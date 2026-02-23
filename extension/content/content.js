@@ -87,13 +87,22 @@
         <div id="veloz-reader-word-container">
           <div id="veloz-touch-left" aria-label="Zurück"></div>
           <div id="veloz-touch-right" aria-label="Weiter"></div>
+          
+          <!-- Context words (previous) -->
+          <div id="veloz-context-prev" class="veloz-context"></div>
+          
+          <!-- Main word display -->
           <div id="veloz-reader-word">
             <span id="veloz-left"></span>
             <span id="veloz-orp"></span>
             <span id="veloz-right"></span>
           </div>
+          
+          <!-- Context words (next) -->
+          <div id="veloz-context-next" class="veloz-context"></div>
         </div>
         <div id="veloz-reader-controls">
+          <button id="veloz-reset" aria-label="Zurück zum Anfang">⏮</button>
           <button id="veloz-prev" aria-label="Zurück">‹</button>
           <button id="veloz-play" aria-label="Wiedergabe">▶</button>
           <button id="veloz-next" aria-label="Weiter">›</button>
@@ -181,8 +190,11 @@
     overlay.dataset.currentIndex = '0';
     overlay.dataset.isPlaying = 'false';
 
-    // Display first word
-    displayWord(words[0]);
+    // Display first word (initially paused, so context is visible)
+    displayWord(words[0], words, 0);
+    
+    // Ensure context is visible initially
+    overlay.querySelector('#veloz-reader-word-container').classList.remove('playing');
 
     // Setup controls
     setupControls(words);
@@ -202,7 +214,7 @@
       .filter(w => w.length > 0);
   }
 
-  function displayWord(word) {
+  function displayWord(word, allWords, currentIdx) {
     const overlay = readerOverlay;
     if (!overlay || !word) return;
 
@@ -218,8 +230,73 @@
     overlay.querySelector('#veloz-orp').textContent = orp;
     overlay.querySelector('#veloz-right').textContent = right;
 
+    // Update context words (previous and next)
+    updateContextWords(allWords, currentIdx);
+
     // Calculate dynamic font size
     adjustFontSize(word);
+  }
+
+  function updateContextWords(allWords, currentIdx) {
+    const overlay = readerOverlay;
+    if (!overlay) return;
+
+    const contextSize = 8;
+    const prevContainer = overlay.querySelector('#veloz-context-prev');
+    const nextContainer = overlay.querySelector('#veloz-context-next');
+
+    // Get previous words (reverse order for display)
+    const prevWords = [];
+    for (let i = 1; i <= contextSize; i++) {
+      const idx = currentIdx - i;
+      if (idx >= 0) {
+        prevWords.unshift(allWords[idx]);
+      }
+    }
+
+    // Get next words
+    const nextWords = [];
+    for (let i = 1; i <= contextSize; i++) {
+      const idx = currentIdx + i;
+      if (idx < allWords.length) {
+        nextWords.push(allWords[idx]);
+      }
+    }
+
+    // Render previous words
+    prevContainer.innerHTML = prevWords.map((w, i) => 
+      `<span class="veloz-context-word" data-offset="-${prevWords.length - i}" title="Klicken zum Springen">${escapeHtml(w)}</span>`
+    ).join('');
+
+    // Render next words
+    nextContainer.innerHTML = nextWords.map((w, i) => 
+      `<span class="veloz-context-word" data-offset="${i + 1}" title="Klicken zum Springen">${escapeHtml(w)}</span>`
+    ).join('');
+
+    // Add click handlers for context words
+    prevContainer.querySelectorAll('.veloz-context-word').forEach(el => {
+      el.addEventListener('click', () => {
+        const offset = parseInt(el.dataset.offset);
+        if (window.velozReaderControls && window.velozReaderControls.goToOffset) {
+          window.velozReaderControls.goToOffset(offset);
+        }
+      });
+    });
+
+    nextContainer.querySelectorAll('.veloz-context-word').forEach(el => {
+      el.addEventListener('click', () => {
+        const offset = parseInt(el.dataset.offset);
+        if (window.velozReaderControls && window.velozReaderControls.goToOffset) {
+          window.velozReaderControls.goToOffset(offset);
+        }
+      });
+    });
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   function calculateORP(word) {
@@ -298,7 +375,7 @@
     }
 
     function updateDisplay() {
-      displayWord(words[currentIndex]);
+      displayWord(words[currentIndex], words, currentIndex);
       const progress = Math.round(((currentIndex + 1) / words.length) * 100);
       progressSpan.textContent = progress + '%';
     }
@@ -326,6 +403,7 @@
       isPlaying = true;
       playBtn.textContent = '⏸';
       playBtn.setAttribute('aria-label', 'Pause');
+      overlay.querySelector('#veloz-reader-word-container').classList.add('playing');
       
       function tick() {
         if (!isPlaying) return;
@@ -342,6 +420,7 @@
       isPlaying = false;
       playBtn.textContent = '▶';
       playBtn.setAttribute('aria-label', 'Wiedergabe');
+      overlay.querySelector('#veloz-reader-word-container').classList.remove('playing');
       if (timer) {
         clearTimeout(timer);
         timer = null;
@@ -353,8 +432,21 @@
       else play();
     }
 
+    function goToOffset(offset) {
+      pause();
+      const newIndex = currentIndex + offset;
+      if (newIndex >= 0 && newIndex < words.length) {
+        currentIndex = newIndex;
+        updateDisplay();
+      }
+    }
+
     // Expose controls for touch/swipe handling
-    window.velozReaderControls = { play, pause, toggle, next, prev };
+    window.velozReaderControls = { play, pause, toggle, next, prev, goToOffset, reset: () => {
+      pause();
+      currentIndex = 0;
+      updateDisplay();
+    }};
 
     // Control event listeners
     playBtn.addEventListener('click', toggle);
@@ -365,6 +457,11 @@
     overlay.querySelector('#veloz-prev').addEventListener('click', () => {
       pause();
       prev();
+    });
+    overlay.querySelector('#veloz-reset').addEventListener('click', () => {
+      pause();
+      currentIndex = 0;
+      updateDisplay();
     });
 
     // WPM slider

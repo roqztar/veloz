@@ -132,14 +132,65 @@
 /* Word Display Area - Fixed ORP center */
 #veloz-reader-word-container {
   position: relative;
-  height: 200px;
+  height: 280px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 8px;
+}
+
+/* Context words styling */
+.veloz-context {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 500;
+  max-width: 90%;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.veloz-context:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.veloz-context-word {
+  transition: all 0.2s ease;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.veloz-context-word:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Hide context when playing */
+#veloz-reader-word-container.playing .veloz-context {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#veloz-context-prev {
+  order: 0;
+  flex-direction: row-reverse;
+  mask-image: linear-gradient(to left, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, black 60%, transparent 100%);
+}
+
+#veloz-context-next {
+  order: 2;
+  mask-image: linear-gradient(to right, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
 }
 
 /* Word display with fixed center pivot */
@@ -210,6 +261,10 @@
   justify-content: center;
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#veloz-reset {
+  font-size: 18px;
 }
 
 #veloz-reader-controls button:hover {
@@ -345,8 +400,14 @@
   }
   
   #veloz-reader-word-container {
-    height: 140px;
-    margin-bottom: 28px;
+    height: 200px;
+    margin-bottom: 24px;
+    gap: 4px;
+  }
+  
+  .veloz-context {
+    font-size: 11px;
+    gap: 4px;
   }
   
   #veloz-reader-word {
@@ -360,15 +421,20 @@
   }
   
   #veloz-reader-controls button {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
+    font-size: 16px;
   }
   
   #veloz-play {
-    width: 60px !important;
-    height: 60px !important;
-    font-size: 24px !important;
+    width: 56px !important;
+    height: 56px !important;
+    font-size: 22px !important;
+  }
+  
+  #veloz-reset {
+    font-size: 14px;
   }
   
   #veloz-reader-wpm {
@@ -401,8 +467,14 @@
   }
   
   #veloz-reader-word-container {
-    height: 100px;
-    margin-bottom: 20px;
+    height: 140px;
+    margin-bottom: 16px;
+    gap: 2px;
+  }
+  
+  .veloz-context {
+    font-size: 10px;
+    gap: 3px;
   }
   
   #veloz-reader-word {
