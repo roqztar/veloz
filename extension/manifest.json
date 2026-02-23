@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Spritz Speed Reader",
+  "name": "Veloz Speed Reader",
   "version": "1.0.0",
   "description": "Speed read any text on the web with RSVP (Rapid Serial Visual Presentation)",
   "permissions": [

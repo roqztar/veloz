@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spritz Speed Reader</title>
+  <title>Veloz Speed Reader</title>
   <style>
     * {
       margin: 0;
@@ -11,148 +11,375 @@
       box-sizing: border-box;
     }
     
-    body {
-      width: 320px;
-      min-height: 400px;
-      background: #0a0a0a;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      padding: 20px;
+    :root {
+      --veloz-red: #ef4444;
+      --veloz-red-dark: #dc2626;
+      --bg-dark: #0a0a0a;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --text-primary: #ffffff;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border: rgba(255, 255, 255, 0.08);
     }
     
+    body {
+      width: 350px;
+      min-height: 420px;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      padding: 24px;
+      background: linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
+    }
+    
+    /* Glassmorphism Card */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    
+    /* Header */
     .header {
       text-align: center;
       margin-bottom: 24px;
     }
     
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--veloz-red) 0%, var(--veloz-red-dark) 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+    
     .header h1 {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 4px;
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .header p {
-      font-size: 12px;
-      color: #64748b;
+      font-size: 13px;
+      color: var(--text-muted);
     }
     
+    /* WPM Control */
     .wpm-control {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
     
     .wpm-label {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .wpm-label span:first-child {
       font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
     }
     
     .wpm-value {
-      font-weight: 600;
-      color: #ef4444;
+      font-weight: 700;
+      color: var(--veloz-red);
+      font-size: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    /* Custom Range Slider */
+    .slider-container {
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
     }
     
     input[type="range"] {
+      -webkit-appearance: none;
       width: 100%;
       height: 6px;
-      -webkit-appearance: none;
-      background: rgba(255, 255, 255, 0.1);
       border-radius: 3px;
+      background: linear-gradient(90deg, var(--veloz-red) 0%, var(--veloz-red) var(--progress, 30%), rgba(255,255,255,0.1) var(--progress, 30%));
       outline: none;
+      cursor: pointer;
     }
     
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
-      background: #ef4444;
-      cursor: pointer;
-      border: 2px solid white;
+      background: white;
+      cursor: grab;
+      border: 3px solid var(--veloz-red);
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+    }
+    
+    input[type="range"]::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.05);
+    }
+    
+    .wpm-range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    
+    /* Action Buttons */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
     }
     
     .action-btn {
       width: 100%;
-      padding: 14px;
-      border-radius: 10px;
+      padding: 14px 18px;
+      border-radius: 12px;
       border: none;
-      background: #ef4444;
-      color: white;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      margin-bottom: 12px;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
     }
     
-    .action-btn:hover {
-      background: #dc2626;
+    .action-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .action-btn:hover::before {
+      opacity: 1;
+    }
+    
+    .action-btn.primary {
+      background: linear-gradient(135deg, var(--veloz-red) 0%, var(--veloz-red-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+    }
+    
+    .action-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    }
+    
+    .action-btn.primary:active {
+      transform: translateY(0);
+    }
+    
+    .action-btn.secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .action-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
       transform: translateY(-1px);
     }
     
     .action-btn:disabled {
-      background: #334155;
+      opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
+      transform: none !important;
     }
     
-    .action-btn.secondary {
-      background: rgba(255, 255, 255, 0.1);
+    .btn-icon {
+      font-size: 16px;
     }
     
-    .action-btn.secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-    
+    /* Info Section */
     .info {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 12px;
-      color: #64748b;
+      padding: 16px;
       text-align: center;
     }
     
+    .info-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    
     .keyboard-shortcut {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    
+    .key {
       background: rgba(255, 255, 255, 0.1);
       padding: 2px 6px;
       border-radius: 4px;
-      font-family: monospace;
+      font-weight: 600;
+    }
+    
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--border) 50%, transparent 100%);
+      margin: 16px 0;
+    }
+    
+    /* Stats */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .stat-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--veloz-red);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Loading/Error States */
+    .status-message {
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: none;
+    }
+    
+    .status-message.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--veloz-red);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .status-message.success {
+      display: block;
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.2);
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>Spritz Reader</h1>
-    <p>Speed read any text</p>
+    <div class="logo">
+      <div class="logo-icon">V</div>
+      <h1>Veloz</h1>
+    </div>
+    <p>Speed Reader Extension</p>
   </div>
   
-  <div class="wpm-control">
+  <div class="wpm-control glass-card">
     <div class="wpm-label">
-      <span>Reading Speed</span>
+      <span>Lesegeschwindigkeit</span>
       <span class="wpm-value" id="wpm-display">300 WPM</span>
     </div>
-    <input type="range" id="wpm-slider" min="200" max="1000" value="300" step="10">
+    <div class="slider-container">
+      <input type="range" id="wpm-slider" min="100" max="1000" value="300" step="10">
+    </div>
+    <div class="wpm-range-labels">
+      <span>100</span>
+      <span>1000</span>
+    </div>
   </div>
   
-  <button class="action-btn" id="read-selection">
-    <span>▶</span> Read Selected Text
-  </button>
+  <div class="actions">
+    <button class="action-btn primary" id="read-selection">
+      <span class="btn-icon">▶</span>
+      <span>Ausgewählten Text lesen</span>
+    </button>
+    
+    <button class="action-btn secondary" id="paste-text">
+      <span class="btn-icon">📋</span>
+      <span>Einfügen & Lesen</span>
+    </button>
+  </div>
   
-  <button class="action-btn secondary" id="paste-text">
-    <span>📋</span> Paste & Read
-  </button>
-  
-  <div class="info">
-    <p>Select text on any page and press</p>
-    <p><span class="keyboard-shortcut">Ctrl+Shift+R</span> to read instantly</p>
+  <div class="info glass-card">
+    <p class="info-text">
+      Text auf einer Seite markieren und<br>
+      <span class="keyboard-shortcut">
+        <span class="key">Ctrl</span> + <span class="key">Shift</span> + <span class="key">R</span>
+      </span>
+      <br>drücken für sofortiges Lesen
+    </p>
+    <div class="divider"></div>
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-dot"></span>
+        <span>Bereit</span>
+      </div>
+    </div>
   </div>
   
   <script src="popup.js"></script>

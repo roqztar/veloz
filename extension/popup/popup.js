@@ -1,4 +1,4 @@
-// Popup script
+// Veloz Popup Script
 
 document.addEventListener('DOMContentLoaded', () => {
   const wpmSlider = document.getElementById('wpm-slider');
@@ -6,11 +6,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const readSelectionBtn = document.getElementById('read-selection');
   const pasteTextBtn = document.getElementById('paste-text');
 
+  // Update slider progress background
+  function updateSliderProgress() {
+    const min = parseInt(wpmSlider.min);
+    const max = parseInt(wpmSlider.max);
+    const value = parseInt(wpmSlider.value);
+    const progress = ((value - min) / (max - min)) * 100;
+    wpmSlider.style.setProperty('--progress', progress + '%');
+  }
+
   // Load saved WPM
   chrome.storage.local.get(['wpm'], (result) => {
-    if (result.wpm) {
+    if (result.wpm && typeof result.wpm === 'number') {
       wpmSlider.value = result.wpm;
       wpmDisplay.textContent = result.wpm + ' WPM';
+      updateSliderProgress();
     }
   });
 
@@ -18,12 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
   wpmSlider.addEventListener('input', () => {
     const wpm = wpmSlider.value;
     wpmDisplay.textContent = wpm + ' WPM';
+    updateSliderProgress();
     chrome.storage.local.set({ wpm: parseInt(wpm) });
   });
+
+  // Initialize slider progress
+  updateSliderProgress();
 
   // Read selected text
   readSelectionBtn.addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    // Show loading state
+    const originalText = readSelectionBtn.innerHTML;
+    readSelectionBtn.innerHTML = '<span class="btn-icon">⏳</span><span>Lade...</span>';
+    readSelectionBtn.disabled = true;
     
     try {
       // Try to get selection from content script
@@ -36,27 +55,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         window.close();
       } else {
-        readSelectionBtn.textContent = '⚠️ No text selected';
+        showError(readSelectionBtn, '⚠️ Kein Text ausgewählt');
         setTimeout(() => {
-          readSelectionBtn.innerHTML = '<span>▶</span> Read Selected Text';
+          readSelectionBtn.innerHTML = originalText;
+          readSelectionBtn.disabled = false;
         }, 2000);
       }
     } catch (error) {
       // Content script not loaded, inject it
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: ['content/content.js']
-      });
-      
-      readSelectionBtn.textContent = '🔄 Refresh and try again';
-      setTimeout(() => {
-        readSelectionBtn.innerHTML = '<span>▶</span> Read Selected Text';
-      }, 2000);
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['content/content.js']
+        });
+        
+        showError(readSelectionBtn, '🔄 Seite neu laden und erneut versuchen');
+        setTimeout(() => {
+          readSelectionBtn.innerHTML = originalText;
+          readSelectionBtn.disabled = false;
+        }, 2500);
+      } catch (injectError) {
+        showError(readSelectionBtn, '⚠️ Kann nicht auf Seite zugreifen');
+        setTimeout(() => {
+          readSelectionBtn.innerHTML = originalText;
+          readSelectionBtn.disabled = false;
+        }, 2000);
+      }
     }
   });
 
   // Paste and read
   pasteTextBtn.addEventListener('click', async () => {
+    const originalText = pasteTextBtn.innerHTML;
+    
     try {
       const text = await navigator.clipboard.readText();
       if (text && text.trim()) {
@@ -67,7 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
             action: 'readText',
             text: text
           });
-        } catch {
+          window.close();
+        } catch (msgError) {
           // Inject content script first
           await chrome.scripting.executeScript({
             target: { tabId: tab.id },
@@ -75,25 +107,38 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           
           setTimeout(async () => {
-            await chrome.tabs.sendMessage(tab.id, {
-              action: 'readText',
-              text: text
-            });
-          }, 100);
+            try {
+              await chrome.tabs.sendMessage(tab.id, {
+                action: 'readText',
+                text: text
+              });
+              window.close();
+            } catch (e) {
+              showError(pasteTextBtn, '🔄 Bitte erneut versuchen');
+              setTimeout(() => {
+                pasteTextBtn.innerHTML = originalText;
+              }, 2000);
+            }
+          }, 150);
         }
-        
-        window.close();
       } else {
-        pasteTextBtn.textContent = '⚠️ Clipboard empty';
+        showError(pasteTextBtn, '⚠️ Zwischenablage leer');
         setTimeout(() => {
-          pasteTextBtn.innerHTML = '<span>📋</span> Paste & Read';
+          pasteTextBtn.innerHTML = originalText;
         }, 2000);
       }
     } catch (error) {
-      pasteTextBtn.textContent = '⚠️ No clipboard access';
+      showError(pasteTextBtn, '⚠️ Kein Zugriff auf Zwischenablage');
       setTimeout(() => {
-        pasteTextBtn.innerHTML = '<span>📋</span> Paste & Read';
+        pasteTextBtn.innerHTML = originalText;
       }, 2000);
     }
   });
+
+  function showError(button, message) {
+    button.innerHTML = `<span class="btn-icon">${message.charAt(0)}</span><span>${message.slice(3)}</span>`;
+    button.style.background = 'rgba(239, 68, 68, 0.2)';
+    button.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+    button.style.color = '#ef4444';
+  }
 });
