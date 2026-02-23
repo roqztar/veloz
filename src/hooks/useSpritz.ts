@@ -184,6 +184,7 @@ export function useSpritz({
   // Reset
   const reset = useCallback(() => {
     stopTimer();
+    setRawText('');
     setCurrentIndex(0);
     setIsPlaying(false);
   }, [stopTimer]);
