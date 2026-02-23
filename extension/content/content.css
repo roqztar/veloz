@@ -129,7 +129,7 @@
   transform: scale(0.95);
 }
 
-/* Word Display Area */
+/* Word Display Area - Fixed ORP center */
 #veloz-reader-word-container {
   position: relative;
   height: 200px;
@@ -142,11 +142,11 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* ORP - Optimal Recognition Point */
+/* Word display with fixed center pivot */
 #veloz-reader-word {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
   font-weight: 700;
   color: white;
   line-height: 1;
@@ -154,27 +154,38 @@
   transition: font-size 0.2s ease;
   font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
   letter-spacing: -0.02em;
-  position: relative;
+  /* Fixed width container so ORP stays at center */
+  width: 100%;
+  max-width: 600px;
 }
 
-/* Fix alignment - ORP centered, word parts flow from it */
+/* Left part - right aligned, flows toward center */
 #veloz-left {
   text-align: right;
   color: #e2e8f0;
-  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  padding-right: 0;
 }
 
+/* ORP - Fixed at center column */
 #veloz-orp {
   color: #ef4444;
   font-weight: 800;
   text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-  flex-shrink: 0;
+  white-space: nowrap;
+  text-align: center;
 }
 
+/* Right part - left aligned, flows from center */
 #veloz-right {
   text-align: left;
   color: #e2e8f0;
-  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  padding-left: 0;
 }
 
 /* Reading Controls */
@@ -340,11 +351,7 @@
   
   #veloz-reader-word {
     font-size: 42px;
-  }
-  
-  #veloz-left,
-  #veloz-right {
-    min-width: 0;
+    max-width: 100%;
   }
   
   #veloz-reader-controls {
@@ -384,11 +391,6 @@
   #veloz-reader-word {
     font-size: 56px;
   }
-  
-  #veloz-left,
-  #veloz-right {
-    min-width: 0;
-  }
 }
 
 /* Landscape mode */
@@ -405,6 +407,7 @@
   
   #veloz-reader-word {
     font-size: 36px;
+    max-width: 100%;
   }
   
   #veloz-reader-controls {
