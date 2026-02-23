@@ -23,12 +23,12 @@
     }
     
     body {
-      width: 350px;
-      min-height: 420px;
+      width: 380px;
+      min-height: 520px;
       background: var(--bg-dark);
       color: var(--text-primary);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      padding: 24px;
+      padding: 20px;
       background: linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
     }
     
@@ -301,6 +301,49 @@
       animation: pulse 2s infinite;
     }
     
+    /* Text Input Section */
+    .text-input-section {
+      margin-bottom: 16px;
+    }
+    
+    .input-label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .text-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    
+    .text-input:focus {
+      outline: none;
+      border-color: var(--veloz-red);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+    
+    .text-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .full-width {
+      width: 100%;
+      margin-top: 12px;
+    }
+    
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
@@ -353,15 +396,32 @@
     </div>
   </div>
   
-  <div class="actions">
-    <button class="action-btn primary" id="read-selection">
+  <!-- Direct Text Input -->
+  <div class="text-input-section">
+    <label class="input-label">Text zum Lesen</label>
+    <textarea 
+      id="direct-text" 
+      class="text-input" 
+      placeholder="Text hier eingeben oder einfügen (Strg+V)..."
+      rows="4"
+    ></textarea>
+    <button class="action-btn primary full-width" id="read-direct">
       <span class="btn-icon">▶</span>
+      <span>Text lesen</span>
+    </button>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <div class="actions">
+    <button class="action-btn secondary" id="read-selection">
+      <span class="btn-icon">📄</span>
       <span>Ausgewählten Text lesen</span>
     </button>
     
     <button class="action-btn secondary" id="paste-text">
       <span class="btn-icon">📋</span>
-      <span>Einfügen & Lesen</span>
+      <span>Zwischenablage einfügen</span>
     </button>
   </div>
   
