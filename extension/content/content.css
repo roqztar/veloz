@@ -1,0 +1,229 @@
+/* Spritz Reader Overlay Styles */
+
+#spritz-reader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2147483647;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#spritz-reader-container {
+  width: 90%;
+  max-width: 800px;
+  background: #0a0a0a;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#spritz-reader-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+#spritz-reader-progress {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#spritz-reader-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+#spritz-reader-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+#spritz-reader-word-container {
+  position: relative;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+#spritz-reader-word {
+  display: flex;
+  align-items: baseline;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+  font-size: 80px;
+  transition: font-size 0.2s ease;
+}
+
+#spritz-left {
+  text-align: right;
+  min-width: 200px;
+  padding-right: 2px;
+}
+
+#spritz-orp {
+  color: #ef4444;
+  position: relative;
+}
+
+#spritz-orp::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #ef4444;
+  border-radius: 50%;
+}
+
+#spritz-right {
+  text-align: left;
+  min-width: 200px;
+  padding-left: 2px;
+}
+
+#spritz-reader-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+#spritz-reader-controls button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+#spritz-reader-controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+#spritz-play {
+  width: 72px !important;
+  height: 72px !important;
+  background: #ef4444 !important;
+  font-size: 28px !important;
+}
+
+#spritz-play:hover {
+  background: #dc2626 !important;
+}
+
+#spritz-reader-wpm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+#spritz-wpm-slider {
+  width: 200px;
+  height: 6px;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+}
+
+#spritz-wpm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ef4444;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+#spritz-wpm-value {
+  color: #94a3b8;
+  font-size: 14px;
+  min-width: 80px;
+  font-weight: 500;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  #spritz-reader-container {
+    padding: 24px;
+    width: 95%;
+  }
+  
+  #spritz-reader-word-container {
+    height: 150px;
+  }
+  
+  #spritz-reader-word {
+    font-size: 48px;
+  }
+  
+  #spritz-left,
+  #spritz-right {
+    min-width: 100px;
+  }
+  
+  #spritz-reader-controls button {
+    width: 48px;
+    height: 48px;
+  }
+  
+  #spritz-play {
+    width: 60px !important;
+    height: 60px !important;
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  #spritz-reader-container {
+    padding: 20px;
+  }
+  
+  #spritz-reader-word-container {
+    height: 100px;
+    margin-bottom: 20px;
+  }
+  
+  #spritz-reader-word {
+    font-size: 40px;
+  }
+  
+  #spritz-reader-controls {
+    margin-bottom: 16px;
+  }
+}

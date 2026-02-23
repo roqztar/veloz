@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spritz Speed Reader</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 320px;
+      min-height: 400px;
+      background: #0a0a0a;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .header p {
+      font-size: 12px;
+      color: #64748b;
+    }
+    
+    .wpm-control {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .wpm-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    
+    .wpm-value {
+      font-weight: 600;
+      color: #ef4444;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ef4444;
+      cursor: pointer;
+      border: 2px solid white;
+    }
+    
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: #ef4444;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .action-btn:hover {
+      background: #dc2626;
+      transform: translateY(-1px);
+    }
+    
+    .action-btn:disabled {
+      background: #334155;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .action-btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .action-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .info {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+    
+    .keyboard-shortcut {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Spritz Reader</h1>
+    <p>Speed read any text</p>
+  </div>
+  
+  <div class="wpm-control">
+    <div class="wpm-label">
+      <span>Reading Speed</span>
+      <span class="wpm-value" id="wpm-display">300 WPM</span>
+    </div>
+    <input type="range" id="wpm-slider" min="200" max="1000" value="300" step="10">
+  </div>
+  
+  <button class="action-btn" id="read-selection">
+    <span>▶</span> Read Selected Text
+  </button>
+  
+  <button class="action-btn secondary" id="paste-text">
+    <span>📋</span> Paste & Read
+  </button>
+  
+  <div class="info">
+    <p>Select text on any page and press</p>
+    <p><span class="keyboard-shortcut">Ctrl+Shift+R</span> to read instantly</p>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
