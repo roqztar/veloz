@@ -27,47 +27,66 @@ export function WordDisplay({
 
   // Calculate dynamic font size based on longest word
   useEffect(() => {
-    if (words.length === 0 || !containerRef.current) return;
+    if (words.length === 0 || !containerRef.current) {
+      setFontSize(64); // Default size when no container
+      return;
+    }
 
     const calculateFontSize = () => {
       const containerWidth = containerRef.current?.offsetWidth || window.innerWidth;
+      if (containerWidth === 0) return 64;
       
-      // Find longest word
+      // Find longest word (fallback to empty string if no words)
       const longestWord = words.reduce((max, word) => {
+        if (!word) return max;
         const cleanWord = word.replace(/[^\w\säöüÄÖÜß]/g, '');
         return cleanWord.length > max.length ? cleanWord : max;
       }, '');
 
       const maxLength = longestWord.length;
-      if (maxLength === 0) return 64;
+      // If no words or very short words, use a reasonable default
+      if (maxLength === 0) return 72;
 
-      // Calculate available space (accounting for side containers and padding)
-      const availableWidth = containerWidth * 0.75; // 75% for the word itself
-      const sideContainersWidth = 600; // 300px each side at base size
-      const effectiveWidth = Math.max(availableWidth - sideContainersWidth, 200);
+      // Calculate available space - be more generous
+      // The word display area is the full container width
+      const availableWidth = containerWidth * 0.9; // 90% of container
+      
+      // Side padding for ORP alignment (each side)
+      // This scales with font size, so we use a percentage-based approach
+      const sidePaddingRatio = 0.35; // 35% each side for ORP centering
+      const effectiveWidth = availableWidth * (1 - sidePaddingRatio * 2);
 
-      // Estimate: average char is ~0.6em wide
-      const charWidthRatio = 0.6;
+      // Estimate: average char is ~0.55em wide for monospace/sans-serif
+      const charWidthRatio = 0.55;
       const baseSize = Math.floor(effectiveWidth / (maxLength * charWidthRatio));
 
       // Apply font size level (-5 to +5 levels)
-      // Level 0 = 200% (was previously +4)
-      // Each step = 15%
-      const levelMultiplier = 2.0 + (fontSizeLevel * 0.15);
+      // Level 0 = 100% base calculation
+      // Each step = 15% change
+      const levelMultiplier = 1.0 + (fontSizeLevel * 0.15);
       const adjustedSize = Math.floor(baseSize * levelMultiplier);
 
-      // Clamp between 20px (min) and 250px (max)
-      return Math.max(20, Math.min(250, adjustedSize));
+      // Clamp between reasonable min and max
+      // Min: 24px (readable), Max: 150px (not too huge)
+      const finalSize = Math.max(24, Math.min(150, adjustedSize));
+      
+      return finalSize;
     };
 
-    setFontSize(calculateFontSize());
+    // Small delay to ensure container has correct dimensions
+    const timeoutId = setTimeout(() => {
+      setFontSize(calculateFontSize());
+    }, 50);
 
     const handleResize = () => {
       setFontSize(calculateFontSize());
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+    };
   }, [words, fontSizeLevel]);
 
   if (!currentWord || !currentWord.text) {
@@ -138,8 +157,9 @@ export function WordDisplay({
     bold: 'font-bold'
   }[fontWeight];
   
-  // Dynamic side padding based on font size
-  const sidePadding = Math.max(150, fontSize * 2.5);
+  // Dynamic side padding based on font size - ensures ORP stays centered
+  // Scale padding with font size but keep minimum for short words
+  const sidePadding = Math.max(120, fontSize * 2.2);
 
   return (
     <div ref={containerRef} className={`relative flex items-center justify-center h-48 ${className}`}>
