@@ -306,12 +306,37 @@
       margin-bottom: 16px;
     }
     
+    .input-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
     .input-label {
-      display: block;
       font-size: 13px;
       color: var(--text-secondary);
-      margin-bottom: 8px;
       font-weight: 500;
+    }
+    
+    .clear-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .clear-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      transform: scale(1.1);
     }
     
     .text-input {
@@ -398,7 +423,10 @@
   
   <!-- Direct Text Input -->
   <div class="text-input-section">
-    <label class="input-label">Text zum Lesen</label>
+    <div class="input-header">
+      <label class="input-label">Text zum Lesen</label>
+      <button class="clear-btn" id="clear-text" title="Text löschen">✕</button>
+    </div>
     <textarea 
       id="direct-text" 
       class="text-input" 
