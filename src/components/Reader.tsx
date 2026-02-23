@@ -498,6 +498,7 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Textarea with glass effect */}
               <div className={`rounded-2xl p-1 ${isDarkMode ? 'bg-black/30' : 'bg-white/50'}`}>
                 <textarea
+                  id="editor-textarea"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder="Füge hier deinen Text ein..."
@@ -512,12 +513,36 @@ export function Reader({ className = '' }: ReaderProps) {
               
               {/* Action Buttons */}
               <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-4 sm:mt-6">
-                <button 
-                  onClick={() => setInputText('')}
-                  className={`px-4 sm:px-6 py-3 sm:py-3 rounded-xl font-medium transition-all ${accentBgClass} ${textColorClass} hover:scale-105 hover:text-red-400 min-h-[48px]`}
-                >
-                  Alles löschen
-                </button>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <button 
+                    onClick={() => setInputText('')}
+                    className={`px-4 sm:px-6 py-3 sm:py-3 rounded-xl font-medium transition-all ${accentBgClass} ${textColorClass} hover:scale-105 hover:text-red-400 min-h-[48px]`}
+                  >
+                    Alles löschen
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      try {
+                        const text = await navigator.clipboard.readText();
+                        if (text?.trim()) {
+                          setInputText(prev => prev + (prev ? '\n\n' : '') + text.trim());
+                        }
+                      } catch {
+                        // Fallback: focus textarea and let user paste manually
+                        const textarea = document.querySelector('#editor-textarea') as HTMLTextAreaElement;
+                        textarea?.focus();
+                      }
+                    }}
+                    className={`px-4 sm:px-6 py-3 sm:py-3 rounded-xl font-medium transition-all ${accentBgClass} ${textColorClass} hover:scale-105 min-h-[48px] flex items-center gap-2`}
+                    title="Zwischenablage einfügen"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    <span className="hidden sm:inline">Einfügen</span>
+                  </button>
+                </div>
                 <div className="flex items-center gap-2 sm:gap-3">
                   <button 
                     onClick={() => setShowEditor(false)} 
