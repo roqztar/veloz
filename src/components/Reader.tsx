@@ -511,19 +511,27 @@ export function Reader({ className = '' }: ReaderProps) {
               </div>
               
               {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 mt-6">
+              <div className="flex items-center justify-between gap-3 mt-6">
                 <button 
-                  onClick={() => setShowEditor(false)} 
-                  className={`px-6 py-3 rounded-xl font-medium transition-all ${accentBgClass} ${textColorClass} hover:scale-105`}
+                  onClick={() => setInputText('')}
+                  className={`px-6 py-3 rounded-xl font-medium transition-all ${accentBgClass} ${textColorClass} hover:scale-105 hover:text-red-400`}
                 >
-                  Abbrechen
+                  Alles löschen
                 </button>
-                <button 
-                  onClick={saveEditor}
-                  className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:scale-105 transition-all"
-                >
-                  Speichern & Lesen
-                </button>
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setShowEditor(false)} 
+                    className={`px-6 py-3 rounded-xl font-medium transition-all ${accentBgClass} ${textColorClass} hover:scale-105`}
+                  >
+                    Abbrechen
+                  </button>
+                  <button 
+                    onClick={saveEditor}
+                    className="px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:scale-105 transition-all"
+                  >
+                    Speichern & Lesen
+                  </button>
+                </div>
               </div>
             </div>
           </div>
