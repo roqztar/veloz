@@ -142,9 +142,11 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* ORP - Optimal Recognition Point */
 #veloz-reader-word {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
   color: white;
   line-height: 1;
@@ -152,53 +154,27 @@
   transition: font-size 0.2s ease;
   font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
   letter-spacing: -0.02em;
+  position: relative;
 }
 
-/* ORP - Optimal Recognition Point */
+/* Fix alignment - ORP centered, word parts flow from it */
 #veloz-left {
   text-align: right;
-  min-width: 180px;
-  padding-right: 2px;
   color: #e2e8f0;
+  flex-shrink: 0;
 }
 
 #veloz-orp {
   color: #ef4444;
-  position: relative;
   font-weight: 800;
   text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-}
-
-#veloz-orp::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
-  background: #ef4444;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-  animation: veloz-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes veloz-pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: translateX(-50%) scale(0.9);
-  }
+  flex-shrink: 0;
 }
 
 #veloz-right {
   text-align: left;
-  min-width: 180px;
-  padding-left: 2px;
   color: #e2e8f0;
+  flex-shrink: 0;
 }
 
 /* Reading Controls */
@@ -368,7 +344,7 @@
   
   #veloz-left,
   #veloz-right {
-    min-width: 90px;
+    min-width: 0;
   }
   
   #veloz-reader-controls {
@@ -411,7 +387,7 @@
   
   #veloz-left,
   #veloz-right {
-    min-width: 130px;
+    min-width: 0;
   }
 }
 
@@ -448,7 +424,6 @@
 @media (prefers-reduced-motion: reduce) {
   #veloz-reader-overlay,
   #veloz-reader-container,
-  #veloz-orp::before,
   #veloz-reader-controls button,
   #veloz-reader-close {
     animation: none;
