@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# Veloz - Speed Reader
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, blazing-fast RSVP (Rapid Serial Visual Presentation) speed reading application built with React and TypeScript.
 
-Currently, two official plugins are available:
+![Veloz Speed Reader](https://img.shields.io/badge/Veloz-Speed%20Reader-ef4444)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **⚡ RSVP Technology** - Words displayed one at a time with ORP (Optimal Recognition Point) highlighting
+- **🎯 Smart Delays** - Words display longer based on length, punctuation, and type
+- **🎚️ WPM Control** - Adjustable reading speed from 200 to 1000 words per minute
+- **🎨 Beautiful UI** - Glassmorphism design with dark/light mode support
+- **⌨️ Keyboard Shortcuts** - Space (play/pause), Arrows (navigate), F (focus mode), E (editor)
+- **📄 File Support** - Upload `.txt` files for reading
+- **🔌 Browser Extension** - Speed read selected text on any webpage
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Quick Start
 
-## Expanding the ESLint configuration
+```bash
+# Install dependencies
+npm install
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# Start development server
+npm run dev
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Deploy
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+See [DEPLOY.md](./DEPLOY.md) for deployment instructions.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `Space` | Play/Pause |
+| `←` / `→` | Previous/Next word |
+| `F` | Toggle focus mode |
+| `E` | Open text editor |
+| `+` / `-` | Increase/Decrease font size |
+| `Escape` | Close modals |
+
+## Browser Extension
+
+The `extension/` folder contains a Chrome/Edge extension for speed-reading selected text on any webpage.
+
+### Install Extension
+1. Open Chrome/Edge → `chrome://extensions/`
+2. Enable "Developer mode"
+3. Click "Load unpacked"
+4. Select the `extension/` folder
+
+## License
+
+MIT
