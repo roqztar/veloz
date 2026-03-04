@@ -24,19 +24,24 @@ export function WordDisplay({
 }: WordDisplayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState(64);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Calculate dynamic font size based on longest word
+  // Detect mobile and calculate font size
   useEffect(() => {
     if (words.length === 0 || !containerRef.current) {
-      setFontSize(64); // Default size when no container
+      setFontSize(64);
       return;
     }
 
     const calculateFontSize = () => {
       const containerWidth = containerRef.current?.offsetWidth || window.innerWidth;
-      if (containerWidth === 0) return 64;
+      const containerHeight = containerRef.current?.offsetHeight || window.innerHeight;
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
       
-      // Find longest word (fallback to empty string if no words)
+      if (containerWidth === 0) return mobile ? 48 : 64;
+      
+      // Find longest word
       const longestWord = words.reduce((max, word) => {
         if (!word) return max;
         const cleanWord = word.replace(/[^\w\säöüÄÖÜß]/g, '');
@@ -44,36 +49,28 @@ export function WordDisplay({
       }, '');
 
       const maxLength = longestWord.length;
-      // If no words or very short words, use a reasonable default
-      if (maxLength === 0) return 72;
+      if (maxLength === 0) return mobile ? 56 : 72;
 
-      // Calculate available space - be more generous
-      // The word display area is the full container width
-      const availableWidth = containerWidth * 0.9; // 90% of container
-      
-      // Side padding for ORP alignment (each side)
-      // This scales with font size, so we use a percentage-based approach
-      const sidePaddingRatio = 0.35; // 35% each side for ORP centering
+      // Mobile: use more available width, less padding
+      const availableWidth = containerWidth * (mobile ? 0.95 : 0.9);
+      const sidePaddingRatio = mobile ? 0.25 : 0.35;
       const effectiveWidth = availableWidth * (1 - sidePaddingRatio * 2);
 
-      // Estimate: average char is ~0.55em wide for monospace/sans-serif
-      const charWidthRatio = 0.55;
+      // Mobile: slightly larger char width ratio for readability
+      const charWidthRatio = mobile ? 0.6 : 0.55;
       const baseSize = Math.floor(effectiveWidth / (maxLength * charWidthRatio));
 
       // Apply font size level (-5 to +5 levels)
-      // Level 0 = 100% base calculation
-      // Each step = 15% change
       const levelMultiplier = 1.0 + (fontSizeLevel * 0.15);
       const adjustedSize = Math.floor(baseSize * levelMultiplier);
 
-      // Clamp between reasonable min and max
-      // Min: 24px (readable), Max: 150px (not too huge)
-      const finalSize = Math.max(24, Math.min(150, adjustedSize));
+      // Mobile: smaller min/max, but ensure readability
+      const minSize = mobile ? 20 : 24;
+      const maxSize = mobile ? Math.min(containerHeight * 0.25, 100) : 150;
       
-      return finalSize;
+      return Math.max(minSize, Math.min(maxSize, adjustedSize));
     };
 
-    // Small delay to ensure container has correct dimensions
     const timeoutId = setTimeout(() => {
       setFontSize(calculateFontSize());
     }, 50);
@@ -92,12 +89,12 @@ export function WordDisplay({
   if (!currentWord || !currentWord.text) {
     return (
       <div ref={containerRef} className={`flex items-center justify-center ${className}`}>
-        <span className="text-slate-500 text-2xl animate-pulse">Bereit...</span>
+        <span className="text-slate-500 text-xl md:text-2xl animate-pulse">Bereit...</span>
       </div>
     );
   }
 
-  // Calculate ORP
+  // Calculate ORP - adjusted for mobile
   const orpIndex = Math.min(
     currentWord.text.length <= 1 ? 0 :
     currentWord.text.length <= 5 ? 1 :
@@ -143,34 +140,33 @@ export function WordDisplay({
   
   const wordColor = getWordColor(currentWord.type);
   
-  // Font family classes
   const fontFamilyClass = {
     sans: 'font-sans',
     serif: 'font-serif',
     mono: 'font-mono'
   }[fontFamily];
 
-  // Font weight classes
   const fontWeightClass = {
     light: 'font-light',
     normal: 'font-normal',
     bold: 'font-bold'
   }[fontWeight];
   
-  // Dynamic side padding based on font size - ensures ORP stays centered
-  // Scale padding with font size but keep minimum for short words
-  const sidePadding = Math.max(120, fontSize * 2.2);
+  // Responsive side padding - smaller on mobile
+  const sidePadding = isMobile 
+    ? Math.max(60, fontSize * 1.5)
+    : Math.max(120, fontSize * 2.2);
 
   return (
-    <div ref={containerRef} className={`relative flex items-center justify-center h-48 ${className}`}>
-      {/* Glow effect behind the word */}
+    <div ref={containerRef} className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}>
+      {/* Glow effect - smaller on mobile */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-32 h-32 bg-red-500/10 rounded-full blur-3xl" />
+        <div className="w-24 h-24 md:w-32 md:h-32 bg-red-500/10 rounded-full blur-3xl" />
       </div>
       
       <div 
         className={`flex items-baseline tracking-tight animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
-        style={{ fontSize: `${fontSize}px` }}
+        style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
       >
         <span 
           className={`text-right overflow-visible whitespace-pre ${wordColor}`}

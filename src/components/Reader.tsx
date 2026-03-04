@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { WordDisplay } from './WordDisplay';
 import { ProgressBar } from './ProgressBar';
+import { SettingsModal } from './SettingsModal';
 import { useSpritz } from '../hooks/useSpritz';
-import { calculateTimeSaved, formatTime, type CleanOptions } from '../core/textCleaner';
+import { calculateTimeSaved, formatTime } from '../core/textCleaner';
+import { parseFile, getSupportedFileTypes, getSupportedMimeTypes } from '../core/fileParser';
 
 // Default Text - Informativer Beispieltext über Speed Reading
 const DEFAULT_TEXT = `Willkommen beim Speed Reader
@@ -35,6 +37,11 @@ export function Reader({ className = '' }: ReaderProps) {
   const [inputText, setInputText] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   
+  // Upload state
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+  
   // Font settings
   const [fontFamily, setFontFamily] = useState<'sans' | 'serif' | 'mono'>('sans');
   const [fontWeight, setFontWeight] = useState<'normal' | 'bold' | 'light'>('bold');
@@ -44,6 +51,13 @@ export function Reader({ className = '' }: ReaderProps) {
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isLongPressRef = useRef(false);
   const scrubIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // Touch/swipe state for mobile
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchStartTime = useRef<number | null>(null);
+  const SWIPE_THRESHOLD = 50; // min distance for swipe
+  const SWIPE_TIMEOUT = 300; // max time for swipe
   
   const {
     words,
@@ -176,6 +190,45 @@ export function Reader({ className = '' }: ReaderProps) {
     isLongPressRef.current = false;
   }, []);
   
+  // Touch/Swipe handlers for mobile navigation
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchStartTime.current = Date.now();
+  }, []);
+  
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStartX.current || !touchStartY.current || !touchStartTime.current) return;
+    
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchEndTime = Date.now();
+    
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+    const deltaTime = touchEndTime - touchStartTime.current;
+    
+    // Only process if within swipe timeout and horizontal movement is greater than vertical
+    if (deltaTime < SWIPE_TIMEOUT && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+        if (deltaX > 0) {
+          // Swipe right -> previous word
+          prev();
+        } else {
+          // Swipe left -> next word
+          next();
+        }
+      } else if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+        // Tap (not a swipe) -> toggle play/pause
+        toggle();
+      }
+    }
+    
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchStartTime.current = null;
+  }, [prev, next, toggle]);
+  
   const handlePointerDown = useCallback((direction: 'prev' | 'next') => {
     isLongPressRef.current = false;
     
@@ -261,150 +314,19 @@ export function Reader({ className = '' }: ReaderProps) {
       </div>
       
       {/* Settings Modal */}
-      {showSettings && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setShowSettings(false)}
-        >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div 
-            className={`relative w-full max-w-md ${glassClass} rounded-2xl p-4 sm:p-6 lg:p-8 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto sm:max-h-none sm:overflow-visible`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-6 sm:mb-8">
-              <h2 className={`text-lg sm:text-xl font-semibold ${textColorClass}`}>Einstellungen</h2>
-              <button 
-                onClick={() => setShowSettings(false)} 
-                className={`p-2 sm:p-2 rounded-full ${accentBgClass} ${textColorClass} transition-transform hover:rotate-90 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </div>
-            
-            {/* Typography Settings */}
-            <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-white/10">
-              <h3 className={`text-xs sm:text-sm font-semibold ${textColorClass} uppercase tracking-wider`}>Schriftart</h3>
-              
-              {/* Font Family */}
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'sans', label: 'Sans', font: 'font-sans' },
-                  { id: 'serif', label: 'Serif', font: 'font-serif' },
-                  { id: 'mono', label: 'Mono', font: 'font-mono' },
-                ].map((font) => (
-                  <button
-                    key={font.id}
-                    onClick={() => setFontFamily(font.id as 'sans' | 'serif' | 'mono')}
-                    className={`px-2 sm:px-3 py-3 sm:py-2 rounded-lg text-sm transition-all ${font.font} min-h-[44px] sm:min-h-0 ${
-                      fontFamily === font.id
-                        ? 'bg-red-500 text-white'
-                        : accentBgClass + ' ' + textColorClass
-                    }`}
-                  >
-                    {font.label}
-                  </button>
-                ))}
-              </div>
-              
-              {/* Font Weight */}
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'light', label: 'Light', class: 'font-light' },
-                  { id: 'normal', label: 'Normal', class: 'font-normal' },
-                  { id: 'bold', label: 'Bold', class: 'font-bold' },
-                ].map((weight) => (
-                  <button
-                    key={weight.id}
-                    onClick={() => setFontWeight(weight.id as 'normal' | 'bold' | 'light')}
-                    className={`px-2 sm:px-3 py-3 sm:py-2 rounded-lg text-sm transition-all ${weight.class} min-h-[44px] sm:min-h-0 ${
-                      fontWeight === weight.id
-                        ? 'bg-red-500 text-white'
-                        : accentBgClass + ' ' + textColorClass
-                    }`}
-                  >
-                    {weight.label}
-                  </button>
-                ))}
-              </div>
-              
-              {/* Font Size */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className={`text-sm ${mutedColorClass}`}>Schriftgröße</span>
-                  <span className={`text-xs ${mutedColorClass} hidden sm:inline`}>Tasten + / −</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setFontSizeLevel(prev => Math.max(prev - 1, -5))}
-                    className={`w-12 h-12 sm:w-10 sm:h-10 rounded-lg ${accentBgClass} ${textColorClass} flex items-center justify-center hover:scale-110 transition-transform min-w-[48px]`}
-                  >
-                    −
-                  </button>
-                  <div className={`flex-1 text-center ${textColorClass} font-medium text-base sm:text-sm`}>
-                    {fontSizeLevel > 0 ? '+' : ''}{fontSizeLevel}
-                  </div>
-                  <button
-                    onClick={() => setFontSizeLevel(prev => Math.min(prev + 1, 5))}
-                    className={`w-12 h-12 sm:w-10 sm:h-10 rounded-lg ${accentBgClass} ${textColorClass} flex items-center justify-center hover:scale-110 transition-transform min-w-[48px]`}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 sm:space-y-6">
-              <h3 className={`text-xs sm:text-sm font-semibold ${textColorClass} uppercase tracking-wider`}>Text-Bereinigung</h3>
-              
-              {[
-                { key: 'cleanUrls', label: 'URLs bereinigen' },
-                { key: 'cleanNumbers', label: 'Zahlen formatieren' },
-                { key: 'expandAbbreviations', label: 'Abkürzungen expandieren' },
-                { key: 'fixLineBreaks', label: 'Zeilenumbrüche korrigieren' },
-                { key: 'cleanMarkup', label: 'Markdown/HTML entfernen' },
-              ].map(({ key, label }) => (
-                <label key={key} className="flex items-center justify-between cursor-pointer group py-1 sm:py-0">
-                  <span className={`text-sm sm:text-base ${textColorClass} group-hover:text-red-400 transition-colors`}>{label}</span>
-                  <div className={`relative w-12 h-6 rounded-full transition-colors ${cleanOptions[key as keyof CleanOptions] ? 'bg-red-500' : isDarkMode ? 'bg-slate-700' : 'bg-gray-300'}`}>
-                    <input
-                      type="checkbox"
-                      checked={cleanOptions[key as keyof CleanOptions] as boolean}
-                      onChange={(e) => setCleanOptions({ [key]: e.target.checked } as Partial<CleanOptions>)}
-                      className="sr-only"
-                    />
-                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${cleanOptions[key as keyof CleanOptions] ? 'translate-x-7' : 'translate-x-1'}`} />
-                  </div>
-                </label>
-              ))}
-              
-              <div className="space-y-3 pt-4 border-t border-white/10">
-                <span className={`text-sm sm:text-base ${textColorClass}`}>Klammern-Inhalt</span>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {(['keep', 'dim', 'shorten', 'remove'] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => setCleanOptions({ handleParentheses: mode })}
-                      className={`px-2 sm:px-3 py-3 sm:py-2 rounded-lg text-sm transition-all min-h-[44px] sm:min-h-0 ${
-                        cleanOptions.handleParentheses === mode
-                          ? 'bg-red-500 text-white'
-                          : accentBgClass + ' ' + textColorClass
-                      }`}
-                    >
-                      {mode === 'keep' && 'Beibehalten'}
-                      {mode === 'dim' && 'Ausgrauen'}
-                      {mode === 'shorten' && 'Kürzen'}
-                      {mode === 'remove' && 'Entfernen'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        isDarkMode={isDarkMode}
+        fontFamily={fontFamily}
+        setFontFamily={setFontFamily}
+        fontWeight={fontWeight}
+        setFontWeight={setFontWeight}
+        fontSizeLevel={fontSizeLevel}
+        setFontSizeLevel={setFontSizeLevel}
+        cleanOptions={cleanOptions}
+        setCleanOptions={setCleanOptions}
+      />
       
       {/* Scrubber Overlay */}
       {showScrubber && (
@@ -476,8 +398,11 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center text-white font-bold text-base sm:text-lg">
-                    ✎
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
                   </div>
                   <div>
                     <h2 className={`text-lg sm:text-xl font-semibold ${textColorClass}`}>Text bearbeiten</h2>
@@ -486,7 +411,7 @@ export function Reader({ className = '' }: ReaderProps) {
                 </div>
                 <button 
                   onClick={() => setShowEditor(false)} 
-                  className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${accentBgClass} ${textColorClass} flex items-center justify-center transition-all hover:rotate-90 hover:scale-110 min-w-[44px]`}
+                  className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${accentBgClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:rotate-90 hover:scale-105 hover:shadow-md active:scale-95 min-w-[44px]`}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"/>
@@ -563,6 +488,41 @@ export function Reader({ className = '' }: ReaderProps) {
         </div>
       )}
       
+      {/* Upload Notifications */}
+      {uploadError && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2">
+          <div className="bg-red-500/90 text-white px-4 py-3 rounded-xl shadow-lg backdrop-blur-sm flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            <span className="text-sm font-medium">{uploadError}</span>
+            <button 
+              onClick={() => setUploadError(null)}
+              className="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {uploadSuccess && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2">
+          <div className="bg-green-500/90 text-white px-4 py-3 rounded-xl shadow-lg backdrop-blur-sm flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span className="text-sm font-medium">{uploadSuccess}</span>
+          </div>
+        </div>
+      )}
+      
       {/* Main Content */}
       <div className="relative h-screen w-full flex flex-col">
         
@@ -574,10 +534,35 @@ export function Reader({ className = '' }: ReaderProps) {
         >
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {/* WPM Display */}
-            <div className={`flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-2 sm:py-3 rounded-full ${glassClass} flex-1 sm:flex-none`}>
+            <div className={`flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-2 sm:py-3 rounded-full ${glassClass} flex-1 sm:flex-none`}>
               <span className={`text-xs font-bold uppercase tracking-wider ${mutedColorClass} hidden sm:inline`}>WPM</span>
-              <span className={`text-lg sm:text-xl font-bold ${textColorClass} min-w-[3ch] text-center`}>{wpm}</span>
-              <div className="relative flex items-center flex-1 sm:flex-none">
+              
+              {/* Minus Button */}
+              <button
+                onClick={() => setWPM(Math.max(200, wpm - 10))}
+                className={`w-8 h-8 sm:w-7 sm:h-7 rounded-full ${accentBgClass} ${textColorClass} flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 hover:shadow-md active:scale-90`}
+                title="WPM -10"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+              
+              <span className={`text-lg sm:text-xl font-bold ${textColorClass} min-w-[3.5ch] text-center`}>{wpm}</span>
+              
+              {/* Plus Button */}
+              <button
+                onClick={() => setWPM(Math.min(1000, wpm + 10))}
+                className={`w-8 h-8 sm:w-7 sm:h-7 rounded-full ${accentBgClass} ${textColorClass} flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 hover:shadow-md active:scale-90`}
+                title="WPM +10"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+              
+              <div className="relative flex items-center flex-1 sm:flex-none ml-1">
                 <input
                   type="range"
                   min={200}
@@ -585,7 +570,7 @@ export function Reader({ className = '' }: ReaderProps) {
                   step={10}
                   value={wpm}
                   onChange={(e) => setWPM(Number(e.target.value))}
-                  className="w-full sm:w-32 h-8 sm:h-6 appearance-none cursor-pointer bg-transparent touch-manipulation"
+                  className="w-full sm:w-24 h-8 sm:h-6 appearance-none cursor-pointer bg-transparent touch-manipulation"
                   style={{ 
                     background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${(wpm-200)/8}%, rgba(255,255,255,0.15) ${(wpm-200)/8}%, rgba(255,255,255,0.15) 100%)`,
                     borderRadius: '4px',
@@ -598,53 +583,75 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Editor Button */}
             <button
               onClick={openEditor}
-              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all hover:scale-110 min-w-[44px]`}
+              className={`relative w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 min-w-[44px] ${words.length > 1 ? 'ring-2 ring-red-500/50' : ''}`}
               title="Text bearbeiten (E)"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 20h9"/>
                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
               </svg>
+              {/* Indicator dot when text is present */}
+              {words.length > 1 && (
+                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-[#0a0a0a]" />
+              )}
             </button>
             
             {/* Upload Button */}
             <input
               type="file"
-              accept=".txt"
-              onChange={(e) => {
+              accept={getSupportedMimeTypes() + ',' + getSupportedFileTypes()}
+              onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (ev) => {
-                    const text = ev.target?.result as string;
-                    if (text) {
-                      setText(text);
+                  setIsUploading(true);
+                  setUploadError(null);
+                  try {
+                    const result = await parseFile(file);
+                    if (result.error) {
+                      setUploadError(result.error);
+                    } else if (result.text) {
+                      setText(result.text);
                       setStartTime(null);
+                      // Show success feedback briefly
+                      setUploadSuccess(`${result.wordCount} Wörter geladen`);
+                      setTimeout(() => setUploadSuccess(null), 3000);
                     }
-                  };
-                  reader.readAsText(file);
+                  } catch {
+                    setUploadError('Fehler beim Laden der Datei.');
+                  } finally {
+                    setIsUploading(false);
+                    // Reset input to allow re-upload of same file
+                    e.target.value = '';
+                  }
                 }
               }}
               id="file-upload"
               className="hidden"
+              disabled={isUploading}
             />
             <label 
               htmlFor="file-upload" 
-              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center cursor-pointer transition-all hover:scale-110 min-w-[44px]`}
-              title=".txt Datei importieren"
+              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center cursor-pointer transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 min-w-[44px] ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              title={`Datei importieren (${getSupportedFileTypes()})`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="12" y1="18" x2="12" y2="12"/>
-                <line x1="9" y1="15" x2="15" y2="15"/>
-              </svg>
+              {isUploading ? (
+                <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+              )}
             </label>
             
             {/* Delete Button */}
             <button 
               onClick={reset}
-              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all hover:scale-110 min-w-[44px]`}
+              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 min-w-[44px]`}
               title="Text löschen"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -658,7 +665,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Settings Button - weiter rechts */}
             <button
               onClick={() => setShowSettings(true)}
-              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all hover:scale-110 sm:ml-4 min-w-[44px]`}
+              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 sm:ml-4 min-w-[44px]`}
               title="Einstellungen"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -684,7 +691,7 @@ export function Reader({ className = '' }: ReaderProps) {
           <div className="flex items-center justify-end gap-2">
             <button 
               onClick={handleToggleFocusMode} 
-              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${focusMode ? 'text-red-400' : textColorClass} flex items-center justify-center transition-all hover:scale-110 min-w-[44px]`}
+              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${focusMode ? 'text-red-400' : textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 min-w-[44px]`}
               title="Focus Mode (F)"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -696,7 +703,7 @@ export function Reader({ className = '' }: ReaderProps) {
             
             <button 
               onClick={handleToggleTheme} 
-              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all hover:scale-110 min-w-[44px]`}
+              className={`w-11 h-11 sm:w-10 sm:h-10 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 min-w-[44px]`}
               title={isDarkMode ? "Light Mode" : "Dark Mode"}
             >
               {isDarkMode ? (
@@ -720,8 +727,12 @@ export function Reader({ className = '' }: ReaderProps) {
           </div>
         </div>
         
-        {/* Word Display */}
-        <div className="flex-1 flex items-center justify-center px-2 sm:px-4">
+        {/* Word Display - with touch/swipe support */}
+        <div 
+          className="flex-1 flex items-center justify-center px-2 sm:px-4 touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <WordDisplay 
             currentWord={currentWord}
             words={words.map(w => w.text)}
@@ -733,6 +744,12 @@ export function Reader({ className = '' }: ReaderProps) {
             fontSizeLevel={fontSizeLevel}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
+          {/* Mobile touch hint */}
+          <div className="absolute bottom-32 left-1/2 -translate-x-1/2 md:hidden">
+            <span className={`text-xs ${mutedColorClass} opacity-50`}>
+              Tippen: Play/Pause • Wischen: Navigation
+            </span>
+          </div>
         </div>
         
         {/* Bottom Controls */}
@@ -746,7 +763,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Skip to Start */}
             <button
               onClick={() => goTo(0)}
-              className={`w-12 h-12 sm:w-11 sm:h-11 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5 min-w-[48px]`}
+              className={`w-12 h-12 sm:w-11 sm:h-11 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 min-w-[48px]`}
               title="Von vorne beginnen"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -762,7 +779,7 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('prev')}
               onTouchEnd={() => handlePointerUp('prev')}
-              className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5 select-none min-w-[56px]`}
+              className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 select-none min-w-[56px]`}
               title="Zurück (←)"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -773,7 +790,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Play/Pause */}
             <button 
               onClick={toggle} 
-              className={`w-20 h-20 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-lg min-w-[80px] sm:min-w-[64px] ${
+              className={`w-20 h-20 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-500/20 active:scale-95 active:translate-y-0 shadow-lg min-w-[80px] sm:min-w-[64px] ${
                 isPlaying 
                   ? 'bg-white text-black shadow-white/20' 
                   : 'bg-gradient-to-br from-red-500 to-pink-500 text-white shadow-red-500/30'
@@ -798,7 +815,7 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('next')}
               onTouchEnd={() => handlePointerUp('next')}
-              className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-0.5 select-none min-w-[56px]`}
+              className={`w-14 h-14 sm:w-12 sm:h-12 rounded-full ${glassClass} ${textColorClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/5 active:scale-95 active:translate-y-0 select-none min-w-[56px]`}
               title="Vor (→)"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

@@ -1,10 +1,51 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Veloz - Speed Reader</title>
+    
+    <!-- Security Headers -->
+    <!-- Content Security Policy - Restricts sources of content -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+      style-src 'self' 'unsafe-inline';
+      font-src 'self' data:;
+      img-src 'self' data: blob:;
+      connect-src 'self';
+      worker-src 'self' blob:;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      upgrade-insecure-requests;
+    ">
+    
+    <!-- X-Frame-Options - Prevents clickjacking -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    
+    <!-- X-Content-Type-Options - Prevents MIME sniffing -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    
+    <!-- Referrer-Policy - Controls referrer information -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    
+    <!-- Permissions-Policy - Restricts browser features -->
+    <meta http-equiv="Permissions-Policy" content="
+      camera=(),
+      microphone=(),
+      geolocation=(),
+      payment=(),
+      usb=(),
+      magnetometer=(),
+      gyroscope=(),
+      accelerometer=()
+    ">
+    
+    <!-- Description -->
+    <meta name="description" content="Veloz - Ein Speed Reader für schnelleres Lesen mit RSVP-Technologie">
   </head>
   <body>
     <div id="root"></div>
