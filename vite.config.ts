@@ -5,24 +5,20 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    // Security: Generate source maps for debugging but don't expose in production
     sourcemap: false,
-    // Optimize chunk size
     rollupOptions: {
       output: {
         manualChunks: {
-          // Separate vendor chunks for better caching
+          // Only split PDF and DOC parsers (they're large)
           'pdf-worker': ['pdfjs-dist'],
           'doc-parser': ['mammoth'],
-          'zip-utils': ['jszip'],
+          // Note: jszip is dynamically imported, don't include here
         },
       },
     },
-    // Security: Limit chunk size to detect potential issues
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 600,
   },
   server: {
-    // Security headers for development server
     headers: {
       'X-Frame-Options': 'DENY',
       'X-Content-Type-Options': 'nosniff',
@@ -30,15 +26,13 @@ export default defineConfig({
     },
   },
   preview: {
-    // Security headers for preview server
     headers: {
       'X-Frame-Options': 'DENY',
       'X-Content-Type-Options': 'nosniff',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
   },
-  // Optimize dependencies
   optimizeDeps: {
-    include: ['pdfjs-dist', 'mammoth', 'jszip'],
+    include: ['pdfjs-dist', 'mammoth'],
   },
 })
