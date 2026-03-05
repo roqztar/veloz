@@ -35,7 +35,6 @@ export function SettingsModal({
 
   const textColor = isDarkMode ? 'text-slate-200' : 'text-gray-900';
   const mutedColor = isDarkMode ? 'text-slate-500' : 'text-gray-600';
-  const bgClass = isDarkMode ? 'bg-[#0a0a0a]' : 'bg-gray-100';
   const glassClass = isDarkMode 
     ? 'bg-white/5 backdrop-blur-xl border border-white/10' 
     : 'bg-white/80 backdrop-blur-xl border border-black/5';

@@ -17,6 +17,7 @@ The project consists of two main parts:
 - **Focus Mode**: Distraction-free reading with hidden controls
 - **Keyboard Shortcuts**: Space (play/pause), Arrows (navigate), F (focus mode), E (editor)
 - **File Support**: Upload PDF, DOC, DOCX, PPT, PPTX, and TXT files for reading
+- **Touch Gestures**: Swipe left/right to navigate, tap to play/pause (mobile)
 
 ---
 
@@ -43,7 +44,7 @@ The project consists of two main parts:
 spritz-reader/
 ├── src/                          # Main web application
 │   ├── components/               # React components
-│   │   ├── Reader.tsx           # Main reader component (reduced, ~400 lines)
+│   │   ├── Reader.tsx           # Main reader component (~400 lines)
 │   │   ├── SettingsModal.tsx    # Settings dialog (extracted for maintainability)
 │   │   ├── WordDisplay.tsx      # Single word display with ORP
 │   │   ├── Controls.tsx         # Playback controls (legacy, unused)
@@ -56,6 +57,8 @@ spritz-reader/
 │   │   └── fileParser.ts        # Secure file upload parser (PDF, DOC, PPT, TXT)
 │   ├── utils/                    # Utility functions
 │   │   └── orp.ts               # ORP calculations (legacy exports)
+│   ├── types/                    # TypeScript declarations
+│   │   └── external.d.ts        # Types for pdfjs-dist, mammoth, jszip
 │   ├── assets/                   # Static assets
 │   ├── App.tsx                  # Root app component (renders Reader)
 │   ├── main.tsx                 # Entry point
@@ -73,20 +76,19 @@ spritz-reader/
 │   └── icons/                   # Extension icons (16/48/128px PNG + SVG)
 ├── dist/                         # Build output (gitignored)
 ├── public/                       # Public assets
-├── index.html                    # HTML entry point
+├── index.html                    # HTML entry point (with CSP headers)
 ├── package.json                  # NPM dependencies
-├── vite.config.ts               # Vite configuration (basic React plugin)
+├── vite.config.ts               # Vite configuration
 ├── tsconfig.json                # TypeScript project references
 ├── tsconfig.app.json            # TypeScript app config (ES2022, strict)
 ├── tsconfig.node.json           # TypeScript node config (ES2023)
-├── tailwind.config.js           # Tailwind CSS configuration (darkMode: 'class')
+├── tailwind.config.js           # Tailwind CSS configuration
 ├── postcss.config.js            # PostCSS configuration
 ├── eslint.config.js             # ESLint configuration (flat config)
 ├── vercel.json                  # Vercel deployment configuration
 ├── README.md                    # Human-readable README
-├── src/types/                  # TypeScript declarations
-│   └── external.d.ts           # Types for pdfjs-dist, mammoth, jszip
-└── DEPLOY.md                    # Deployment instructions
+├── DEPLOY.md                    # Deployment instructions
+└── MAINTENANCE.md               # Maintenance guidelines for developers
 ```
 
 ---
@@ -100,20 +102,20 @@ npm install
 # Development server (Vite dev server)
 npm run dev
 
-# Production build
+# Production build (TypeScript compile + Vite build)
 npm run build
 
 # Preview production build locally
 npm run preview
 
-# Lint code
+# Lint code with ESLint
 npm run lint
 ```
 
 ### Build Output
 - The web app builds to `dist/` directory
 - The extension files are in `extension/` and don't require building
-- Extension icons are included in the repository (icon16.png, icon48.png, icon128.png)
+- Extension icons are included in the repository (icon16.png, icon48.png, icon128.png, icon.svg)
 
 ---
 
@@ -124,7 +126,7 @@ npm run lint
 **Reader.tsx** (Main Component)
 - Manages all UI state (settings, scrubber, editor, focus mode, theme)
 - Handles keyboard shortcuts AND touch/swipe gestures for mobile
-- **Mobile Features:**
+- Mobile Features:
   - Swipe left/right on word display to navigate
   - Tap word display to play/pause
   - Touch-optimized buttons (min 44px)
@@ -135,7 +137,7 @@ npm run lint
 
 **WordDisplay.tsx**
 - Displays a single word with ORP highlighting
-- **Responsive font sizing:** Adapts to mobile screens (<768px)
+- Responsive font sizing: Adapts to mobile screens (<768px)
 - Mobile: smaller padding (25% vs 35%), adjusted min/max sizes
 - Supports 3 font families (sans, serif, mono) and 3 weights (light, normal, bold)
 - Font size adjustable from -5 to +5 levels (15% per step)
@@ -379,9 +381,45 @@ Where `delayMultiplier` is affected by:
 - CSP compatible (no inline scripts in extension)
 
 ### Build Security
-- Source maps disabled in production builds
+- Source maps disabled in production builds (`sourcemap: false` in vite.config.ts)
 - Dependencies chunked separately for better cache control
 - Security headers configured in `vite.config.ts` for dev/preview servers
+
+---
+
+## Configuration Files Reference
+
+### vite.config.ts
+- React plugin for Vite
+- Manual chunking for PDF and DOC parsers (large dependencies)
+- Security headers for dev/preview servers
+- Optimized dependencies: pdfjs-dist, mammoth
+
+### tsconfig.app.json
+- Target: ES2022
+- Libs: ES2022, DOM, DOM.Iterable
+- Strict mode enabled
+- Module resolution: bundler
+
+### eslint.config.js
+- Flat config format (ESLint 9.x)
+- TypeScript ESLint recommended rules
+- React Hooks and React Refresh plugins
+- Ignores `dist/` directory
+
+### tailwind.config.js
+- Content: index.html, src/**/*.{js,ts,jsx,tsx}
+- Dark mode: 'class' strategy
+- No custom theme extensions
+
+### postcss.config.js
+- @tailwindcss/postcss plugin
+- autoprefixer plugin
+
+### vercel.json
+- Framework: vite
+- SPA rewrites: all routes to index.html
+- Output directory: dist
 
 ---
 
@@ -404,3 +442,7 @@ Where `delayMultiplier` is affected by:
 - **Font Size Levels**: -5 to +5, each step is 15% change
 - **Context Buffer**: Shows previous/next words (buffer size 1 in web app, 8 in extension)
 - **Abbreviations**: German and English abbreviations supported (z.B., e.g., etc.)
+
+---
+
+Last updated: 2026-03-05

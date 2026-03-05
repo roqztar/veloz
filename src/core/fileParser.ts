@@ -142,20 +142,22 @@ async function parsePDF(file: File): Promise<string> {
     const arrayBuffer = await file.arrayBuffer();
     
     // Configure PDF.js to use CMap for proper Unicode support
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pdf = await pdfjsLib.getDocument({ 
       data: arrayBuffer,
       cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + pdfjsLib.version + '/cmaps/',
       cMapPacked: true,
       // Enable standard font data for better character mapping
       standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + pdfjsLib.version + '/standard_fonts/'
-    }).promise;
+    } as any).promise;
     
     let fullText = '';
     
     // Extract text from all pages
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const textContent = await (page.getTextContent as any)({
         // Include extra properties for better text handling
         includeMarkedContent: false
       });
@@ -179,7 +181,7 @@ async function parsePDF(file: File): Promise<string> {
         };
         
         // Get Y position from transform matrix (index 5 is Y translation)
-        const currentY = textItem.transform?.[5] ?? lastY;
+        const currentY: number | null = textItem.transform?.[5] ?? lastY;
         
         // Check if we're on a new line (Y position changed significantly)
         if (lastY !== null && currentY !== null && Math.abs(currentY - lastY) > 3) {
@@ -345,7 +347,8 @@ async function parsePPTX(file: File): Promise<string> {
     
     // Use JSZip to extract text from PPTX (which is a ZIP file)
     const JSZip = await import('jszip');
-    const zip = await JSZip.default.loadAsync(arrayBuffer);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const zip: any = await JSZip.default.loadAsync(arrayBuffer);
     
     let fullText = '';
     
@@ -368,7 +371,8 @@ async function parsePPTX(file: File): Promise<string> {
       const textMatches = content.match(/<a:t>([^<]*)<\/a:t>/g);
       if (textMatches) {
         const slideText = textMatches
-          .map(match => match.replace(/<a:t>(.*?)<\/a:t>/, '$1'))
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .map((match: any) => match.replace(/<a:t>(.*?)<\/a:t>/, '$1'))
           .join(' ');
         
         if (slideText.trim()) {
@@ -394,7 +398,7 @@ async function parsePPTX(file: File): Promise<string> {
  * Parses PPT file (older PowerPoint format)
  * Limited support - warns user
  */
-async function parsePPT(file: File): Promise<string> {
+async function parsePPT(_file: File): Promise<string> {
   // PPT binary format is complex; we can't easily parse it client-side
   throw new Error(
     'Das alte PPT-Format wird nicht unterstützt. ' +
