@@ -14,7 +14,7 @@ A modern, blazing-fast RSVP (Rapid Serial Visual Presentation) speed reading app
 - **🎚️ WPM Control** - Adjustable reading speed from 200 to 1000 words per minute
 - **🎨 Beautiful UI** - Glassmorphism design with dark/light mode support
 - **⌨️ Keyboard Shortcuts** - Space (play/pause), Arrows (navigate), F (focus mode), E (editor)
-- **📄 File Support** - Upload `.txt` files for reading
+- **📄 File Support** - Upload files for reading
 - **🔌 Browser Extension** - Speed read selected text on any webpage
 
 ## Quick Start
