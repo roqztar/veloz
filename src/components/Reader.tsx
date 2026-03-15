@@ -765,10 +765,14 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Minus Button */}
               <button
                 onClick={() => setWPM(Math.max(200, wpm - 10))}
-                className="w-8 h-8 sm:w-7 sm:h-7 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 border border-slate-700 hover:border-slate-500"
+                className="w-9 h-9 flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
+                style={{ 
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  border: `1px solid ${neonColor}30`
+                }}
                 title="WPM -10"
               >
-                <MinusIcon size={16} />
+                <MinusIcon size={18} color={neonColor} />
               </button>
               
               <span 
@@ -781,10 +785,14 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Plus Button */}
               <button
                 onClick={() => setWPM(Math.min(1000, wpm + 10))}
-                className="w-8 h-8 sm:w-7 sm:h-7 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 border border-slate-700 hover:border-slate-500"
+                className="w-9 h-9 flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
+                style={{ 
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  border: `1px solid ${neonColor}30`
+                }}
                 title="WPM +10"
               >
-                <PlusIcon size={16} />
+                <PlusIcon size={18} color={neonColor} />
               </button>
               
               <div className="relative flex items-center flex-1 sm:flex-none ml-1">
@@ -807,11 +815,14 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Editor Button */}
             <button
               onClick={openEditor}
-              className={`relative w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[44px] ${words.length > 1 ? '' : ''}`}
-              style={{ borderColor: neonColorDim }}
+              className="relative w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title="Text bearbeiten (E)"
             >
-              <EditIcon size={20} />
+              <EditIcon size={22} color={neonColor} />
               {words.length > 1 && (
                 <span 
                   className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full"
@@ -856,48 +867,60 @@ export function Reader({ className = '' }: ReaderProps) {
             />
             <label 
               htmlFor="file-upload" 
-              className={`w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[44px] ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
-              style={{ borderColor: neonColorDim }}
+              className={`w-11 h-11 flex items-center justify-center cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title={`Datei importieren (${getSupportedFileTypes()})`}
             >
               {isUploading ? (
-                <SpinnerIcon size={20} />
+                <SpinnerIcon size={22} color={neonColor} />
               ) : (
-                <UploadIcon size={20} />
+                <UploadIcon size={22} color={neonColor} />
               )}
             </label>
             
             {/* Delete Button */}
             <button 
               onClick={reset}
-              className={`w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} text-slate-300 hover:text-red-400 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[44px]`}
-              style={{ borderColor: neonColorDim }}
+              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title="Text löschen"
             >
-              <TrashIcon size={20} />
+              <TrashIcon size={22} color="#ef4444" />
             </button>
             
             {/* Settings Button */}
             <button
               onClick={() => setShowSettings(true)}
-              className={`w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 sm:ml-4 min-w-[44px]`}
-              style={{ borderColor: neonColorDim }}
+              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded sm:ml-4"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title="Einstellungen"
             >
-              <SettingsIcon size={20} />
+              <SettingsIcon size={22} color={neonColor} />
             </button>
             
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className={`w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[44px]`}
-              style={{ borderColor: neonColorDim }}
+              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title="Vollbild (F)"
             >
               {isFullscreen ? (
-                <ExitFullscreenIcon size={20} />
+                <ExitFullscreenIcon size={22} color={neonColor} />
               ) : (
-                <FullscreenIcon size={20} />
+                <FullscreenIcon size={22} color={neonColor} />
               )}
             </button>
           </div>
@@ -912,15 +935,15 @@ export function Reader({ className = '' }: ReaderProps) {
             />
             <button 
               onClick={() => setShowColorPicker(true)}
-              className={`w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[44px]`}
+              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
               style={{ 
-                borderColor: neonColor,
-                color: neonColor,
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}`,
                 boxShadow: `0 0 10px ${neonColorGlow}`
               }}
               title="Neon Color"
             >
-              <PaletteIcon size={20} />
+              <PaletteIcon size={22} color={neonColor} />
             </button>
           </div>
         </div>
@@ -964,11 +987,14 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Skip to Start */}
             <button
               onClick={() => goTo(0)}
-              className={`w-12 h-12 sm:w-11 sm:h-11 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[48px]`}
-              style={{ borderColor: neonColorDim }}
+              className="w-12 h-12 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title="Von vorne beginnen"
             >
-              <SkipBackIcon size={20} />
+              <SkipBackIcon size={22} color={neonColor} />
             </button>
             
             {/* Prev */}
@@ -978,33 +1004,30 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('prev')}
               onTouchEnd={() => handlePointerUp('prev')}
-              className={`w-14 h-14 sm:w-12 sm:h-12 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none min-w-[56px]`}
-              style={{ borderColor: neonColorDim }}
+              className="w-14 h-14 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title="Zurück (←)"
             >
-              <PrevIcon size={24} />
+              <PrevIcon size={26} color={neonColor} />
             </button>
             
             {/* Play/Pause */}
             <button 
               onClick={toggle} 
-              className={`w-20 h-20 sm:w-16 sm:h-16 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 shadow-lg min-w-[80px] sm:min-w-[64px] border-2 ${
-                isPlaying 
-                  ? 'bg-black text-white border-white' 
-                  : 'text-black'
-              }`}
-              style={!isPlaying ? {
-                backgroundColor: neonColor,
-                borderColor: neonColor,
-                boxShadow: `0 0 30px ${neonColorGlow}`
-              } : {
-                boxShadow: '0 0 20px rgba(255,255,255,0.3)'
+              className="w-20 h-20 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 rounded-lg"
+              style={{
+                backgroundColor: isPlaying ? 'rgba(0,0,0,0.6)' : neonColor,
+                border: `1px solid ${isPlaying ? 'rgba(255,255,255,0.3)' : neonColor}`,
+                boxShadow: isPlaying ? '0 0 20px rgba(255,255,255,0.2)' : `0 0 30px ${neonColorGlow}`
               }}
             >
               {isPlaying ? (
-                <PauseIcon size={32} />
+                <PauseIcon size={36} color={neonColor} />
               ) : (
-                <PlayIcon size={36} />
+                <PlayIcon size={40} color="#000" />
               )}
             </button>
             
@@ -1015,11 +1038,14 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('next')}
               onTouchEnd={() => handlePointerUp('next')}
-              className={`w-14 h-14 sm:w-12 sm:h-12 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none min-w-[56px]`}
-              style={{ borderColor: neonColorDim }}
+              className="w-14 h-14 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
               title="Vor (→)"
             >
-              <NextIcon size={24} />
+              <NextIcon size={26} color={neonColor} />
             </button>
           </div>
           
