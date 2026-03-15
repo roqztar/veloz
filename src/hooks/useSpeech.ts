@@ -82,7 +82,7 @@ export function useSpeech() {
     return candidates[0];
   }, [voices]);
 
-  const speak = useCallback((text: string, wpm?: number) => {
+  const speak = useCallback((text: string, _wpm?: number) => {
     if (enabled === 'off' || !synthRef.current) return;
     
     // Cancel previous speech immediately
