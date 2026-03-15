@@ -1071,11 +1071,11 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Play/Pause */}
             <button 
               onClick={toggle} 
-              className="w-20 h-20 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 rounded-lg"
+              className="w-20 h-20 flex items-center justify-center text-black transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 rounded-lg"
               style={{
-                backgroundColor: isPlaying ? 'rgba(0,0,0,0.6)' : neonColor,
-                border: `1px solid ${isPlaying ? 'rgba(255,255,255,0.3)' : neonColor}`,
-                boxShadow: isPlaying ? '0 0 20px rgba(255,255,255,0.2)' : `0 0 30px ${neonColorGlow}`
+                backgroundColor: neonColor,
+                border: `1px solid ${neonColor}`,
+                boxShadow: `0 0 30px ${neonColorGlow}`
               }}
             >
               {isPlaying ? (
