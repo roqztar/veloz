@@ -235,9 +235,9 @@ async function parsePDF(file: File): Promise<string> {
         const trimmed = line.trim();
         // If this line is just a single punctuation mark (comma, period, etc.)
         if (/^[,;:.!?]$/.test(trimmed)) {
-          // Attach to previous line if exists, otherwise to next line
-          if (mergedLines.length > 0) {
-            mergedLines[mergedLines.length - 1] += trimmed;
+          // Attach to previous line if it ends with a word character
+          if (mergedLines.length > 0 && /\w$/.test(mergedLines[mergedLines.length - 1])) {
+            mergedLines[mergedLines.length - 1] += ' ' + trimmed;
           } else if (i < punctLines.length - 1) {
             punctLines[i + 1] = trimmed + punctLines[i + 1];
           } else {
