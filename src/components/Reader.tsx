@@ -62,8 +62,13 @@ export function Reader({ className = '' }: ReaderProps) {
   const [startTime, setStartTime] = useState<number | null>(null);
   
   // Rainbow color picker state - random hue on each visit
-  const [hue, setHue] = useState(() => Math.floor(Math.random() * 360));
+  const [hue, setHue] = useState(180); // Default during SSR/build
   const [showColorPicker, setShowColorPicker] = useState(false);
+  
+  // Set random hue after mount (client-side only)
+  useEffect(() => {
+    setHue(Math.floor(Math.random() * 360));
+  }, []);
   
   // Visual effects (default off for cleaner reading experience)
   const [showGrid, setShowGrid] = useState(false);
