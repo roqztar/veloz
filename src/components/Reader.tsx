@@ -165,10 +165,8 @@ export function Reader({ className = '' }: ReaderProps) {
   const { 
     speak, 
     stop: stopSpeech, 
-    isSupported: speechSupported,
     enabled: speechEnabled,
     toggle: toggleSpeech,
-    isLoaded: isSpeechLoaded,
     serverAvailable
   } = useSpeech();
   
