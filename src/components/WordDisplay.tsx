@@ -143,6 +143,11 @@ export function WordDisplay({
     bold: 'font-bold'
   }[fontWeight];
 
+  // Calculate side padding for ORP centering - based on max word length for stability
+  const maxWordLength = Math.max(3, ...words.map(w => w?.length || 0));
+  const charWidth = fontSize * 0.6;
+  const sidePadding = Math.max(charWidth * 3, (maxWordLength * charWidth) / 2);
+
   return (
     <div ref={containerRef} className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}>
       {/* Background glow */}
@@ -153,39 +158,71 @@ export function WordDisplay({
         />
       </div>
       
-      {/* Word display - simple inline layout */}
+      {/* Word display with fixed positioning for ORP centering */}
       <div 
-        className={`relative z-10 whitespace-nowrap animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
+        className={`flex items-baseline animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
         style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
       >
-        {/* Full word with ORP highlighted */}
-        {before && (
-          <span className={wordColor}>
-            {before}
-          </span>
-        )}
-        
-        {/* ORP - highlighted */}
+        {/* Before ORP - fixed width for stability */}
         <span 
-          className="inline-block font-black px-1.5 py-0.5 mx-0.5"
+          className={`text-right whitespace-pre ${wordColor}`}
+          style={{ 
+            width: `${sidePadding}px`,
+            minWidth: `${sidePadding}px`,
+          }}
+        >
+          {before}
+        </span>
+        
+        {/* ORP - highlighted with enhanced glow */}
+        <span 
+          className="relative font-black px-2 py-1 mx-1"
           style={{ 
             color: '#000000',
             backgroundColor: neonColor,
             textShadow: 'none',
-            boxShadow: `0 0 ${isMobile ? '20px' : '40px'} ${neonColor}, 0 0 ${isMobile ? '40px' : '80px'} ${neonColorGlow}`,
-            borderRadius: '4px',
+            boxShadow: `0 0 ${isMobile ? '25px' : '50px'} ${neonColor}, 0 0 ${isMobile ? '50px' : '100px'} ${neonColorGlow}, inset 0 0 10px rgba(255,255,255,0.3)`,
+            borderRadius: '6px',
+            border: `2px solid rgba(255,255,255,0.5)`,
           }}
         >
           {orp}
+          {/* Animated scanline effect */}
+          <span 
+            className="absolute inset-0 overflow-hidden rounded"
+            style={{ borderRadius: '4px' }}
+          >
+            <span 
+              className="absolute w-full h-0.5 bg-white/30"
+              style={{
+                animation: 'scanline 2s linear infinite',
+                top: '0%',
+              }}
+            />
+          </span>
         </span>
         
-        {/* After ORP */}
-        {after && (
-          <span className={wordColor}>
-            {after}
-          </span>
-        )}
+        {/* After ORP - fixed width for stability */}
+        <span 
+          className={`text-left whitespace-pre ${wordColor}`}
+          style={{ 
+            width: `${sidePadding}px`,
+            minWidth: `${sidePadding}px`,
+          }}
+        >
+          {after}
+        </span>
       </div>
+      
+      {/* Scanline animation */}
+      <style>{`
+        @keyframes scanline {
+          0% { top: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 }

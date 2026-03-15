@@ -71,10 +71,10 @@ export function ProgressBar({
     : '';
   
   return (
-    <div className="relative">
+    <div className="relative py-2">
       <div 
         ref={containerRef}
-        className={`w-full h-3 cursor-pointer relative ${isDarkMode ? 'bg-slate-800' : 'bg-black/10'} ${className}`}
+        className={`w-full h-6 cursor-pointer relative rounded-full ${isDarkMode ? 'bg-slate-800' : 'bg-black/10'} ${className}`}
         style={{ 
           backgroundColor: isDarkMode ? 'rgba(30, 41, 59, 0.5)' : 'rgba(0,0,0,0.1)',
         }}
@@ -85,31 +85,38 @@ export function ProgressBar({
       >
         {/* Progress Fill */}
         <div 
-          className="h-full transition-all duration-150 ease-out absolute left-0 top-0"
+          className="h-full transition-all duration-150 ease-out absolute left-0 top-0 rounded-full"
           style={{ 
             width: `${clampedProgress}%`,
             backgroundColor: neonColor,
-            boxShadow: `0 0 10px ${neonColor}, 0 0 20px ${neonColor}`
+            boxShadow: `0 0 15px ${neonColor}, 0 0 30px ${neonColor}`
           }}
         />
         
         {/* Hover Position Indicator */}
         {hoverIndex !== null && !isDragging && (
           <div 
-            className="absolute top-0 h-full w-0.5 bg-white/50 pointer-events-none"
+            className="absolute top-0 h-full w-1 bg-white/70 pointer-events-none rounded-full"
             style={{ left: `${tooltipPosition}%` }}
           />
         )}
         
-        {/* Draggable Handle */}
+        {/* Draggable Handle - larger for easier grabbing */}
         <div 
-          className="absolute top-1/2 -translate-y-1/2 w-4 h-6 rounded-sm cursor-grab active:cursor-grabbing transition-transform hover:scale-110"
+          className="absolute top-1/2 -translate-y-1/2 w-6 h-10 rounded-lg cursor-grab active:cursor-grabbing transition-transform hover:scale-110 border-2 border-white"
           style={{ 
-            left: `calc(${clampedProgress}% - 8px)`,
+            left: `calc(${clampedProgress}% - 12px)`,
             backgroundColor: neonColor,
-            boxShadow: `0 0 15px ${neonColor}, 0 0 30px ${neonColor}`
+            boxShadow: `0 0 20px ${neonColor}, 0 0 40px ${neonColor}, inset 0 0 10px rgba(255,255,255,0.5)`
           }}
-        />
+        >
+          {/* Grip lines */}
+          <div className="absolute inset-0 flex items-center justify-center gap-1">
+            <div className="w-0.5 h-4 bg-black/30 rounded-full" />
+            <div className="w-0.5 h-4 bg-black/30 rounded-full" />
+            <div className="w-0.5 h-4 bg-black/30 rounded-full" />
+          </div>
+        </div>
       </div>
       
       {/* Word Preview Tooltip - Comic Speech Bubble Style */}
