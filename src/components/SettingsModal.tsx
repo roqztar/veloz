@@ -16,6 +16,9 @@ interface SettingsModalProps {
   // Cleaning
   cleanOptions: CleanOptions;
   setCleanOptions: (opts: Partial<CleanOptions>) => void;
+  
+  // Cyberpunk theme
+  neonColor?: string;
 }
 
 export function SettingsModal({
@@ -30,15 +33,14 @@ export function SettingsModal({
   setFontSizeLevel,
   cleanOptions,
   setCleanOptions,
+  neonColor = '#00ffff',
 }: SettingsModalProps) {
   if (!isOpen) return null;
 
-  const textColor = isDarkMode ? 'text-slate-200' : 'text-gray-900';
-  const mutedColor = isDarkMode ? 'text-slate-500' : 'text-gray-600';
-  const glassClass = isDarkMode 
-    ? 'bg-white/5 backdrop-blur-xl border border-white/10' 
-    : 'bg-white/80 backdrop-blur-xl border border-black/5';
-  const accentBg = isDarkMode ? 'bg-white/10 hover:bg-white/20' : 'bg-black/10 hover:bg-black/20';
+  const textColor = 'text-slate-200';
+  const mutedColor = 'text-slate-500';
+  const terminalClass = 'bg-black/60 border border-slate-700/50';
+  const accentBg = 'bg-slate-800 hover:bg-slate-700';
 
   const toggleOption = (key: keyof CleanOptions) => {
     setCleanOptions({ [key]: !cleanOptions[key] } as Partial<CleanOptions>);
@@ -49,16 +51,25 @@ export function SettingsModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in"
       onClick={onClose}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
       
       <div 
-        className={`relative w-full max-w-md ${glassClass} rounded-2xl p-6 animate-in zoom-in-95 max-h-[85vh] overflow-hidden flex flex-col`}
+        className={`relative w-full max-w-md ${terminalClass} p-6 animate-in zoom-in-95 max-h-[85vh] overflow-hidden flex flex-col`}
+        style={{ 
+          borderColor: neonColor,
+          boxShadow: `0 0 30px ${neonColor}40, inset 0 0 20px ${neonColor}20`
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className={`text-xl font-semibold ${textColor}`}>Einstellungen</h2>
-          <button onClick={onClose} className={`p-2 rounded-full ${accentBg} ${textColor}`}>
+          <h2 className={`text-xl font-bold font-mono uppercase tracking-wider`} style={{ color: neonColor }}>
+            // SYSTEM_CONFIG
+          </h2>
+          <button 
+            onClick={onClose} 
+            className={`p-2 ${accentBg} ${textColor} transition-all hover:rotate-90`}
+          >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18"/>
               <line x1="6" y1="6" x2="18" y2="18"/>
@@ -71,7 +82,7 @@ export function SettingsModal({
           
           {/* Typography */}
           <section className="space-y-4">
-            <h3 className={`text-sm font-medium ${mutedColor}`}>Schriftart</h3>
+            <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Typography</h3>
             
             {/* Family */}
             <div className="flex gap-2">
@@ -79,15 +90,16 @@ export function SettingsModal({
                 <button
                   key={f}
                   onClick={() => setFontFamily(f)}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm transition-all ${
+                  className={`flex-1 py-2 px-3 text-sm font-mono transition-all border ${
                     fontFamily === f 
-                      ? 'bg-red-500 text-white' 
-                      : `${accentBg} ${textColor}`
+                      ? 'text-black font-bold' 
+                      : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
                   }`}
+                  style={fontFamily === f ? { backgroundColor: neonColor } : {}}
                 >
-                  {f === 'sans' && 'Sans'}
-                  {f === 'serif' && 'Serif'}
-                  {f === 'mono' && 'Mono'}
+                  {f === 'sans' && 'SANS'}
+                  {f === 'serif' && 'SERIF'}
+                  {f === 'mono' && 'MONO'}
                 </button>
               ))}
             </div>
@@ -98,15 +110,16 @@ export function SettingsModal({
                 <button
                   key={w}
                   onClick={() => setFontWeight(w)}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm transition-all ${
+                  className={`flex-1 py-2 px-3 text-sm font-mono transition-all border ${
                     fontWeight === w 
-                      ? 'bg-red-500 text-white' 
-                      : `${accentBg} ${textColor}`
+                      ? 'text-black font-bold' 
+                      : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
                   }`}
+                  style={fontWeight === w ? { backgroundColor: neonColor } : {}}
                 >
-                  {w === 'light' && 'Light'}
-                  {w === 'normal' && 'Normal'}
-                  {w === 'bold' && 'Bold'}
+                  {w === 'light' && 'LIGHT'}
+                  {w === 'normal' && 'NORMAL'}
+                  {w === 'bold' && 'BOLD'}
                 </button>
               ))}
             </div>
@@ -114,8 +127,11 @@ export function SettingsModal({
             {/* Size */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className={`text-sm ${textColor}`}>Größe</span>
-                <span className={`text-lg font-mono ${textColor}`}>
+                <span className={`text-sm ${textColor} font-mono`}>SCALE_FACTOR</span>
+                <span 
+                  className={`text-lg font-mono font-bold`}
+                  style={{ color: neonColor }}
+                >
                   {fontSizeLevel > 0 ? '+' : ''}{fontSizeLevel}
                 </span>
               </div>
@@ -123,7 +139,7 @@ export function SettingsModal({
                 <button
                   onClick={() => setFontSizeLevel(Math.max(-5, fontSizeLevel - 1))}
                   disabled={fontSizeLevel <= -5}
-                  className={`w-10 h-10 rounded-lg ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30`}
+                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
                 >
                   -
                 </button>
@@ -134,15 +150,16 @@ export function SettingsModal({
                   step={1}
                   value={fontSizeLevel}
                   onChange={(e) => setFontSizeLevel(Number(e.target.value))}
-                  className="flex-1 h-2 rounded-lg appearance-none cursor-pointer"
+                  className="flex-1 h-2 appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${((fontSizeLevel + 5) / 10) * 100}%, ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'} ${((fontSizeLevel + 5) / 10) * 100}%)`
+                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((fontSizeLevel + 5) / 10) * 100}%, rgba(51,65,85,0.5) ${((fontSizeLevel + 5) / 10) * 100}%)`,
+                    height: '8px'
                   }}
                 />
                 <button
                   onClick={() => setFontSizeLevel(Math.min(5, fontSizeLevel + 1))}
                   disabled={fontSizeLevel >= 5}
-                  className={`w-10 h-10 rounded-lg ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30`}
+                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
                 >
                   +
                 </button>
@@ -150,11 +167,11 @@ export function SettingsModal({
             </div>
           </section>
 
-          <hr className={`border-t ${isDarkMode ? 'border-white/10' : 'border-black/10'}`} />
+          <hr className="border-t border-slate-700" />
 
           {/* Text Cleaning */}
           <section className="space-y-4">
-            <h3 className={`text-sm font-medium ${mutedColor}`}>Text-Bereinigung</h3>
+            <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Text_Processing</h3>
             
             <div className="space-y-2">
               {[
@@ -166,12 +183,16 @@ export function SettingsModal({
                 { key: 'cleanFootnotes', label: 'Fußnoten entfernen' },
               ].map(({ key, label }) => (
                 <label key={key} className="flex items-center justify-between py-2 cursor-pointer">
-                  <span className={`text-sm ${textColor}`}>{label}</span>
+                  <span className={`text-sm ${textColor} font-mono`}>{label}</span>
                   <input
                     type="checkbox"
                     checked={cleanOptions[key as keyof CleanOptions] as boolean}
                     onChange={() => toggleOption(key as keyof CleanOptions)}
-                    className="w-5 h-5 rounded border-2 border-red-500 text-red-500 focus:ring-red-500"
+                    className="w-5 h-5 appearance-none border-2 border-slate-600 checked:bg-transparent cursor-pointer"
+                    style={{
+                      borderColor: cleanOptions[key as keyof CleanOptions] ? neonColor : undefined,
+                      backgroundColor: cleanOptions[key as keyof CleanOptions] ? neonColor : undefined
+                    }}
                   />
                 </label>
               ))}
@@ -179,22 +200,23 @@ export function SettingsModal({
 
             {/* Parentheses */}
             <div className="space-y-2 pt-2">
-              <span className={`text-sm ${textColor}`}>Klammern</span>
+              <span className={`text-sm ${textColor} font-mono`}>KLAMMERN_MODE</span>
               <div className="flex gap-2">
                 {(['keep', 'dim', 'shorten', 'remove'] as const).map((mode) => (
                   <button
                     key={mode}
                     onClick={() => setCleanOptions({ handleParentheses: mode })}
-                    className={`flex-1 py-2 px-1 rounded-lg text-xs transition-all ${
+                    className={`flex-1 py-2 px-1 text-xs font-mono transition-all border ${
                       cleanOptions.handleParentheses === mode
-                        ? 'bg-red-500 text-white'
-                        : `${accentBg} ${textColor}`
+                        ? 'text-black font-bold' 
+                        : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
                     }`}
+                    style={cleanOptions.handleParentheses === mode ? { backgroundColor: neonColor } : {}}
                   >
-                    {mode === 'keep' && 'Anzeigen'}
-                    {mode === 'dim' && 'Dimmen'}
-                    {mode === 'shorten' && 'Kürzen'}
-                    {mode === 'remove' && 'Entfernen'}
+                    {mode === 'keep' && 'KEEP'}
+                    {mode === 'dim' && 'DIM'}
+                    {mode === 'shorten' && 'SHORT'}
+                    {mode === 'remove' && 'DEL'}
                   </button>
                 ))}
               </div>

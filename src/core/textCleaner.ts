@@ -476,6 +476,16 @@ export function formatTime(seconds: number): string {
 }
 
 /**
+ * Formatiert Zeit im Cyberpunk-Stil als HH:MM:SS
+ */
+export function formatTimeCyberpunk(seconds: number): string {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+/**
  * Berechnet die geschätzte Zeit für normales Lesen (250 WPM)
  */
 export function calculateNormalReadingTime(wordCount: number): number {

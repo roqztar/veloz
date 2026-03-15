@@ -10,6 +10,9 @@ interface WordDisplayProps {
   fontFamily?: 'sans' | 'serif' | 'mono';
   fontWeight?: 'normal' | 'bold' | 'light';
   fontSizeLevel?: number;
+  orpColor?: string;
+  neonColor?: string;
+  neonColorGlow?: string;
   className?: string;
 }
 
@@ -17,9 +20,12 @@ export function WordDisplay({
   currentWord,
   words,
   isDarkMode = true,
-  fontFamily = 'sans',
+  fontFamily = 'mono',
   fontWeight = 'bold',
   fontSizeLevel = 0,
+  orpColor = '#ffffff',
+  neonColor = '#00ffff',
+  neonColorGlow = 'rgba(0, 255, 255, 0.5)',
   className = '' 
 }: WordDisplayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -89,7 +95,12 @@ export function WordDisplay({
   if (!currentWord || !currentWord.text) {
     return (
       <div ref={containerRef} className={`flex items-center justify-center ${className}`}>
-        <span className="text-slate-500 text-xl md:text-2xl animate-pulse">Bereit...</span>
+        <span 
+          className="text-xl md:text-2xl animate-pulse font-mono"
+          style={{ color: neonColor, textShadow: `0 0 20px ${neonColorGlow}` }}
+        >
+          &gt; INITIALIZING...
+        </span>
       </div>
     );
   }
@@ -106,35 +117,20 @@ export function WordDisplay({
   const orp = currentWord.text[orpIndex] || '';
   const after = currentWord.text.slice(orpIndex + 1);
   
+  // Cyberpunk word type colors - using the neon theme
   const getWordColor = (type: DisplayWord['type']): string => {
-    if (isDarkMode) {
-      switch (type) {
-        case 'url':
-        case 'code':
-          return 'text-amber-300';
-        case 'parenthetical':
-          return 'text-slate-400';
-        case 'number':
-          return 'text-cyan-300';
-        case 'heading':
-          return 'text-white';
-        default:
-          return 'text-white';
-      }
-    } else {
-      switch (type) {
-        case 'url':
-        case 'code':
-          return 'text-amber-700';
-        case 'parenthetical':
-          return 'text-gray-500';
-        case 'number':
-          return 'text-cyan-700';
-        case 'heading':
-          return 'text-gray-900';
-        default:
-          return 'text-gray-900';
-      }
+    switch (type) {
+      case 'url':
+      case 'code':
+        return 'text-amber-400';
+      case 'parenthetical':
+        return 'text-slate-500';
+      case 'number':
+        return 'text-green-400';
+      case 'heading':
+        return 'text-white';
+      default:
+        return 'text-slate-200';
     }
   };
   
@@ -159,9 +155,12 @@ export function WordDisplay({
 
   return (
     <div ref={containerRef} className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}>
-      {/* Glow effect - smaller on mobile */}
+      {/* Cyberpunk glow effect using neon color */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-24 h-24 md:w-32 md:h-32 bg-red-500/10 rounded-full blur-3xl" />
+        <div 
+          className="w-32 h-32 md:w-48 md:h-48 rounded-full blur-3xl"
+          style={{ backgroundColor: neonColorGlow }}
+        />
       </div>
       
       <div 
@@ -178,8 +177,23 @@ export function WordDisplay({
           {before}
         </span>
         
-        <span className={`relative ${isDarkMode ? 'text-red-400 drop-shadow-[0_0_30px_rgba(248,113,113,0.5)]' : 'text-red-600'}`}>
+        {/* ORP character with neon glow - using the contrast color */}
+        <span 
+          className="relative"
+          style={{ 
+            color: orpColor,
+            textShadow: `0 0 ${isMobile ? '15px' : '25px'} ${neonColorGlow}, 0 0 ${isMobile ? '30px' : '50px'} ${neonColorGlow}`,
+          }}
+        >
           {orp}
+          {/* Additional glow underline for ORP */}
+          <span 
+            className="absolute -bottom-1 left-0 right-0 h-0.5 md:h-1"
+            style={{ 
+              backgroundColor: neonColor,
+              boxShadow: `0 0 10px ${neonColor}, 0 0 20px ${neonColor}`
+            }}
+          />
         </span>
         
         <span 

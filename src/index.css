@@ -200,25 +200,14 @@ input[type="range"]::-webkit-slider-runnable-track {
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
+  appearance: none;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #ef4444;
-  cursor: grab;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(239,68,68,0.4);
-  margin-top: -7px;
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 4px 12px rgba(239,68,68,0.5);
-}
-
-input[type="range"]::-webkit-slider-thumb:active {
-  cursor: grabbing;
-  transform: scale(1.05);
+  border: 2px solid white;
+  margin-top: -6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 input[type="range"]::-moz-range-track {
@@ -226,49 +215,61 @@ input[type="range"]::-moz-range-track {
   height: 6px;
   border-radius: 3px;
   background: rgba(255,255,255,0.2);
+  border: none;
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #ef4444;
-  cursor: grab;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(239,68,68,0.4);
-  transition: transform 0.1s, box-shadow 0.1s;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-input[type="range"]::-moz-range-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 4px 12px rgba(239,68,68,0.5);
+input[type="range"]:focus {
+  outline: none;
 }
 
-input[type="range"]::-moz-range-thumb:active {
-  cursor: grabbing;
-  transform: scale(1.05);
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
 }
 
-/* Selection Styling */
-::selection {
-  background: rgba(239, 68, 68, 0.3);
-  color: inherit;
+/* Custom Checkbox */
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #ef4444;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
 }
 
-/* Focus Styling */
-:focus-visible {
-  outline: 2px solid rgba(239, 68, 68, 0.5);
-  outline-offset: 2px;
+input[type="checkbox"]:checked {
+  background-color: #ef4444;
 }
 
-/* Smooth transitions */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
-/* Glassmorphism utilities */
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+/* Glassmorphism Utilities */
 .glass {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
@@ -277,74 +278,65 @@ input[type="range"]::-moz-range-thumb:active {
 }
 
 .glass-light {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* ============================================
-   MOBILE RESPONSIVE BREAKPOINTS
-   ============================================ */
+/* Mobile Touch Optimization */
+.touch-manipulation {
+  touch-action: manipulation;
+}
 
-/* Tablets (max-width: 768px) */
-@media (max-width: 768px) {
-  html {
-    font-size: 14px;
+/* Prevent text selection during long press */
+.select-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth scrolling */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  .mobile-text-sm {
+    font-size: 0.875rem;
   }
   
-  /* Larger touch targets for tablets */
-  button, 
-  input[type="range"],
-  label[for] {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  /* Adjust range input for touch */
   input[type="range"]::-webkit-slider-thumb {
     width: 24px;
     height: 24px;
     margin-top: -9px;
+    border-width: 3px;
   }
   
   input[type="range"]::-moz-range-thumb {
     width: 24px;
     height: 24px;
+    border-width: 3px;
   }
   
-  /* Larger scrollbar for touch */
-  ::-webkit-scrollbar {
-    width: 8px;
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+  }
+  
+  input[type="range"]::-moz-range-track {
     height: 8px;
   }
 }
 
-/* Smartphones (max-width: 480px) */
-@media (max-width: 480px) {
-  html {
-    font-size: 13px;
-  }
-  
-  /* Prevent text zoom on iOS */
-  input, 
-  textarea, 
-  select {
-    font-size: 16px;
-  }
-  
-  /* Touch optimization */
-  * {
-    touch-action: manipulation;
-  }
-  
-  /* Larger touch targets */
-  button {
+/* Larger touch targets on mobile */
+@media (max-width: 768px) {
+  .mobile-touch-target {
     min-height: 44px;
     min-width: 44px;
   }
   
-  /* Range input optimized for thumb */
   input[type="range"]::-webkit-slider-thumb {
     width: 28px;
     height: 28px;
@@ -386,4 +378,200 @@ input[type="range"]::-moz-range-thumb:active {
   .landscape-hide {
     display: none !important;
   }
+}
+
+/* ===== CYBERPUNK TERMINAL THEME ===== */
+
+/* Terminal Font Classes */
+.font-terminal {
+  font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+  letter-spacing: 0.02em;
+}
+
+/* Neon Glow Effects */
+.neon-glow {
+  text-shadow: 0 0 5px currentColor,
+               0 0 10px currentColor,
+               0 0 20px currentColor,
+               0 0 40px currentColor;
+}
+
+.neon-glow-sm {
+  text-shadow: 0 0 2px currentColor,
+               0 0 5px currentColor,
+               0 0 10px currentColor;
+}
+
+.neon-box-glow {
+  box-shadow: 0 0 5px currentColor,
+              0 0 10px currentColor,
+              inset 0 0 5px currentColor;
+}
+
+/* Cyberpunk Border Style */
+.cyber-border {
+  border: 1px solid;
+  border-image: linear-gradient(135deg, currentColor 0%, transparent 50%, currentColor 100%) 1;
+}
+
+/* Rainbow Slider for Color Picker */
+.rainbow-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 24px;
+  border-radius: 12px;
+  background: linear-gradient(
+    to right,
+    #ff0000 0%,
+    #ff8000 8.33%,
+    #ffff00 16.66%,
+    #80ff00 25%,
+    #00ff00 33.33%,
+    #00ff80 41.66%,
+    #00ffff 50%,
+    #0080ff 58.33%,
+    #0000ff 66.66%,
+    #8000ff 75%,
+    #ff00ff 83.33%,
+    #ff0080 91.66%,
+    #ff0000 100%
+  );
+  outline: none;
+  cursor: pointer;
+}
+
+.rainbow-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5),
+              0 0 20px rgba(255, 255, 255, 0.3);
+  cursor: grab;
+}
+
+.rainbow-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.rainbow-slider::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5),
+              0 0 20px rgba(255, 255, 255, 0.3);
+  cursor: grab;
+}
+
+.rainbow-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* Cyberpunk Background Grid */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Scanline Effect */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Terminal Blink Cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.terminal-cursor::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+/* Holographic Card Effect */
+.holo-card {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Glitch Text Effect */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-text:hover {
+  animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Sharp Button Style for Cyberpunk */
+.btn-sharp {
+  border-radius: 0;
+  clip-path: polygon(
+    10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px
+  );
+}
+
+/* Corner Accents */
+.corner-accent {
+  position: relative;
+}
+
+.corner-accent::before,
+.corner-accent::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+}
+
+.corner-accent::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner-accent::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
 }
