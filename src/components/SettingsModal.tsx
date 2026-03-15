@@ -10,8 +10,7 @@ interface SettingsModalProps {
   setFontFamily: (f: 'sans' | 'serif' | 'mono') => void;
   fontWeight: 'normal' | 'bold' | 'light';
   setFontWeight: (w: 'normal' | 'bold' | 'light') => void;
-  fontSizeLevel: number;
-  setFontSizeLevel: (l: number) => void;
+
   
   // Cleaning
   cleanOptions: CleanOptions;
@@ -29,8 +28,7 @@ export function SettingsModal({
   setFontFamily,
   fontWeight,
   setFontWeight,
-  fontSizeLevel,
-  setFontSizeLevel,
+
   cleanOptions,
   setCleanOptions,
   neonColor = '#00ffff',
@@ -124,47 +122,7 @@ export function SettingsModal({
               ))}
             </div>
 
-            {/* Size */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className={`text-sm ${textColor} font-mono`}>SCALE_FACTOR</span>
-                <span 
-                  className={`text-lg font-mono font-bold`}
-                  style={{ color: neonColor }}
-                >
-                  {fontSizeLevel > 0 ? '+' : ''}{fontSizeLevel}
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setFontSizeLevel(Math.max(-5, fontSizeLevel - 1))}
-                  disabled={fontSizeLevel <= -5}
-                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                >
-                  -
-                </button>
-                <input
-                  type="range"
-                  min={-5}
-                  max={5}
-                  step={1}
-                  value={fontSizeLevel}
-                  onChange={(e) => setFontSizeLevel(Number(e.target.value))}
-                  className="flex-1 h-2 appearance-none cursor-pointer"
-                  style={{
-                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((fontSizeLevel + 5) / 10) * 100}%, rgba(51,65,85,0.5) ${((fontSizeLevel + 5) / 10) * 100}%)`,
-                    height: '8px'
-                  }}
-                />
-                <button
-                  onClick={() => setFontSizeLevel(Math.min(5, fontSizeLevel + 1))}
-                  disabled={fontSizeLevel >= 5}
-                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                >
-                  +
-                </button>
-              </div>
-            </div>
+
           </section>
 
           <hr className="border-t border-slate-700" />
