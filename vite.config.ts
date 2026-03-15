@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     sourcemap: false,
+    target: 'es2020',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -17,6 +18,12 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 600,
+  },
+  esbuild: {
+    target: 'es2020',
+    supported: {
+      'top-level-await': true,
+    },
   },
   server: {
     headers: {
