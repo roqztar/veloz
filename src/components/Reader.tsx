@@ -942,15 +942,14 @@ export function Reader({ className = '' }: ReaderProps) {
             </button>
           </div>
           
-          {/* CyberEye Time Saved Display */}
-          <CyberEye 
-            timeSaved={timeSaved}
-            neonColor={neonColor}
-            className="hidden sm:block"
-          />
-          
           {/* Color Picker Button */}
           <div className="flex items-center justify-end gap-2">
+            {/* CyberEye Time Saved Display - left of color picker */}
+            <CyberEye 
+              timeSaved={timeSaved}
+              neonColor={neonColor}
+              className="hidden sm:block mr-1"
+            />
             <button 
               onClick={() => setShowColorPicker(true)}
               className={`w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[44px]`}
@@ -1089,7 +1088,7 @@ export function Reader({ className = '' }: ReaderProps) {
           {/* Progress Bar - Draggable with word preview */}
           <div className="mt-4 sm:mt-6">
             {/* Current word count - subtle, bottom left */}
-            <div className="flex justify-between items-end mb-2">
+            <div className="flex justify-between items-end mb-4">
               <span 
                 className="font-mono text-xs opacity-40"
                 style={{ color: neonColor }}

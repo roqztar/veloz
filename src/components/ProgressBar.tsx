@@ -124,7 +124,7 @@ export function ProgressBar({
           style={{ 
             width: `${clampedProgress}%`,
             backgroundColor: neonColor,
-            boxShadow: `0 0 15px ${neonColor}, 0 0 30px ${neonColor}`
+            boxShadow: `0 0 8px ${neonColor}, 0 0 16px ${neonColor}60`
           }}
         />
         
@@ -142,7 +142,7 @@ export function ProgressBar({
           style={{ 
             left: `calc(${clampedProgress}% - 12px)`,
             backgroundColor: neonColor,
-            boxShadow: `0 0 20px ${neonColor}, 0 0 40px ${neonColor}, inset 0 0 10px rgba(255,255,255,0.5)`
+            boxShadow: `0 0 10px ${neonColor}, 0 0 20px ${neonColor}60, inset 0 0 10px rgba(255,255,255,0.3)`
           }}
         >
           {/* Grip lines */}
@@ -164,7 +164,7 @@ export function ProgressBar({
             backgroundColor: 'rgba(0, 0, 0, 0.95)',
             border: `2px solid ${neonColor}`,
             borderRadius: '16px',
-            boxShadow: `0 0 20px ${neonColor}60, inset 0 0 20px ${neonColor}10`,
+            boxShadow: `0 0 10px ${neonColor}40, inset 0 0 10px ${neonColor}10`,
             color: neonColor,
             textShadow: `0 0 5px ${neonColor}`,
             minWidth: '120px',

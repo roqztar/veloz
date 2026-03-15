@@ -43,7 +43,7 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
         >
           <defs>
             <filter id="hourglassGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+              <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
               <feMerge>
                 <feMergeNode in="coloredBlur"/>
                 <feMergeNode in="SourceGraphic"/>
@@ -118,7 +118,7 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
           backgroundColor: 'rgba(0, 0, 0, 0.95)',
           border: `2px solid ${neonColor}`,
           borderRadius: '4px',
-          boxShadow: `0 0 20px ${neonColor}, 0 0 40px ${neonColor}`,
+          boxShadow: `0 0 12px ${neonColor}60`,
         }}
       >
         {/* Arrow pointing down */}
