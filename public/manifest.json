@@ -1,0 +1,21 @@
+{
+  "name": "Eyedance",
+  "short_name": "Eyedance",
+  "description": "Speed Reader für schnelleres Lesen mit RSVP-Technologie",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/eyedance.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "education"],
+  "lang": "de",
+  "dir": "ltr"
+}

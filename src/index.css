@@ -287,6 +287,46 @@ input[type="checkbox"]:focus {
 .glass-light {
   background: rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(20px);
+}
+
+/* Mobile Touch Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch device optimizations */
+  html {
+    touch-action: manipulation;
+  }
+  
+  /* Prevent text selection during swipes */
+  .touch-pan-y {
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  /* Larger touch targets on mobile */
+  button, 
+  [role="button"],
+  input[type="range"]::-webkit-slider-thumb {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent callout on iOS */
+  * {
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
