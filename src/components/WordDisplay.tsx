@@ -23,7 +23,7 @@ export function WordDisplay({
   fontFamily = 'mono',
   fontWeight = 'bold',
   fontSizeLevel = 0,
-  orpColor = '#ffffff',
+  orpColor: _orpColor,
   neonColor = '#00ffff',
   neonColorGlow = 'rgba(0, 255, 255, 0.5)',
   className = '' 
