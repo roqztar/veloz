@@ -1041,9 +1041,7 @@ export function Reader({ className = '' }: ReaderProps) {
               onClick={() => setShowColorPicker(true)}
               className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
               style={{ 
-                backgroundColor: 'rgba(0,0,0,0.4)',
-                border: `1px solid ${neonColor}`,
-                boxShadow: `0 0 10px ${neonColorGlow}`
+                backgroundColor: 'rgba(0,0,0,0.4)'
               }}
               title="Neon Color"
             >
