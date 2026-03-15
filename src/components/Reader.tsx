@@ -6,12 +6,6 @@ import { CyberEye } from './CyberEye';
 import { useSpritz } from '../hooks/useSpritz';
 import { calculateTimeSaved } from '../core/textCleaner';
 import { parseFile, getSupportedFileTypes, getSupportedMimeTypes } from '../core/fileParser';
-import {
-  PlayIcon, PauseIcon, SkipBackIcon, PrevIcon, NextIcon,
-  SettingsIcon, EditIcon, UploadIcon, TrashIcon,
-  FullscreenIcon, ExitFullscreenIcon, PaletteIcon,
-  PlusIcon, MinusIcon, CloseIcon, CheckIcon, SpinnerIcon, ClipboardIcon
-} from './PixelIcons';
 
 // Default Text - Cyberpunk themed welcome message
 const DEFAULT_TEXT = `SYSTEM INITIALIZED
@@ -432,7 +426,10 @@ export function Reader({ className = '' }: ReaderProps) {
                 onClick={() => setShowColorPicker(false)} 
                 className="p-2 text-slate-400 hover:text-white transition-colors"
               >
-                <CloseIcon size={24} />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
               </button>
             </div>
             
@@ -546,7 +543,10 @@ export function Reader({ className = '' }: ReaderProps) {
                 onClick={() => setShowScrubber(false)} 
                 className={`p-2 sm:p-2 text-slate-400 hover:text-white transition-all hover:rotate-90 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center`}
               >
-                <CloseIcon size={22} />
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
               </button>
             </div>
             
@@ -670,7 +670,10 @@ export function Reader({ className = '' }: ReaderProps) {
                     className={`px-4 sm:px-6 py-3 sm:py-3 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 font-mono transition-all min-h-[48px] flex items-center gap-2`}
                     title="Import from clipboard"
                   >
-                    <ClipboardIcon size={18} />
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
                     <span className="hidden sm:inline">PASTE</span>
                   </button>
                 </div>
@@ -712,13 +715,19 @@ export function Reader({ className = '' }: ReaderProps) {
               boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)'
             }}
           >
-            <CloseIcon size={20} />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
             <span className="font-bold">ERROR: {uploadError}</span>
             <button 
               onClick={() => setUploadError(null)}
               className="ml-2 p-1 hover:bg-white/20 transition-colors"
             >
-              <CloseIcon size={16} />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
             </button>
           </div>
         </div>
@@ -734,7 +743,10 @@ export function Reader({ className = '' }: ReaderProps) {
               boxShadow: `0 0 20px ${neonColorGlow}`
             }}
           >
-            <CheckIcon size={20} />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
             <span className="font-bold">{uploadSuccess}</span>
           </div>
         </div>
@@ -772,7 +784,9 @@ export function Reader({ className = '' }: ReaderProps) {
                 }}
                 title="WPM -10"
               >
-                <MinusIcon size={18} color={neonColor} />
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
               </button>
               
               <span 
@@ -792,7 +806,10 @@ export function Reader({ className = '' }: ReaderProps) {
                 }}
                 title="WPM +10"
               >
-                <PlusIcon size={18} color={neonColor} />
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
               </button>
               
               <div className="relative flex items-center flex-1 sm:flex-none ml-1">
@@ -822,7 +839,10 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
               title="Text bearbeiten (E)"
             >
-              <EditIcon size={22} color={neonColor} />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
               {words.length > 1 && (
                 <span 
                   className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full"
@@ -875,9 +895,16 @@ export function Reader({ className = '' }: ReaderProps) {
               title={`Datei importieren (${getSupportedFileTypes()})`}
             >
               {isUploading ? (
-                <SpinnerIcon size={22} color={neonColor} />
+                <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
               ) : (
-                <UploadIcon size={22} color={neonColor} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
               )}
             </label>
             
@@ -891,7 +918,12 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
               title="Text löschen"
             >
-              <TrashIcon size={22} color="#ef4444" />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+              </svg>
             </button>
             
             {/* Settings Button */}
@@ -904,7 +936,10 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
               title="Einstellungen"
             >
-              <SettingsIcon size={22} color={neonColor} />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
             </button>
             
             {/* Fullscreen Button */}
@@ -918,9 +953,13 @@ export function Reader({ className = '' }: ReaderProps) {
               title="Vollbild (F)"
             >
               {isFullscreen ? (
-                <ExitFullscreenIcon size={22} color={neonColor} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+                </svg>
               ) : (
-                <FullscreenIcon size={22} color={neonColor} />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
               )}
             </button>
           </div>
@@ -943,7 +982,17 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
               title="Neon Color"
             >
-              <PaletteIcon size={22} color={neonColor} />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"/>
+                <path d="M12 2v6.5"/>
+                <path d="M12 21.5v-6.5"/>
+                <path d="M2 12h6.5"/>
+                <path d="M21.5 12H15"/>
+                <path d="M4.34 4.34l4.6 4.6"/>
+                <path d="M19.66 19.66l-4.6-4.6"/>
+                <path d="M4.34 19.66l4.6-4.6"/>
+                <path d="M19.66 4.34l-4.6 4.6"/>
+              </svg>
             </button>
           </div>
         </div>
@@ -994,7 +1043,10 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
               title="Von vorne beginnen"
             >
-              <SkipBackIcon size={22} color={neonColor} />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="19 20 9 12 19 4 19 20"/>
+                <line x1="5" y1="19" x2="5" y2="5"/>
+              </svg>
             </button>
             
             {/* Prev */}
@@ -1011,7 +1063,9 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
               title="Zurück (←)"
             >
-              <PrevIcon size={26} color={neonColor} />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
             </button>
             
             {/* Play/Pause */}
@@ -1025,9 +1079,14 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
             >
               {isPlaying ? (
-                <PauseIcon size={36} color={neonColor} />
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="4" width="4" height="16"/>
+                  <rect x="14" y="4" width="4" height="16"/>
+                </svg>
               ) : (
-                <PlayIcon size={40} color="#000" />
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" className="ml-1">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
               )}
             </button>
             
@@ -1045,7 +1104,9 @@ export function Reader({ className = '' }: ReaderProps) {
               }}
               title="Vor (→)"
             >
-              <NextIcon size={26} color={neonColor} />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
             </button>
           </div>
           
