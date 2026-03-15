@@ -231,21 +231,29 @@ body {
   }
 }
 
-/* ORP Scan line animation */
+/* ORP Scan line animation - vertical sweep up and down */
 @keyframes orp-scan {
   0% {
     opacity: 0;
-    transform: translateX(-100vw);
+    transform: translateY(100%);
   }
-  10% {
-    opacity: 1;
+  15% {
+    opacity: 0.7;
   }
-  90% {
-    opacity: 1;
+  45% {
+    opacity: 0.9;
+    transform: translateY(-30%);
+  }
+  55% {
+    opacity: 0.9;
+    transform: translateY(-30%);
+  }
+  85% {
+    opacity: 0.7;
   }
   100% {
     opacity: 0;
-    transform: translateX(100vw);
+    transform: translateY(100%);
   }
 }
 
@@ -282,7 +290,7 @@ body {
 }
 
 .orp-scan {
-  animation: orp-scan 1.5s ease-in-out forwards;
+  animation: orp-scan 1.2s ease-in-out forwards;
 }
 
 .orp-pulse {

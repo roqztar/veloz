@@ -90,7 +90,7 @@ export function Reader({ className = '' }: ReaderProps) {
     setOrpScanActive(true);
     setTimeout(() => {
       setOrpScanActive(false);
-    }, 1500);
+    }, 1200);
   }, []);
   
   // Upload state
@@ -1187,27 +1187,30 @@ export function Reader({ className = '' }: ReaderProps) {
           
           {/* ORP Scan Effect */}
           {orpScanActive && (
-            <div className="absolute inset-0 pointer-events-none orp-scan z-20 flex items-center justify-center">
-              {/* Scan line */}
+            <div className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-hidden">
+              {/* Scan line - vertical beam */}
+              <div className="orp-scan absolute w-full flex items-center justify-center">
+                <div 
+                  className="w-32 h-1"
+                  style={{
+                    background: `linear-gradient(90deg, 
+                      transparent 0%, 
+                      ${neonColor}40 20%, 
+                      ${neonColor} 50%, 
+                      ${neonColor}40 80%, 
+                      transparent 100%
+                    )`,
+                    boxShadow: `0 0 30px ${neonColorGlow}, 0 0 60px ${neonColorGlow}`,
+                    filter: 'blur(2px)'
+                  }}
+                />
+              </div>
+              {/* Center glow pulse */}
               <div 
-                className="absolute h-full w-1"
+                className="absolute w-48 h-48 rounded-full orp-pulse"
                 style={{
-                  background: `linear-gradient(180deg, 
-                    transparent 0%, 
-                    ${neonColor} 20%, 
-                    ${neonColor} 80%, 
-                    transparent 100%
-                  )`,
-                  boxShadow: `0 0 20px ${neonColor}, 0 0 40px ${neonColorGlow}`,
-                  filter: 'blur(1px)'
-                }}
-              />
-              {/* Scan glow overlay */}
-              <div 
-                className="absolute inset-0"
-                style={{
-                  background: `radial-gradient(circle at center, ${neonColorGlow} 0%, transparent 50%)`,
-                  opacity: 0.3
+                  background: `radial-gradient(circle, ${neonColorGlow} 0%, transparent 70%)`,
+                  opacity: 0.4
                 }}
               />
             </div>
