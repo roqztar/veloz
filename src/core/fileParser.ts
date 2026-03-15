@@ -221,10 +221,22 @@ async function parsePDF(file: File): Promise<string> {
       }
       
       // Join lines with proper spacing
-      const pageText = lines
+      let pageText = lines
         .map(line => line.join(''))
         .join('\n')
         .trim();
+      
+      // Fix hyphenation at line breaks (common in PDFs)
+      // Pattern: word-
+word -> wordword
+      pageText = pageText.replace(/(\w)-\n+(\w)/g, '$1$2');
+      
+      // Also handle soft hyphens and common hyphenation patterns
+      pageText = pageText.replace(/(\w)[\u00AD\u2010\u2011]\n*(\w)/g, '$1$2');
+      
+      // Join lines that end without punctuation (likely continued sentences)
+      // But preserve paragraph breaks (lines ending with punctuation or blank lines)
+      pageText = pageText.replace(/([^.!?;:\n])\n+([a-zäöüß])/g, '$1 $2');
       
       if (pageText) {
         fullText += pageText + '\n\n';
@@ -300,6 +312,14 @@ function fixPdfEncoding(text: string): string {
   // Clean up multiple spaces
   fixed = fixed.replace(/ +/g, ' ');
   fixed = fixed.replace(/\n +/g, '\n');
+  
+  // Final cleanup: join lines that are likely part of same paragraph
+  // Lines ending with lowercase letter or comma followed by line starting with lowercase
+  // are likely hyphenation or line breaks within a sentence
+  fixed = fixed.replace(/([a-zäöüß,;])\n([a-zäöüß])/g, '$1 $2');
+  
+  // Remove excessive blank lines (more than 2)
+  fixed = fixed.replace(/\n{3,}/g, '\n\n');
   
   return fixed.trim();
 }

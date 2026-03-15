@@ -384,7 +384,10 @@ export function Reader({ className = '' }: ReaderProps) {
       {showEditor && (
         <div 
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-300"
-          onClick={() => setShowEditor(false)}
+          onClick={() => {
+            // Click outside saves changes and closes (like "Save")
+            saveEditor();
+          }}
         >
           <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
           <div 
@@ -470,7 +473,11 @@ export function Reader({ className = '' }: ReaderProps) {
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3">
                   <button 
-                    onClick={() => setShowEditor(false)} 
+                    onClick={() => {
+                      // Restore original text without saving changes
+                      setInputText(rawText);
+                      setShowEditor(false);
+                    }} 
                     className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 sm:py-3 rounded-xl font-medium transition-all ${accentBgClass} ${textColorClass} hover:scale-105 min-h-[48px]`}
                   >
                     Abbrechen
