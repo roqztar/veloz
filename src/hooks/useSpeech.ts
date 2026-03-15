@@ -2,122 +2,135 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 export type SpeechState = 'on' | 'off';
 
+// eSpeak-js is a WebAssembly port of eSpeak - extremely fast but robotic sounding
+// It can handle 300+ WPM easily
 export function useSpeech() {
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [enabled, setEnabled] = useState<SpeechState>('off');
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const synthRef = useRef<SpeechSynthesis | null>(null);
-  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const espeakRef = useRef<any>(null);
 
-  // Initialize speech synthesis
+  // Initialize eSpeak on mount
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    synthRef.current = window.speechSynthesis;
+    let mounted = true;
     
-    const loadVoices = () => {
-      const availableVoices = synthRef.current?.getVoices() || [];
-      setVoices(availableVoices);
+    const initEspeak = async () => {
+      try {
+        // Dynamic import to avoid SSR issues
+        const { default: espeak } = await import('espeak-js');
+        
+        if (!mounted) return;
+        
+        // Initialize eSpeak with German and English voices
+        await espeak.load();
+        
+        if (!mounted) return;
+        
+        espeakRef.current = espeak;
+        setIsLoaded(true);
+        
+        console.log('[eSpeak] Loaded successfully');
+      } catch (err) {
+        console.error('[eSpeak] Failed to load:', err);
+      }
     };
     
-    loadVoices();
-    
-    if (synthRef.current) {
-      synthRef.current.onvoiceschanged = loadVoices;
-    }
+    initEspeak();
     
     return () => {
-      if (synthRef.current) {
-        synthRef.current.onvoiceschanged = null;
+      mounted = false;
+      if (currentSourceRef.current) {
+        try {
+          currentSourceRef.current.stop();
+        } catch {}
       }
     };
   }, []);
 
   // Detect language from text
   const detectLanguage = useCallback((text: string): 'de' | 'en' => {
-    const germanPatterns = /[äöüß]|\b(der|die|das|und|ist|zu|den|mit|von|für|auf|sich|dem|ein|eine|nicht|als|auch|es|an|werden|aus|er|hat|dass|sie|nach|wird|bei|einer|um|am|paar|machen|können|haben|ihr|sein|zum|war|oder|über|wie|noch|wurde|durch|mehr|zwei|sein|man|daß|müssen|uns|wollen|ihnen|seine|vom|jetzt|immer|gegen|sehr|einfach|neu|gut|ganz|damit|ohne|lange|weil|wenn|diese|mein|etwas|keine|seit|nur|anderen|viele|mal|wo|weiß|dann|ihre|unter|eigene|deine|ob|wegen|weit|soll|diesem|beide|sagte|je|also|geht|beim|heute|trotz|gerade|eben|wohl|sieht|zwar|deshalb|während|bereits|bevor|sondern|sonst|etwa|meist|früher|weiter|wenig|niemand|zwischen|einmal|allenfalls|übrigens|schon|nochmal|natürlich|zusammen|danach|vorher|dadurch|deswegen|trotzdem)\b/gi;
+    const germanPatterns = /[äöüß]|\b(der|die|das|und|ist|zu|den|mit|von|für|auf|sich|dem|ein|eine|nicht|als|auch|es|an|werden|aus|er|hat|dass|sie|nach|wird|bei|einer|um|am|machen|können|haben|ihr|sein|zum|war|oder|über|wie|noch|wurde|durch|mehr|zwei|sein|man|müssen|uns|wollen|ihnen|seine|vom|jetzt|immer|gegen|sehr|einfach|neu|gut|ganz|damit|ohne|lange|weil|wenn|diese|mein|etwas|keine|seit|nur|anderen|viele|mal|wo|weiß|dann|ihre|unter|eigene|deine|ob|wegen|weit|soll|diesem|beide|sagte|je|also|geht|beim|heute|trotz|gerade|eben|wohl|sieht|zwar|deshalb|während|bereits|bevor|sondern|sonst|etwa|meist|früher|weiter|wenig|niemand|zwischen|einmal|allenfalls|übrigens|schon|nochmal|natürlich|zusammen|danach|vorher|dadurch|deswegen|trotzdem)\b/gi;
     const germanMatches = (text.match(germanPatterns) || []).length;
     
-    const englishPatterns = /\b(the|and|is|to|of|a|in|that|have|it|for|not|on|with|he|as|you|do|at|this|but|his|by|from|they|we|say|her|she|or|an|will|my|one|all|would|there|their|what|so|up|out|if|about|who|get|which|go|me|when|make|can|like|time|no|just|him|know|take|people|into|year|your|good|some|could|them|see|other|than|then|now|look|only|come|its|over|think|also|back|after|use|two|how|our|work|first|well|way|even|new|want|because|any|these|give|day|most|us|are|was|were|been|have|has|had|will|shall|should|may|might|must|need|used|having)\b/gi;
-    const englishMatches = (text.match(englishPatterns) || []).length;
-    
-    return germanMatches > englishMatches ? 'de' : 'en';
+    return germanMatches > 0 ? 'de' : 'en';
   }, []);
 
-  // Get the best voice for high-speed RSVP reading
-  // Always picks the fastest/most responsive voice available
-  const getBestVoice = useCallback((preferredLang?: 'de' | 'en'): SpeechSynthesisVoice | null => {
-    if (voices.length === 0) return null;
+  const speak = useCallback(async (text: string, wpm: number = 275) => {
+    if (enabled === 'off' || !espeakRef.current || !isLoaded) return;
     
-    // Get German and English voices separately
-    const germanVoices = voices.filter(v => /^de-/.test(v.lang));
-    const englishVoices = voices.filter(v => /^en-/.test(v.lang));
-    
-    // Choose language priority
-    let candidates: SpeechSynthesisVoice[] = [];
-    if (preferredLang === 'de') {
-      candidates = germanVoices.length > 0 ? germanVoices : englishVoices;
-    } else if (preferredLang === 'en') {
-      candidates = englishVoices.length > 0 ? englishVoices : germanVoices;
-    } else {
-      candidates = germanVoices.length > 0 ? germanVoices : englishVoices.length > 0 ? englishVoices : voices;
+    // Stop any current speech
+    if (currentSourceRef.current) {
+      try {
+        currentSourceRef.current.stop();
+      } catch {}
+      currentSourceRef.current = null;
     }
     
-    if (candidates.length === 0) candidates = voices;
-    
-    // Priority for high-speed reading:
-    // 1. Google voices (best for fast reading)
-    const googleVoice = candidates.find(v => /Google\s+(?:US|UK|Deutsch)/i.test(v.name) || /^Google\s/i.test(v.name));
-    if (googleVoice) return googleVoice;
-    
-    // 2. Microsoft voices (good for fast reading)
-    const msVoice = candidates.find(v => /Microsoft/i.test(v.name) && !/Mobile/i.test(v.name));
-    if (msVoice) return msVoice;
-    
-    // 3. Any enhanced/neural voice
-    const enhancedVoice = candidates.find(v => /Enhanced|Premium|Neural/i.test(v.name));
-    if (enhancedVoice) return enhancedVoice;
-    
-    // 4. First available voice
-    return candidates[0];
-  }, [voices]);
-
-  const speak = useCallback((text: string, _wpm?: number) => {
-    if (enabled === 'off' || !synthRef.current) return;
-    
-    // Cancel previous speech immediately
-    synthRef.current.cancel();
-    
-    // Detect language
-    const detectedLang = detectLanguage(text);
-    
-    // Get best voice
-    const voice = getBestVoice(detectedLang);
-    if (!voice) return;
-    
-    // Always use maximum rate (2.0) for RSVP - this is the browser limit
-    // The speech will be cut off by the next word, but that's intentional
-    // to keep up with the reading pace
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voice;
-    utterance.lang = voice.lang;
-    utterance.rate = 2.0; // Maximum browser limit
-    utterance.volume = 1;
-    utterance.pitch = 1;  // Neutral pitch
-    
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    
-    currentUtteranceRef.current = utterance;
-    synthRef.current.speak(utterance);
-  }, [enabled, getBestVoice, detectLanguage]);
-
-  const stop = useCallback(() => {
-    if (synthRef.current) {
-      synthRef.current.cancel();
+    try {
+      setIsSpeaking(true);
+      
+      const lang = detectLanguage(text);
+      const voice = lang === 'de' ? 'de' : 'en';
+      
+      // eSpeak uses words-per-minute directly!
+      // Much better than Web Speech API's arbitrary rate
+      const effectiveWPM = Math.min(400, Math.max(100, wpm));
+      
+      // Generate audio using eSpeak
+      const audioData = espeakRef.current.synth(text, {
+        voice: voice,
+        speed: effectiveWPM, // eSpeak accepts WPM directly!
+        pitch: 50, // 0-100
+        amplitude: 100, // volume
+      });
+      
+      if (!audioData || audioData.length === 0) {
+        setIsSpeaking(false);
+        return;
+      }
+      
+      // Create audio context if needed
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      
+      const ctx = audioContextRef.current;
+      
+      // Convert to AudioBuffer
+      const arrayBuffer = new Uint8Array(audioData).buffer;
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+      
+      // Play the audio
+      const source = ctx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(ctx.destination);
+      
+      source.onended = () => {
+        setIsSpeaking(false);
+        currentSourceRef.current = null;
+      };
+      
+      currentSourceRef.current = source;
+      source.start(0);
+      
+    } catch (err) {
+      console.error('[eSpeak] Speak error:', err);
       setIsSpeaking(false);
     }
+  }, [enabled, isLoaded, detectLanguage]);
+
+  const stop = useCallback(() => {
+    if (currentSourceRef.current) {
+      try {
+        currentSourceRef.current.stop();
+      } catch {}
+      currentSourceRef.current = null;
+    }
+    setIsSpeaking(false);
   }, []);
 
   const toggle = useCallback(() => {
@@ -137,8 +150,8 @@ export function useSpeech() {
     }
   }, [stop]);
 
-  // Check if speech synthesis is supported
-  const isSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  // Check if speech synthesis is available
+  const isSupported = isLoaded;
 
   return {
     speak,
@@ -148,6 +161,6 @@ export function useSpeech() {
     enabled,
     toggle,
     setState,
-    currentVoice: voices.length > 0 ? getBestVoice() : null
+    isLoaded
   };
 }

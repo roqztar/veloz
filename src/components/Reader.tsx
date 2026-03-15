@@ -168,20 +168,20 @@ export function Reader({ className = '' }: ReaderProps) {
     isSupported: speechSupported,
     enabled: speechEnabled,
     toggle: toggleSpeech,
-    currentVoice
+    isLoaded: isSpeechLoaded
   } = useSpeech();
   
-  // Speak current word when it changes
+  // Speak current word when it changes - pass current WPM to eSpeak
   useEffect(() => {
     if (isPlaying && currentWord?.text && speechEnabled === 'on') {
-      speak(currentWord.text);
+      speak(currentWord.text, wpm);
     }
-  }, [currentWord, isPlaying, speak, speechEnabled]);
+  }, [currentWord, isPlaying, speak, speechEnabled, wpm]);
   
-  // Cap WPM at 150 when Voice is enabled (browser TTS limit for comprehensible speech)
+  // Cap WPM at 400 when Voice is enabled (eSpeak can handle up to 400+ WPM)
   useEffect(() => {
-    if (speechEnabled === 'on' && wpm > 150) {
-      setWPM(150);
+    if (speechEnabled === 'on' && wpm > 400) {
+      setWPM(400);
     }
   }, [speechEnabled, wpm, setWPM]);
   
@@ -550,7 +550,7 @@ export function Reader({ className = '' }: ReaderProps) {
         speechEnabled={speechEnabled}
         toggleSpeech={toggleSpeech}
         speechSupported={speechSupported}
-        currentVoice={currentVoice}
+        isSpeechLoaded={isSpeechLoaded}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}
         neonColor={neonColor}
@@ -981,13 +981,13 @@ export function Reader({ className = '' }: ReaderProps) {
               
               {/* Plus Button */}
               <button
-                onClick={() => setWPM(Math.min(speechEnabled === 'on' ? 150 : 1000, wpm + 10))}
+                onClick={() => setWPM(Math.min(speechEnabled === 'on' ? 400 : 1000, wpm + 10))}
                 className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
                 }}
-                title={speechEnabled === 'on' ? 'WPM +10 (max 150 with Voice)' : 'WPM +10'}
+                title={speechEnabled === 'on' ? 'WPM +10 (max 400 with Voice)' : 'WPM +10'}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
@@ -999,13 +999,13 @@ export function Reader({ className = '' }: ReaderProps) {
                 <input
                   type="range"
                   min={50}
-                  max={speechEnabled === 'on' ? 150 : 1000}
+                  max={speechEnabled === 'on' ? 400 : 1000}
                   step={10}
                   value={wpm}
                   onChange={(e) => setWPM(Number(e.target.value))}
                   className="w-full sm:w-24 h-8 sm:h-6 appearance-none cursor-pointer bg-transparent touch-manipulation"
                   style={{ 
-                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${(wpm-50)/(speechEnabled === 'on' ? 1.0 : 9.5)}%, rgba(51,65,85,0.5) ${(wpm-50)/(speechEnabled === 'on' ? 1.0 : 9.5)}%, rgba(51,65,85,0.5) 100%)`,
+                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${(wpm-50)/(speechEnabled === 'on' ? 3.5 : 9.5)}%, rgba(51,65,85,0.5) ${(wpm-50)/(speechEnabled === 'on' ? 3.5 : 9.5)}%, rgba(51,65,85,0.5) 100%)`,
                     height: '8px'
                   }}
                 />
@@ -1015,7 +1015,7 @@ export function Reader({ className = '' }: ReaderProps) {
                     className="absolute -top-5 right-0 text-[10px] font-mono text-slate-400 whitespace-nowrap"
                     style={{ color: neonColor }}
                   >
-                    max 150 with Voice
+                    max 400 with eSpeak
                   </div>
                 )}
               </div>

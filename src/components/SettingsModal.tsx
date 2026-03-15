@@ -20,11 +20,11 @@ interface SettingsModalProps {
   showGlow: boolean;
   setShowGlow: (v: boolean) => void;
   
-  // Speech synthesis - simplified
+  // Speech synthesis - eSpeak
   speechEnabled: SpeechState;
   toggleSpeech: () => void;
   speechSupported: boolean;
-  currentVoice: SpeechSynthesisVoice | null;
+  isSpeechLoaded: boolean;
   
   // Cleaning
   cleanOptions: CleanOptions;
@@ -51,7 +51,7 @@ export function SettingsModal({
   speechEnabled,
   toggleSpeech,
   speechSupported,
-  currentVoice,
+  isSpeechLoaded,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
   neonColor = '#00ffff',
@@ -228,34 +228,35 @@ export function SettingsModal({
           
           <hr className="border-t border-slate-700" />
           
-          {/* Speech Synthesis - Simplified */}
+          {/* Speech Synthesis - eSpeak */}
           {speechSupported && (
             <section className="space-y-4">
-              <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech</h3>
+              <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech (eSpeak)</h3>
               
               <div className="flex items-center justify-between">
                 <div>
                   <div className={`text-sm ${textColor} font-mono`}>TTS</div>
                   <div className="text-xs text-slate-500 font-mono mt-1">
-                    {currentVoice ? currentVoice.name : 'Loading...'}
+                    {isSpeechLoaded ? 'eSpeak Ready' : 'Loading eSpeak...'}
                   </div>
                 </div>
                 <button
                   onClick={toggleSpeech}
+                  disabled={!isSpeechLoaded}
                   className={`py-2 px-4 text-sm font-mono transition-all border ${
                     speechEnabled === 'on'
                       ? 'text-black font-bold' 
                       : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
-                  }`}
+                  } ${!isSpeechLoaded ? 'opacity-50 cursor-not-allowed' : ''}`}
                   style={speechEnabled === 'on' ? { backgroundColor: neonColor } : {}}
                 >
                   {speechEnabled === 'on' ? 'ON' : 'OFF'}
                 </button>
               </div>
               
-              {speechEnabled === 'on' && currentVoice && (
+              {speechEnabled === 'on' && (
                 <div className="text-xs text-slate-500 font-mono">
-                  Auto-optimized for high-speed reading
+                  Up to 400 WPM (robotic but fast)
                 </div>
               )}
             </section>
