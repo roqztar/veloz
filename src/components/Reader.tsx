@@ -433,23 +433,55 @@ export function Reader({ className = '' }: ReaderProps) {
               </button>
             </div>
             
-            {/* Rainbow Slider */}
+            {/* Rainbow Slider - Drag & Drop */}
             <div className="w-72 mb-6">
               <div 
+                ref={(el) => {
+                  if (!el) return;
+                  const handleMove = (clientX: number) => {
+                    const rect = el.getBoundingClientRect();
+                    const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+                    const percentage = x / rect.width;
+                    setHue(Math.round(percentage * 360));
+                  };
+                  
+                  const onMouseDown = (e: MouseEvent) => {
+                    handleMove(e.clientX);
+                    const onMouseMove = (moveEvent: MouseEvent) => {
+                      handleMove(moveEvent.clientX);
+                    };
+                    const onMouseUp = () => {
+                      document.removeEventListener('mousemove', onMouseMove);
+                      document.removeEventListener('mouseup', onMouseUp);
+                    };
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                  };
+                  
+                  const onTouchStart = (e: TouchEvent) => {
+                    handleMove(e.touches[0].clientX);
+                    const onTouchMove = (moveEvent: TouchEvent) => {
+                      handleMove(moveEvent.touches[0].clientX);
+                    };
+                    const onTouchEnd = () => {
+                      document.removeEventListener('touchmove', onTouchMove);
+                      document.removeEventListener('touchend', onTouchEnd);
+                    };
+                    document.addEventListener('touchmove', onTouchMove);
+                    document.addEventListener('touchend', onTouchEnd);
+                  };
+                  
+                  el.addEventListener('mousedown', onMouseDown);
+                  el.addEventListener('touchstart', onTouchStart);
+                }}
                 className="h-8 rounded cursor-pointer relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)'
                 }}
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const x = e.clientX - rect.left;
-                  const percentage = x / rect.width;
-                  setHue(Math.round(percentage * 360));
-                }}
               >
                 {/* Slider thumb */}
                 <div 
-                  className="absolute top-0 bottom-0 w-1 bg-white shadow-lg"
+                  className="absolute top-0 bottom-0 w-1 bg-white shadow-lg pointer-events-none"
                   style={{ 
                     left: `${(hue / 360) * 100}%`,
                     boxShadow: '0 0 10px rgba(255,255,255,0.8)'
