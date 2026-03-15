@@ -261,7 +261,7 @@ export function SettingsModal({
                 ))}
               </div>
               
-              {/* Rate */}
+              {/* Rate - max 2.0 (browser limit), user can only decrease */}
               {voiceGender !== 'off' && (
                 <>
                   <div className="space-y-2 pt-2">
@@ -276,22 +276,22 @@ export function SettingsModal({
                     </div>
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() => setSpeechRate(Math.max(1.2, speechRate - 0.1))}
-                        disabled={speechRate <= 1.2}
+                        onClick={() => setSpeechRate(Math.max(0.5, speechRate - 0.1))}
+                        disabled={speechRate <= 0.5}
                         className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
                       >
                         -
                       </button>
                       <input
                         type="range"
-                        min={1.2}
+                        min={0.5}
                         max={2.0}
                         step={0.1}
                         value={speechRate}
                         onChange={(e) => setSpeechRate(Number(e.target.value))}
                         className="flex-1 h-2 appearance-none cursor-pointer"
                         style={{
-                          background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechRate - 1.2) / 0.8) * 100}%, rgba(51,65,85,0.5) ${((speechRate - 1.2) / 0.8) * 100}%)`,
+                          background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechRate - 0.5) / 1.5) * 100}%, rgba(51,65,85,0.5) ${((speechRate - 0.5) / 1.5) * 100}%)`,
                           height: '8px'
                         }}
                       />
@@ -299,6 +299,7 @@ export function SettingsModal({
                         onClick={() => setSpeechRate(Math.min(2.0, speechRate + 0.1))}
                         disabled={speechRate >= 2.0}
                         className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                        title="Maximum speed (browser limit)"
                       >
                         +
                       </button>

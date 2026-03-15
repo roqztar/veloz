@@ -174,8 +174,8 @@ export function useSpeech() {
     isSupported,
     options,
     setGender,
-    setRate: (rate: number) => setOptions(prev => ({ ...prev, rate })),
-    setVolume: (volume: number) => setOptions(prev => ({ ...prev, volume })),
-    setPitch: (pitch: number) => setOptions(prev => ({ ...prev, pitch }))
+    setRate: (rate: number) => setOptions(prev => ({ ...prev, rate: Math.min(2.0, Math.max(0.5, rate)) })),
+    setVolume: (volume: number) => setOptions(prev => ({ ...prev, volume: Math.min(1, Math.max(0, volume)) })),
+    setPitch: (pitch: number) => setOptions(prev => ({ ...prev, pitch: Math.min(2, Math.max(0, pitch)) }))
   };
 }
