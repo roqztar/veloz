@@ -256,6 +256,32 @@ async function parsePDF(file: File): Promise<string> {
       }
       pageText = processedLines.join('\n');
       
+      // Remove footnote reference lines (standalone numbers or number ranges)
+      // Pattern: lines with only numbers like "8", "9,10", "11", "12,13", "1-4", "5-7"
+      pageText = pageText.replace(/^\s*\d{1,2}(?:[-,]\d{1,2})?\s*$/gm, '');
+      
+      // Move leading punctuation to previous line
+      // Pattern: "\n, " -> ", " (comma at start of line)
+      // Pattern: "\n. " -> ". " (period at start of line)
+      pageText = pageText.replace(/\n([,;.]\s*)/g, '$1\n');
+      
+      // Join very short lines (≤3 chars like "it", "to", "a") with next line
+      const lines2 = pageText.split('\n');
+      const mergedLines2: string[] = [];
+      let i2 = 0;
+      while (i2 < lines2.length) {
+        const current = lines2[i2]?.trim();
+        const next = lines2[i2 + 1];
+        if (current && next && current.length <= 3 && /^[a-zA-Z]+$/.test(current)) {
+          mergedLines2.push(current + ' ' + next);
+          i2 += 2;
+        } else {
+          mergedLines2.push(lines2[i2]);
+          i2++;
+        }
+      }
+      pageText = mergedLines2.join('\n');
+      
       if (pageText) {
         fullText += pageText + '\n\n';
       }

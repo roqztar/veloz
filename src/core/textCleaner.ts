@@ -193,6 +193,10 @@ function cleanFootnotes(text: string): string {
   // z.B. "Wort[12]" -> "Wort"
   cleaned = cleaned.replace(/(\w)\[\d{1,3}\]/g, '$1');
   
+  // Entferne Fußnoten-Referenzen direkt am Wortende (z.B. "recognition1-4", "circuits11")
+  // Pattern: word followed by number or number range (1-4, 5-7, 9,10, 8, etc.)
+  cleaned = cleaned.replace(/(\w)(\d{1,2}(?:[-,]\d{1,2})?)(?=[\s.!?;,]|$)/g, '$1');
+  
   // Entferne isolierte Zahlen am Zeilenanfang/ende (häufig bei PDF-Extraktion)
   // Nur wenn es sich um sehr kurze Zeilen handelt (weniger als 5 Zeichen)
   cleaned = cleaned.replace(/^\s*\d{1,3}\s*$/gm, '');
