@@ -1140,17 +1140,18 @@ export function Reader({ className = '' }: ReaderProps) {
             </button>
           </div>
           
+          {/* Current word count - positioned well above progress bar to avoid overlap */}
+          <div className="flex justify-between items-end mb-6">
+            <span 
+              className="font-mono text-sm"
+              style={{ color: neonColor, opacity: 0.7 }}
+            >
+              {currentIndex + 1} / {words.length}
+            </span>
+          </div>
+          
           {/* Progress Bar - Draggable with word preview */}
-          <div className="mt-4 sm:mt-6">
-            {/* Current word count - subtle, bottom left */}
-            <div className="flex justify-between items-end mb-4">
-              <span 
-                className="font-mono text-xs opacity-40"
-                style={{ color: neonColor }}
-              >
-                {currentIndex + 1} / {words.length}
-              </span>
-            </div>
+          <div className="mt-2">
             <ProgressBar 
               progress={progress} 
               currentIndex={currentIndex}
