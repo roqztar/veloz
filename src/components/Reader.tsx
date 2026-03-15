@@ -290,6 +290,12 @@ export function Reader({ className = '' }: ReaderProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggle, next, prev, showSettings, showScrubber, showEditor, showColorPicker, toggleFullscreen]);
   
+  // Wrapped pause that also stops speech
+  const handlePause = useCallback(() => {
+    pause();
+    stopSpeech();
+  }, [pause, stopSpeech]);
+  
   const openEditor = useCallback(() => {
     setInputText(rawText);
     setShowEditor(true);
@@ -304,12 +310,6 @@ export function Reader({ className = '' }: ReaderProps) {
     }
     setShowEditor(false);
   }, [inputText, setText, triggerSpotlight]);
-  
-  // Wrapped pause that also stops speech
-  const handlePause = useCallback(() => {
-    pause();
-    stopSpeech();
-  }, [pause, stopSpeech]);
   
   // Wrapped toggle that also stops speech when pausing
   const handleToggle = useCallback(() => {
