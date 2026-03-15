@@ -4,6 +4,7 @@ import { ProgressBar } from './ProgressBar';
 import { SettingsModal } from './SettingsModal';
 import { CyberEye } from './CyberEye';
 import { useSpritz } from '../hooks/useSpritz';
+import { useSpeech } from '../hooks/useSpeech';
 import { calculateTimeSaved } from '../core/textCleaner';
 import { parseFile, getSupportedFileTypes, getSupportedMimeTypes } from '../core/fileParser';
 
@@ -68,6 +69,30 @@ export function Reader({ className = '' }: ReaderProps) {
   const [showGrid, setShowGrid] = useState(false);
   const [showGlow, setShowGlow] = useState(false);
   
+  // Spotlight and scan animation states
+  const [spotlightActive, setSpotlightActive] = useState(false);
+  const [orpScanActive, setOrpScanActive] = useState(false);
+  const [gridFlashActive, setGridFlashActive] = useState(false);
+  const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // Trigger spotlight animation
+  const triggerSpotlight = useCallback(() => {
+    setSpotlightActive(true);
+    setGridFlashActive(true);
+    setTimeout(() => {
+      setSpotlightActive(false);
+      setGridFlashActive(false);
+    }, 2500);
+  }, []);
+  
+  // Trigger ORP scan animation
+  const triggerOrpScan = useCallback(() => {
+    setOrpScanActive(true);
+    setTimeout(() => {
+      setOrpScanActive(false);
+    }, 1500);
+  }, []);
+  
   // Upload state
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -124,6 +149,44 @@ export function Reader({ className = '' }: ReaderProps) {
   const neonColorDim = `hsl(${hue}, 100%, 30%)`;
   const neonColorGlow = `hsl(${hue}, 100%, 50%, 0.5)`;
   const orpColor = getContrastColor(neonColor);
+  
+  // Speech synthesis
+  const { 
+    speak, 
+    stop: stopSpeech, 
+    isSupported: speechSupported,
+    options: speechOptions,
+    setGender,
+    setRate,
+  } = useSpeech();
+  
+  // Speak current word when it changes
+  useEffect(() => {
+    if (isPlaying && currentWord?.text && speechOptions.gender !== 'off') {
+      speak(currentWord.text);
+    }
+  }, [currentWord, isPlaying, speak, speechOptions.gender]);
+  
+  // Initial spotlight effect on page load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      triggerSpotlight();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [triggerSpotlight]);
+  
+  // ORP scan every 45 seconds
+  useEffect(() => {
+    orpScanTimerRef.current = setInterval(() => {
+      triggerOrpScan();
+    }, 45000); // 45 seconds
+    
+    return () => {
+      if (orpScanTimerRef.current) {
+        clearInterval(orpScanTimerRef.current);
+      }
+    };
+  }, [triggerOrpScan]);
   
   // Track elapsed time when playing - update every second for stability
   useEffect(() => {
@@ -199,7 +262,7 @@ export function Reader({ className = '' }: ReaderProps) {
       switch (e.code) {
         case 'Space':
           e.preventDefault();
-          toggle();
+          handleToggle();
           break;
         case 'ArrowLeft':
           e.preventDefault();
@@ -230,16 +293,31 @@ export function Reader({ className = '' }: ReaderProps) {
   const openEditor = useCallback(() => {
     setInputText(rawText);
     setShowEditor(true);
-    pause();
-  }, [rawText, pause]);
+    handlePause();
+  }, [rawText, handlePause]);
   
   const saveEditor = useCallback(() => {
     if (inputText.trim()) {
       setText(inputText);
       setStartTime(null);
+      triggerSpotlight();
     }
     setShowEditor(false);
-  }, [inputText, setText]);
+  }, [inputText, setText, triggerSpotlight]);
+  
+  // Wrapped pause that also stops speech
+  const handlePause = useCallback(() => {
+    pause();
+    stopSpeech();
+  }, [pause, stopSpeech]);
+  
+  // Wrapped toggle that also stops speech when pausing
+  const handleToggle = useCallback(() => {
+    if (isPlaying) {
+      stopSpeech();
+    }
+    toggle();
+  }, [isPlaying, toggle, stopSpeech]);
   
   const handlePointerLeave = useCallback(() => {
     if (longPressTimerRef.current) {
@@ -295,14 +373,14 @@ export function Reader({ className = '' }: ReaderProps) {
         }
       } else if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
         // Tap (not a swipe) -> toggle play/pause
-        toggle();
+        handleToggle();
       }
     }
     
     touchStartX.current = null;
     touchStartY.current = null;
     touchStartTime.current = null;
-  }, [prev, next, toggle]);
+  }, [prev, next, handleToggle]);
   
   const handlePointerDown = useCallback((direction: 'prev' | 'next') => {
     isLongPressRef.current = false;
@@ -320,7 +398,7 @@ export function Reader({ className = '' }: ReaderProps) {
         }
       }, 150);
     }, 500);
-  }, [currentIndex, words.length, goTo, pause]);
+  }, [currentIndex, words.length, goTo, handlePause]);
   
   const handlePointerUp = useCallback((direction: 'prev' | 'next') => {
     if (longPressTimerRef.current) {
@@ -371,8 +449,8 @@ export function Reader({ className = '' }: ReaderProps) {
       onClick={resetInactivityTimer}
     >
       {/* Optional Cyberpunk Grid Background */}
-      {showGrid && (
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {(showGrid || gridFlashActive) && (
+        <div className={`fixed inset-0 pointer-events-none overflow-hidden ${gridFlashActive ? 'grid-flash' : ''}`}>
           <div 
             className="absolute inset-0 opacity-20"
             style={{
@@ -393,6 +471,49 @@ export function Reader({ className = '' }: ReaderProps) {
         </div>
       )}
       
+      {/* Neon Spotlight Sweep Effect */}
+      {spotlightActive && (
+        <div className="fixed inset-0 pointer-events-none z-30 spotlight-sweep overflow-hidden">
+          {/* Main spotlight beam */}
+          <div 
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-full"
+            style={{
+              background: `linear-gradient(90deg, 
+                transparent 0%, 
+                ${neonColorGlow} 20%, 
+                ${neonColor} 50%, 
+                ${neonColorGlow} 80%, 
+                transparent 100%
+              )`,
+              filter: 'blur(40px)',
+              opacity: 0.4
+            }}
+          />
+          {/* Secondary glow layer */}
+          <div 
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-full"
+            style={{
+              background: `linear-gradient(90deg, 
+                transparent 0%, 
+                ${neonColor} 30%, 
+                ${neonColor} 70%, 
+                transparent 100%
+              )`,
+              filter: 'blur(80px)',
+              opacity: 0.2
+            }}
+          />
+          {/* Ambient glow pulse overlay */}
+          <div 
+            className="absolute inset-0 ambient-pulse"
+            style={{
+              background: `radial-gradient(ellipse at center, ${neonColorGlow} 0%, transparent 70%)`,
+              opacity: 0.15
+            }}
+          />
+        </div>
+      )}
+      
       {/* Settings Modal */}
       <SettingsModal
         isOpen={showSettings}
@@ -408,6 +529,11 @@ export function Reader({ className = '' }: ReaderProps) {
         setShowGrid={setShowGrid}
         showGlow={showGlow}
         setShowGlow={setShowGlow}
+        voiceGender={speechOptions.gender}
+        setVoiceGender={setGender}
+        speechRate={speechOptions.rate}
+        setSpeechRate={setRate}
+        speechSupported={speechSupported}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}
         neonColor={neonColor}
@@ -917,6 +1043,7 @@ export function Reader({ className = '' }: ReaderProps) {
                     } else if (result.text) {
                       setText(result.text);
                       setStartTime(null);
+                      triggerSpotlight();
                       setUploadSuccess(`${result.wordCount} Wörter geladen`);
                       setTimeout(() => setUploadSuccess(null), 3000);
                     }
@@ -1038,7 +1165,7 @@ export function Reader({ className = '' }: ReaderProps) {
         
         {/* Word Display - with touch/swipe support */}
         <div 
-          className="flex-1 flex items-center justify-center px-2 sm:px-4 touch-pan-y"
+          className="flex-1 flex items-center justify-center px-2 sm:px-4 touch-pan-y relative"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -1057,6 +1184,35 @@ export function Reader({ className = '' }: ReaderProps) {
             showGlow={showGlow}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
+          
+          {/* ORP Scan Effect */}
+          {orpScanActive && (
+            <div className="absolute inset-0 pointer-events-none orp-scan z-20 flex items-center justify-center">
+              {/* Scan line */}
+              <div 
+                className="absolute h-full w-1"
+                style={{
+                  background: `linear-gradient(180deg, 
+                    transparent 0%, 
+                    ${neonColor} 20%, 
+                    ${neonColor} 80%, 
+                    transparent 100%
+                  )`,
+                  boxShadow: `0 0 20px ${neonColor}, 0 0 40px ${neonColorGlow}`,
+                  filter: 'blur(1px)'
+                }}
+              />
+              {/* Scan glow overlay */}
+              <div 
+                className="absolute inset-0"
+                style={{
+                  background: `radial-gradient(circle at center, ${neonColorGlow} 0%, transparent 50%)`,
+                  opacity: 0.3
+                }}
+              />
+            </div>
+          )}
+          
           {/* Mobile touch hint */}
           <div className="absolute bottom-32 left-1/2 -translate-x-1/2 md:hidden">
             <span className={`text-xs ${mutedColorClass} opacity-50 font-mono`}>
@@ -1110,7 +1266,7 @@ export function Reader({ className = '' }: ReaderProps) {
             
             {/* Play/Pause */}
             <button 
-              onClick={toggle} 
+              onClick={handleToggle} 
               className="w-20 h-20 flex items-center justify-center text-black transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 rounded-lg"
               style={{
                 backgroundColor: neonColor,

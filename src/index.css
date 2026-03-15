@@ -188,6 +188,111 @@ body {
   animation-duration: 1000ms;
 }
 
+.duration-2000 {
+  animation-duration: 2000ms;
+}
+
+.duration-3000 {
+  animation-duration: 3000ms;
+}
+
+/* Neon Spotlight Sweep Animation */
+@keyframes spotlight-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) rotate(-15deg) scaleX(0.5);
+  }
+  15% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateX(0%) rotate(0deg) scaleX(1);
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) rotate(15deg) scaleX(0.5);
+  }
+}
+
+/* Grid flash animation during spotlight */
+@keyframes grid-flash {
+  0%, 100% {
+    opacity: 0;
+  }
+  30%, 70% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ORP Scan line animation */
+@keyframes orp-scan {
+  0% {
+    opacity: 0;
+    transform: translateX(-100vw);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100vw);
+  }
+}
+
+/* ORP pulse during scan */
+@keyframes orp-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+  }
+}
+
+/* Ambient glow pulse */
+@keyframes ambient-pulse {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* Utility classes for spotlight effects */
+.spotlight-sweep {
+  animation: spotlight-sweep 2.5s ease-in-out forwards;
+}
+
+.grid-flash {
+  animation: grid-flash 2.5s ease-in-out forwards;
+}
+
+.orp-scan {
+  animation: orp-scan 1.5s ease-in-out forwards;
+}
+
+.orp-pulse {
+  animation: orp-pulse 0.8s ease-in-out 2;
+}
+
+.ambient-pulse {
+  animation: ambient-pulse 4s ease-in-out infinite;
+}
+
 /* Range Input Styling */
 input[type="range"] {
   -webkit-appearance: none;
@@ -326,9 +431,6 @@ input[type="checkbox"]:focus {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
-}
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Mobile Touch Optimization */

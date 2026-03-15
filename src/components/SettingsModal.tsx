@@ -1,4 +1,5 @@
 import type { CleanOptions } from '../core/textCleaner';
+import type { VoiceGender } from '../hooks/useSpeech';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -18,6 +19,13 @@ interface SettingsModalProps {
   setShowGrid: (v: boolean) => void;
   showGlow: boolean;
   setShowGlow: (v: boolean) => void;
+  
+  // Speech synthesis
+  voiceGender: VoiceGender;
+  setVoiceGender: (g: VoiceGender) => void;
+  speechRate: number;
+  setSpeechRate: (r: number) => void;
+  speechSupported: boolean;
   
   // Cleaning
   cleanOptions: CleanOptions;
@@ -41,6 +49,11 @@ export function SettingsModal({
   setShowGrid,
   showGlow,
   setShowGlow,
+  voiceGender,
+  setVoiceGender,
+  speechRate,
+  setSpeechRate,
+  speechSupported,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
   neonColor = '#00ffff',
@@ -216,6 +229,79 @@ export function SettingsModal({
               </button>
             </div>
           </section>
+          
+          <hr className="border-t border-slate-700" />
+          
+          {/* Speech Synthesis */}
+          {speechSupported && (
+            <section className="space-y-4">
+              <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech_Synthesis</h3>
+              
+              {/* Voice Gender */}
+              <div className="flex gap-2">
+                {(['off', 'female', 'male'] as const).map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => setVoiceGender(g)}
+                    className={`flex-1 py-2 px-3 text-sm font-mono transition-all border ${
+                      voiceGender === g 
+                        ? 'text-black font-bold' 
+                        : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
+                    }`}
+                    style={voiceGender === g ? { backgroundColor: neonColor } : {}}
+                  >
+                    {g === 'off' && 'OFF'}
+                    {g === 'female' && 'FEMALE'}
+                    {g === 'male' && 'MALE'}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Rate */}
+              {voiceGender !== 'off' && (
+                <div className="space-y-2 pt-2">
+                  <div className="flex justify-between items-center">
+                    <span className={`text-sm ${textColor} font-mono`}>RATE</span>
+                    <span 
+                      className={`text-lg font-mono font-bold`}
+                      style={{ color: neonColor }}
+                    >
+                      {speechRate.toFixed(1)}x
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSpeechRate(Math.max(0.5, speechRate - 0.1))}
+                      disabled={speechRate <= 0.5}
+                      className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="range"
+                      min={0.5}
+                      max={2.0}
+                      step={0.1}
+                      value={speechRate}
+                      onChange={(e) => setSpeechRate(Number(e.target.value))}
+                      className="flex-1 h-2 appearance-none cursor-pointer"
+                      style={{
+                        background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechRate - 0.5) / 1.5) * 100}%, rgba(51,65,85,0.5) ${((speechRate - 0.5) / 1.5) * 100}%)`,
+                        height: '8px'
+                      }}
+                    />
+                    <button
+                      onClick={() => setSpeechRate(Math.min(2.0, speechRate + 0.1))}
+                      disabled={speechRate >= 2.0}
+                      className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
         </div>
       </div>
     </div>
