@@ -396,7 +396,8 @@ export function Reader({ className = '' }: ReaderProps) {
         setFontFamily={setFontFamily}
         fontWeight={fontWeight}
         setFontWeight={setFontWeight}
-
+        fontSizeLevel={fontSizeLevel}
+        setFontSizeLevel={setFontSizeLevel}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}
         neonColor={neonColor}
