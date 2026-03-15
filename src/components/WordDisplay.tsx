@@ -187,16 +187,16 @@ export function WordDisplay({
           }}
         >
           {orp}
-          {/* Animated scanline effect */}
+          {/* Subtle scanline effect - slow and faint */}
           <span 
-            className="absolute inset-0 overflow-hidden rounded"
+            className="absolute inset-0 overflow-hidden rounded pointer-events-none"
             style={{ borderRadius: '4px' }}
           >
             <span 
-              className="absolute w-full h-0.5 bg-white/30"
+              className="absolute w-full h-px bg-white/20"
               style={{
-                animation: 'scanline 2s linear infinite',
-                top: '0%',
+                animation: 'scanline 8s ease-in-out infinite',
+                top: '20%',
               }}
             />
           </span>
@@ -214,13 +214,13 @@ export function WordDisplay({
         </span>
       </div>
       
-      {/* Scanline animation */}
+      {/* Slow subtle scanline animation */}
       <style>{`
         @keyframes scanline {
-          0% { top: 0%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
+          0% { top: 10%; opacity: 0; }
+          20% { opacity: 0.3; }
+          80% { opacity: 0.3; }
+          100% { top: 90%; opacity: 0; }
         }
       `}</style>
     </div>

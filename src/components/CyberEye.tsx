@@ -28,7 +28,8 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
   
   return (
     <div 
-      className={`relative ${className}`}
+      className={`relative w-16 flex flex-col items-center ${className}`}
+      style={{ minWidth: '64px' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -37,7 +38,7 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
         width="60" 
         height="40" 
         viewBox="0 0 60 40" 
-        className="overflow-visible cursor-help"
+        className="overflow-visible cursor-help flex-shrink-0"
       >
         {/* Outer glow filter */}
         <defs>
@@ -142,61 +143,53 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
         {formatTime(timeSaved)}
       </div>
       
-      {/* Hover Tooltip - Cyberpunk Style */}
-      {isHovered && (
+      {/* Hover Tooltip - Fixed position, always visible */}
+      <div 
+        className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 pointer-events-none z-[100] whitespace-nowrap transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.95)',
+          border: `2px solid ${neonColor}`,
+          borderRadius: '4px',
+          boxShadow: `0 0 20px ${neonColor}, 0 0 40px ${neonColorGlow}`,
+        }}
+      >
+        {/* Arrow pointing down */}
         <div 
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 pointer-events-none z-50 whitespace-nowrap"
+          className="absolute -bottom-2 left-1/2 -translate-x-1/2"
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.95)',
-            border: `2px solid ${neonColor}`,
-            borderRadius: '4px',
-            boxShadow: `0 0 20px ${neonColor}60`,
+            width: '0',
+            height: '0',
+            borderLeft: '8px solid transparent',
+            borderRight: '8px solid transparent',
+            borderTop: `8px solid ${neonColor}`
           }}
-        >
-          {/* Arrow pointing down */}
+        />
+        
+        {/* Content */}
+        <div className="font-mono text-center">
           <div 
-            className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0"
-            style={{
-              borderLeft: '8px solid transparent',
-              borderRight: '8px solid transparent',
-              borderTop: `8px solid ${neonColor}`
-            }}
-          />
+            className="text-xs mb-1"
+            style={{ color: neonColor, opacity: 0.7 }}
+          >
+            // TIME_SAVED
+          </div>
           <div 
-            className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0"
-            style={{
-              borderLeft: '6px solid transparent',
-              borderRight: '6px solid transparent',
-              borderTop: '6px solid rgba(0, 0, 0, 0.95)'
+            className="text-lg font-bold"
+            style={{ 
+              color: neonColor,
+              textShadow: `0 0 10px ${neonColor}`
             }}
-          />
-          
-          {/* Content */}
-          <div className="font-mono text-center">
-            <div 
-              className="text-xs mb-1 opacity-70"
-              style={{ color: neonColor }}
-            >
-              // TIME_SAVED
-            </div>
-            <div 
-              className="text-lg font-bold"
-              style={{ 
-                color: neonColor,
-                textShadow: `0 0 10px ${neonColor}`
-              }}
-            >
-              {formatTime(timeSaved)}
-            </div>
-            <div 
-              className="text-xs mt-1 opacity-60"
-              style={{ color: neonColor }}
-            >
-              VS NORMAL_READ (250WPM)
-            </div>
+          >
+            {formatTime(timeSaved)}
+          </div>
+          <div 
+            className="text-xs mt-1"
+            style={{ color: neonColor, opacity: 0.6 }}
+          >
+            VS NORMAL_READ (250WPM)
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
