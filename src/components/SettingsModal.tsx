@@ -25,6 +25,7 @@ interface SettingsModalProps {
   toggleSpeech: () => void;
   speechSupported: boolean;
   isSpeechLoaded: boolean;
+  serverAvailable: boolean;
   
   // Cleaning
   cleanOptions: CleanOptions;
@@ -52,6 +53,7 @@ export function SettingsModal({
   toggleSpeech,
   speechSupported,
   isSpeechLoaded,
+  serverAvailable,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
   neonColor = '#00ffff',
@@ -229,38 +231,42 @@ export function SettingsModal({
           <hr className="border-t border-slate-700" />
           
           {/* Speech Synthesis - eSpeak */}
-          {speechSupported && (
-            <section className="space-y-4">
-              <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech (eSpeak)</h3>
-              
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className={`text-sm ${textColor} font-mono`}>TTS</div>
-                  <div className="text-xs text-slate-500 font-mono mt-1">
-                    {isSpeechLoaded ? 'eSpeak Ready' : 'Loading eSpeak...'}
-                  </div>
+          <section className="space-y-4">
+            <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech (eSpeak)</h3>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <div className={`text-sm ${textColor} font-mono`}>TTS</div>
+                <div className={`text-xs font-mono mt-1 ${serverAvailable ? 'text-green-500' : 'text-amber-500'}`}>
+                  {serverAvailable ? 'eSpeak Server Ready' : 'Start: npm run tts'}
                 </div>
-                <button
-                  onClick={toggleSpeech}
-                  disabled={!isSpeechLoaded}
-                  className={`py-2 px-4 text-sm font-mono transition-all border ${
-                    speechEnabled === 'on'
-                      ? 'text-black font-bold' 
-                      : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
-                  } ${!isSpeechLoaded ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  style={speechEnabled === 'on' ? { backgroundColor: neonColor } : {}}
-                >
-                  {speechEnabled === 'on' ? 'ON' : 'OFF'}
-                </button>
               </div>
-              
-              {speechEnabled === 'on' && (
-                <div className="text-xs text-slate-500 font-mono">
-                  Up to 400 WPM (robotic but fast)
-                </div>
-              )}
-            </section>
-          )}
+              <button
+                onClick={toggleSpeech}
+                disabled={!serverAvailable}
+                className={`py-2 px-4 text-sm font-mono transition-all border ${
+                  speechEnabled === 'on'
+                    ? 'text-black font-bold' 
+                    : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
+                } ${!serverAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
+                style={speechEnabled === 'on' ? { backgroundColor: neonColor } : {}}
+              >
+                {speechEnabled === 'on' ? 'ON' : 'OFF'}
+              </button>
+            </div>
+            
+            {speechEnabled === 'on' && serverAvailable && (
+              <div className="text-xs text-slate-500 font-mono">
+                Up to 400 WPM with local eSpeak
+              </div>
+            )}
+            
+            {!serverAvailable && (
+              <div className="text-xs text-slate-600 font-mono">
+                Run: cd server && npm install && npm start
+              </div>
+            )}
+          </section>
         </div>
       </div>
     </div>

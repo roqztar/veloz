@@ -10,15 +10,15 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tts": "cd server && npm start"
   },
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "pdfjs-dist": "^4.10.38",
     "mammoth": "^1.9.0",
-    "jszip": "^3.10.1",
-    "speak-tts": "^2.0.8"
+    "jszip": "^3.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

@@ -168,7 +168,8 @@ export function Reader({ className = '' }: ReaderProps) {
     isSupported: speechSupported,
     enabled: speechEnabled,
     toggle: toggleSpeech,
-    isLoaded: isSpeechLoaded
+    isLoaded: isSpeechLoaded,
+    serverAvailable
   } = useSpeech();
   
   // Speak current word when it changes - pass current WPM to eSpeak
@@ -551,6 +552,7 @@ export function Reader({ className = '' }: ReaderProps) {
         toggleSpeech={toggleSpeech}
         speechSupported={speechSupported}
         isSpeechLoaded={isSpeechLoaded}
+        serverAvailable={serverAvailable}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}
         neonColor={neonColor}
