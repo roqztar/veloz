@@ -18,7 +18,7 @@
     "pdfjs-dist": "^4.10.38",
     "mammoth": "^1.9.0",
     "jszip": "^3.10.1",
-    "espeak-js": "^1.0.3"
+    "speak-tts": "^2.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
