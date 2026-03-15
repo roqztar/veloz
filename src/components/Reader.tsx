@@ -353,7 +353,6 @@ export function Reader({ className = '' }: ReaderProps) {
   
   // Cyberpunk dark theme classes
   const bgClass = 'bg-[#050505]';
-  const _textColorClass = 'text-slate-200';
   const mutedColorClass = 'text-slate-500';
   
   // Cyberpunk terminal-style glass class with neon borders
