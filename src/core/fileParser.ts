@@ -235,37 +235,26 @@ async function parsePDF(file: File): Promise<string> {
       
       // Fix broken words: single letter (often capital) followed by rest of word
       // Pattern: "M\nachine" -> "Machine" (common in PDF column layouts)
-      pageText = pageText.replace(/([A-Za-z])\n+([a-zäöüß]{2,})/g, '$1$2');
-      
-      // COLUMN LAYOUT DETECTION (Newspaper-style layouts)
-      // If line is short (<45 chars) and ends with a word (no hyphen) 
-      // AND next line starts with lowercase letter AND is short (<45 chars),
-      // it's likely a column break within a sentence.
-      const lines = pageText.split('\n');
-      const mergedLines: string[] = [];
-      let i = 0;
-      while (i < lines.length) {
-        const current = lines[i].trim();
-        const next = lines[i + 1]?.trim();
-        
-        // Check if current line looks like end of column in multi-column layout:
-        // - short line (<45 chars)
-        // - doesn't end with punctuation (not a sentence end)
-        // - next line exists, is also short (<45 chars)
-        // - next line starts with lowercase (continuation of sentence)
-        if (next && 
-            current.length < 45 && 
-            next.length < 45 &&
-            !current.match(/[.!?;:,\-]\s*$/) &&
-            next.match(/^[a-zäöüß]/)) {
-          mergedLines.push(current + ' ' + next);
-          i += 2;
+      // ONLY apply when the single letter is a single character line
+      const textLines = pageText.split('\n');
+      const processedLines: string[] = [];
+      let idx = 0;
+      while (idx < textLines.length) {
+        const current = textLines[idx];
+        const next = textLines[idx + 1];
+        // Only merge if current line is exactly one letter and next starts with lowercase
+        if (current && next && 
+            current.trim().length === 1 && 
+            /^[A-Za-z]$/.test(current.trim()) &&
+            /^[a-zäöüß]/.test(next.trim())) {
+          processedLines.push(current.trim() + next);
+          idx += 2;
         } else {
-          mergedLines.push(lines[i]);
-          i++;
+          processedLines.push(current);
+          idx++;
         }
       }
-      pageText = mergedLines.join('\n');
+      pageText = processedLines.join('\n');
       
       if (pageText) {
         fullText += pageText + '\n\n';
@@ -341,11 +330,6 @@ function fixPdfEncoding(text: string): string {
   // Clean up multiple spaces
   fixed = fixed.replace(/ +/g, ' ');
   fixed = fixed.replace(/\n +/g, '\n');
-  
-  // Final cleanup: join lines that are likely part of same paragraph
-  // Lines ending with lowercase letter or comma followed by line starting with lowercase
-  // are likely hyphenation or line breaks within a sentence
-  fixed = fixed.replace(/([a-zäöüß,;])\n([a-zäöüß])/g, '$1 $2');
   
   // Remove excessive blank lines (more than 2)
   fixed = fixed.replace(/\n{3,}/g, '\n\n');
