@@ -177,21 +177,21 @@ export function WordDisplay({
           {before}
         </span>
         
-        {/* ORP character with neon glow - using the contrast color */}
+        {/* ORP character with neon glow - using the neon color for visibility */}
         <span 
-          className="relative"
+          className="relative font-black"
           style={{ 
-            color: orpColor,
-            textShadow: `0 0 ${isMobile ? '15px' : '25px'} ${neonColorGlow}, 0 0 ${isMobile ? '30px' : '50px'} ${neonColorGlow}`,
+            color: neonColor,
+            textShadow: `0 0 ${isMobile ? '20px' : '40px'} ${neonColor}, 0 0 ${isMobile ? '40px' : '80px'} ${neonColor}`,
           }}
         >
           {orp}
-          {/* Additional glow underline for ORP */}
+          {/* Thick neon underline for ORP */}
           <span 
-            className="absolute -bottom-1 left-0 right-0 h-0.5 md:h-1"
+            className="absolute -bottom-1 left-0 right-0 h-1 md:h-1.5"
             style={{ 
               backgroundColor: neonColor,
-              boxShadow: `0 0 10px ${neonColor}, 0 0 20px ${neonColor}`
+              boxShadow: `0 0 15px ${neonColor}, 0 0 30px ${neonColor}, 0 0 45px ${neonColor}`
             }}
           />
         </span>
