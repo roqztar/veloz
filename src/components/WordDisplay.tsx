@@ -61,13 +61,13 @@ export function WordDisplay({
       const charWidthRatio = mobile ? 0.65 : 0.6;
       const baseSize = Math.floor(availableWidth / (maxLength * charWidthRatio));
 
-      // Apply font size level (-5 to +5 levels)
-      const levelMultiplier = 1.0 + (fontSizeLevel * 0.15);
+      // Apply font size level (-5 to +5 levels) - 20% per level for more noticeable changes
+      const levelMultiplier = 1.0 + (fontSizeLevel * 0.20);
       const adjustedSize = Math.floor(baseSize * levelMultiplier);
 
-      // Clamp to reasonable range
-      const minSize = mobile ? 24 : 32;
-      const maxSize = mobile ? 80 : 120;
+      // Clamp to reasonable range - increased max for larger font sizes
+      const minSize = mobile ? 20 : 28;
+      const maxSize = mobile ? 120 : 180;
       
       return Math.max(minSize, Math.min(maxSize, adjustedSize));
     };
