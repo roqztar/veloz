@@ -942,24 +942,13 @@ export function Reader({ className = '' }: ReaderProps) {
             </button>
           </div>
           
-          {/* Stats - TIME SAVED in HH:MM:SS format */}
-          <div className="flex items-center gap-4">
-            {/* CyberEye Stats Display */}
-            <CyberEye 
-              timeSaved={timeSaved}
-              wordsSeen={currentIndex + 1}
-              neonColor={neonColor}
-              className="hidden sm:block"
-            />
-            
-            {/* Word Counter */}
-            <div 
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 ${terminalClass} font-mono`}
-              style={{ borderColor: neonColorDim }}
-            >
-              <span className={`text-sm font-bold`} style={{ color: neonColor }}>{currentIndex + 1} / {words.length}</span>
-            </div>
-          </div>
+          {/* CyberEye Stats Display */}
+          <CyberEye 
+            timeSaved={timeSaved}
+            wordsSeen={currentIndex + 1}
+            neonColor={neonColor}
+            className="hidden sm:block"
+          />
           
           {/* Color Picker Button */}
           <div className="flex items-center justify-end gap-2">
@@ -1100,6 +1089,15 @@ export function Reader({ className = '' }: ReaderProps) {
           
           {/* Progress Bar - Draggable with word preview */}
           <div className="mt-4 sm:mt-6">
+            {/* Current word count - subtle, bottom left */}
+            <div className="flex justify-between items-end mb-2">
+              <span 
+                className="font-mono text-xs opacity-40"
+                style={{ color: neonColor }}
+              >
+                {currentIndex + 1} / {words.length}
+              </span>
+            </div>
             <ProgressBar 
               progress={progress} 
               currentIndex={currentIndex}
