@@ -112,31 +112,58 @@ export function ProgressBar({
         />
       </div>
       
-      {/* Word Preview Tooltip */}
+      {/* Word Preview Tooltip - Comic Speech Bubble Style */}
       {hoverIndex !== null && previewWord && (
         <div 
-          className="absolute bottom-full mb-2 px-3 py-2 rounded-lg text-sm font-mono pointer-events-none z-50"
+          className="absolute bottom-full mb-3 px-4 py-3 text-sm font-mono pointer-events-none z-50"
           style={{
             left: `${tooltipPosition}%`,
             transform: 'translateX(-50%)',
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            border: `1px solid ${neonColor}`,
-            boxShadow: `0 0 20px ${neonColor}40`,
+            backgroundColor: 'rgba(0, 0, 0, 0.95)',
+            border: `2px solid ${neonColor}`,
+            borderRadius: '16px',
+            boxShadow: `0 0 20px ${neonColor}60, inset 0 0 20px ${neonColor}10`,
             color: neonColor,
-            textShadow: `0 0 5px ${neonColor}`
+            textShadow: `0 0 5px ${neonColor}`,
+            minWidth: '120px',
+            textAlign: 'center'
           }}
         >
-          {/* Speech bubble pointer */}
+          {/* Speech bubble tail */}
           <div 
-            className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0"
+            className="absolute -bottom-2 left-1/2 -translate-x-1/2"
             style={{
-              borderLeft: '6px solid transparent',
-              borderRight: '6px solid transparent',
-              borderTop: `6px solid ${neonColor}`
+              width: '0',
+              height: '0',
+              borderLeft: '10px solid transparent',
+              borderRight: '10px solid transparent',
+              borderTop: `10px solid ${neonColor}`
             }}
           />
-          <span className="text-xs text-slate-400 block mb-1">{hoverIndex + 1} / {totalWords}</span>
-          <span className="font-bold">{previewWord}</span>
+          {/* Inner tail for border effect */}
+          <div 
+            className="absolute -bottom-1.5 left-1/2 -translate-x-1/2"
+            style={{
+              width: '0',
+              height: '0',
+              borderLeft: '8px solid transparent',
+              borderRight: '8px solid transparent',
+              borderTop: '8px solid rgba(0, 0, 0, 0.95)'
+            }}
+          />
+          
+          {/* Word index */}
+          <span 
+            className="text-xs block mb-1 opacity-70"
+            style={{ color: neonColor }}
+          >
+            [{hoverIndex + 1}/{totalWords}]
+          </span>
+          
+          {/* Preview word */}
+          <span className="font-bold text-lg block truncate max-w-[200px]">
+            {previewWord}
+          </span>
         </div>
       )}
     </div>
