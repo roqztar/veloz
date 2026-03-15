@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Background -->
+  <rect width="100" height="100" rx="20" fill="#000"/>
+  
+  <!-- Outer eye shape -->
+  <ellipse cx="50" cy="50" rx="45" ry="30" fill="none" stroke="#00ffff" stroke-width="3"/>
+  
+  <!-- Inner eye details -->
+  <ellipse cx="50" cy="50" rx="20" ry="20" fill="none" stroke="#00ffff" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Pupil/Focus point (ORP style) -->
+  <circle cx="50" cy="50" r="8" fill="#00ffff"/>
+  <circle cx="50" cy="50" r="4" fill="#000"/>
+  
+  <!-- Scan lines -->
+  <line x1="50" y1="10" x2="50" y2="30" stroke="#00ffff" stroke-width="1" opacity="0.5"/>
+  <line x1="50" y1="70" x2="50" y2="90" stroke="#00ffff" stroke-width="1" opacity="0.5"/>
+  <line x1="10" y1="50" x2="30" y2="50" stroke="#00ffff" stroke-width="1" opacity="0.5"/>
+  <line x1="70" y1="50" x2="90" y2="50" stroke="#00ffff" stroke-width="1" opacity="0.5"/>
+  
+  <!-- Corner accents -->
+  <path d="M5 5 L15 5 L5 15 Z" fill="#00ffff" opacity="0.8"/>
+  <path d="M95 5 L85 5 L95 15 Z" fill="#00ffff" opacity="0.8"/>
+  <path d="M5 95 L15 95 L5 85 Z" fill="#00ffff" opacity="0.8"/>
+  <path d="M95 95 L85 95 L95 85 Z" fill="#00ffff" opacity="0.8"/>
+</svg>
