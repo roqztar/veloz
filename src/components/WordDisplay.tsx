@@ -164,34 +164,35 @@ export function WordDisplay({
       </div>
       
       <div 
-        className={`flex items-center justify-center tracking-tight animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
+        className={`flex items-baseline tracking-tight animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
         style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
       >
+        {/* Before ORP */}
         <span 
-          className={`${wordColor}`}
-          style={{ marginRight: '0.1em' }}
+          className={`text-right whitespace-pre ${wordColor}`}
+          style={{ minWidth: '0.5em' }}
         >
           {before}
         </span>
         
         {/* ORP character - INVERTED for maximum visibility */}
         <span 
-          className="font-black px-1.5 py-0.5"
+          className="relative font-black px-1.5 py-0.5 mx-0.5"
           style={{ 
             color: '#000000',
             backgroundColor: neonColor,
             textShadow: 'none',
             boxShadow: `0 0 ${isMobile ? '20px' : '40px'} ${neonColor}, 0 0 ${isMobile ? '40px' : '80px'} ${neonColorGlow}`,
             borderRadius: '4px',
-            margin: '0 0.05em',
           }}
         >
           {orp}
         </span>
         
+        {/* After ORP */}
         <span 
-          className={`${wordColor}`}
-          style={{ marginLeft: '0.1em' }}
+          className={`text-left whitespace-pre ${wordColor}`}
+          style={{ minWidth: '0.5em' }}
         >
           {after}
         </span>
