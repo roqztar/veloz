@@ -1,5 +1,5 @@
 /**
- * Secure File Parser for Neuro-Read
+ * Secure File Parser for Eyedance
  * Handles PDF, DOC, DOCX, PPT, PPTX, and TXT file parsing
  * All parsing happens client-side for privacy/security
  */

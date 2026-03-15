@@ -1,8 +1,8 @@
-# Neuro-Read
+# Eyedance
 
 A modern, blazing-fast RSVP (Rapid Serial Visual Presentation) speed reading application built with React and TypeScript.
 
-![Neuro-Read](https://img.shields.io/badge/Neuro--Read-Speed%20Reader-ef4444)
+![Eyedance](https://img.shields.io/badge/Eyedance-Speed%20Reader-ef4444)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)

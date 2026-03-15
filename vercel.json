@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "name": "neuro-read",
+  "name": "eyedance",
   "framework": "vite",
   "outputDirectory": "dist",
   "rewrites": [
