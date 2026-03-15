@@ -44,17 +44,17 @@ The project consists of two main parts:
 spritz-reader/
 ├── src/                          # Main web application
 │   ├── components/               # React components
-│   │   ├── Reader.tsx           # Main reader component (~400 lines)
+│   │   ├── Reader.tsx           # Main reader component (~844 lines)
 │   │   ├── SettingsModal.tsx    # Settings dialog (extracted for maintainability)
-│   │   ├── WordDisplay.tsx      # Single word display with ORP
+│   │   ├── WordDisplay.tsx      # Single word display with ORP (~197 lines)
 │   │   ├── Controls.tsx         # Playback controls (legacy, unused)
-│   │   └── ProgressBar.tsx      # Reading progress bar
+│   │   └── ProgressBar.tsx      # Reading progress bar (~22 lines)
 │   ├── hooks/                    # Custom React hooks
-│   │   ├── useSpritz.ts         # Core reading logic hook (246 lines)
-│   │   └── useDynamicFontSize.ts # Responsive font sizing (83 lines)
+│   │   ├── useSpritz.ts         # Core reading logic hook (~246 lines)
+│   │   └── useDynamicFontSize.ts # Responsive font sizing (~83 lines)
 │   ├── core/                     # Core utilities
-│   │   ├── textCleaner.ts       # Text parsing and cleaning pipeline (458 lines)
-│   │   └── fileParser.ts        # Secure file upload parser (PDF, DOC, PPT, TXT)
+│   │   ├── textCleaner.ts       # Text parsing and cleaning pipeline (~458 lines)
+│   │   └── fileParser.ts        # Secure file upload parser (~516 lines)
 │   ├── utils/                    # Utility functions
 │   │   └── orp.ts               # ORP calculations (legacy exports)
 │   ├── types/                    # TypeScript declarations
@@ -63,16 +63,16 @@ spritz-reader/
 │   ├── App.tsx                  # Root app component (renders Reader)
 │   ├── main.tsx                 # Entry point
 │   ├── App.css                  # Component styles (minimal)
-│   └── index.css                # Global styles + Tailwind (388 lines)
+│   └── index.css                # Global styles + Tailwind (~388 lines)
 ├── extension/                    # Browser extension (Manifest V3)
 │   ├── manifest.json            # Extension manifest (v3)
-│   ├── background.js            # Service worker (77 lines)
+│   ├── background.js            # Service worker (~77 lines)
 │   ├── content/
-│   │   ├── content.js           # Content script injected to pages (540 lines)
-│   │   └── content.css          # Content script styles (523 lines)
+│   │   ├── content.js           # Content script injected to pages (~540 lines)
+│   │   └── content.css          # Content script styles (~523 lines)
 │   ├── popup/
-│   │   ├── popup.html           # Extension popup UI (475 lines inline styles)
-│   │   └── popup.js             # Popup logic (204 lines)
+│   │   ├── popup.html           # Extension popup UI (~475 lines inline styles)
+│   │   └── popup.js             # Popup logic (~204 lines)
 │   └── icons/                   # Extension icons (16/48/128px PNG + SVG)
 ├── dist/                         # Build output (gitignored)
 ├── public/                       # Public assets
@@ -147,6 +147,12 @@ npm run lint
 - Simple progress indicator with gradient fill
 - Accessibility attributes (role, aria values)
 
+**SettingsModal.tsx** (206 lines)
+- Extracted from Reader.tsx to maintain component size
+- Typography settings: font family, weight, size
+- Text cleaning options: URLs, numbers, abbreviations, line breaks, markup
+- Parentheses handling modes: keep, dim, shorten, remove
+
 ### Core Logic
 
 **useSpritz.ts** (Custom Hook - 246 lines)
@@ -155,6 +161,7 @@ npm run lint
 - Calculates smart delays based on word metadata
 - Provides text navigation (next, prev, goTo, reset)
 - Context buffer for previous/next words
+- Code block detection and optional skipping
 
 **textCleaner.ts** (Text Processing - 458 lines)
 - `CleanOptions` interface for text processing configuration
@@ -164,7 +171,7 @@ npm run lint
 - Abbreviation dictionary (German and English)
 - URL, number, markup cleaning functions
 
-**fileParser.ts** (Secure File Upload)
+**fileParser.ts** (Secure File Upload - 516 lines)
 - `parseFile()` - Main entry point for file parsing
 - `validateFile()` - Security validation (size, type, path traversal check)
 - `sanitizeText()` - XSS prevention, control character removal
@@ -351,6 +358,10 @@ Where `delayMultiplier` is affected by:
   - `default-src 'self'` - Only same-origin content
   - `script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com` - Trusted scripts only
   - `style-src 'self' 'unsafe-inline'` - Inline styles allowed (required by Tailwind)
+  - `font-src 'self' data:` - Fonts from same origin or data URIs
+  - `img-src 'self' data: blob:` - Images from same origin or data/blob
+  - `connect-src 'self'` - Network requests to same origin only
+  - `worker-src 'self' blob:` - Workers from same origin or blob
   - `object-src 'none'` - No Flash/Java plugins
   - `frame-ancestors 'none'` - Prevents clickjacking
   - `upgrade-insecure-requests` - Forces HTTPS
@@ -445,4 +456,4 @@ Where `delayMultiplier` is affected by:
 
 ---
 
-Last updated: 2026-03-05
+Last updated: 2026-03-15

@@ -163,6 +163,7 @@ export function SettingsModal({
                 { key: 'expandAbbreviations', label: 'Abkürzungen auflösen' },
                 { key: 'fixLineBreaks', label: 'Zeilenumbrüche korrigieren' },
                 { key: 'cleanMarkup', label: 'Markup entfernen' },
+                { key: 'cleanFootnotes', label: 'Fußnoten entfernen' },
               ].map(({ key, label }) => (
                 <label key={key} className="flex items-center justify-between py-2 cursor-pointer">
                   <span className={`text-sm ${textColor}`}>{label}</span>

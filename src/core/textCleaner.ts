@@ -18,6 +18,8 @@ export interface CleanOptions {
   fixLineBreaks: boolean;
   /** Sonderzeichen filtern */
   cleanSpecialChars: boolean;
+  /** Fußnoten-Referenzen entfernen */
+  cleanFootnotes: boolean;
 }
 
 export const DEFAULT_CLEAN_OPTIONS: CleanOptions = {
@@ -28,6 +30,7 @@ export const DEFAULT_CLEAN_OPTIONS: CleanOptions = {
   expandAbbreviations: false,
   fixLineBreaks: true,
   cleanSpecialChars: true,
+  cleanFootnotes: true,
 };
 
 /** Wort mit Metadaten für Smart Display */
@@ -178,6 +181,29 @@ function cleanSpecialChars(text: string): string {
 }
 
 /**
+ * Entfernt Fußnoten-Referenzen aus PDF-Texten
+ * Erkennt: hochgestellte Zahlen am Satzende, [1], (1), etc.
+ */
+function cleanFootnotes(text: string): string {
+  // Entferne einzelne Zahlen, die zwischen Satzzeichen und Leerzeichen stehen
+  // z.B. "Text. 1 Nächster Satz" -> "Text. Nächster Satz"
+  let cleaned = text.replace(/([.!?;,])\s+(\d{1,3})\s+(?=[A-ZÄÖÜ])/g, '$1 ');
+  
+  // Entferne Zahlen in eckigen Klammern am Wortende (typisch für akademische Fußnoten)
+  // z.B. "Wort[12]" -> "Wort"
+  cleaned = cleaned.replace(/(\w)\[\d{1,3}\]/g, '$1');
+  
+  // Entferne isolierte Zahlen am Zeilenanfang/ende (häufig bei PDF-Extraktion)
+  // Nur wenn es sich um sehr kurze Zeilen handelt (weniger als 5 Zeichen)
+  cleaned = cleaned.replace(/^\s*\d{1,3}\s*$/gm, '');
+  
+  // Entferne mehrfache Leerzeichen, die durch die Bereinigung entstanden sein könnten
+  cleaned = cleaned.replace(/ +/g, ' ');
+  
+  return cleaned;
+}
+
+/**
  * Expandiert Abkürzungen
  */
 function expandAbbreviations(text: string): string {
@@ -237,6 +263,10 @@ export function cleanText(text: string, options: Partial<CleanOptions> = {}): st
   
   if (opts.cleanSpecialChars) {
     cleaned = cleanSpecialChars(cleaned);
+  }
+  
+  if (opts.cleanFootnotes) {
+    cleaned = cleanFootnotes(cleaned);
   }
   
   return cleaned.trim();
