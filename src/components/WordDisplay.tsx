@@ -164,39 +164,34 @@ export function WordDisplay({
       </div>
       
       <div 
-        className={`flex items-baseline tracking-tight animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
+        className={`flex items-center justify-center tracking-tight animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
         style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
       >
         <span 
-          className={`text-right overflow-visible whitespace-pre ${wordColor}`}
-          style={{ 
-            width: `${sidePadding}px`, 
-            minWidth: `${sidePadding}px`,
-          }}
+          className={`${wordColor}`}
+          style={{ marginRight: '0.1em' }}
         >
           {before}
         </span>
         
         {/* ORP character - INVERTED for maximum visibility */}
         <span 
-          className="relative font-black px-1 mx-0.5"
+          className="font-black px-1.5 py-0.5"
           style={{ 
             color: '#000000',
             backgroundColor: neonColor,
             textShadow: 'none',
             boxShadow: `0 0 ${isMobile ? '20px' : '40px'} ${neonColor}, 0 0 ${isMobile ? '40px' : '80px'} ${neonColorGlow}`,
-            borderRadius: '2px',
+            borderRadius: '4px',
+            margin: '0 0.05em',
           }}
         >
           {orp}
         </span>
         
         <span 
-          className={`text-left overflow-visible whitespace-pre ${wordColor}`}
-          style={{ 
-            width: `${sidePadding}px`, 
-            minWidth: `${sidePadding}px`,
-          }}
+          className={`${wordColor}`}
+          style={{ marginLeft: '0.1em' }}
         >
           {after}
         </span>
