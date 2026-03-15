@@ -204,10 +204,10 @@ input[type="range"]::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #ef4444;
+  background: var(--neon-color, #00ffff);
   border: 2px solid white;
   margin-top: -6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 0 10px var(--neon-color, #00ffff), 0 0 20px var(--neon-color, #00ffff);
 }
 
 input[type="range"]::-moz-range-track {

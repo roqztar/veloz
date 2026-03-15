@@ -113,7 +113,7 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
         <circle cx="30" cy="35" r="1.5" fill={neonColor} opacity="0.5" />
       </svg>
       
-      {/* Time display below eye - minimal format */}
+      {/* Time display below eye - rounded to 1 decimal, stable */}
       <div 
         className="text-center font-mono text-xs mt-1 font-bold"
         style={{ 
@@ -122,8 +122,8 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
         }}
       >
         {timeSaved >= 60 
-          ? `${Math.floor(timeSaved / 60)}m` 
-          : `${Math.floor(timeSaved)}s`}
+          ? `${(timeSaved / 60).toFixed(1)}m` 
+          : `${timeSaved.toFixed(1)}s`}
       </div>
     </div>
   );

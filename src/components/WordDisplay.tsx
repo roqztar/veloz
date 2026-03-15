@@ -177,23 +177,18 @@ export function WordDisplay({
           {before}
         </span>
         
-        {/* ORP character with neon glow - using the neon color for visibility */}
+        {/* ORP character - INVERTED for maximum visibility */}
         <span 
-          className="relative font-black"
+          className="relative font-black px-1 mx-0.5"
           style={{ 
-            color: neonColor,
-            textShadow: `0 0 ${isMobile ? '20px' : '40px'} ${neonColor}, 0 0 ${isMobile ? '40px' : '80px'} ${neonColor}`,
+            color: '#000000',
+            backgroundColor: neonColor,
+            textShadow: 'none',
+            boxShadow: `0 0 ${isMobile ? '20px' : '40px'} ${neonColor}, 0 0 ${isMobile ? '40px' : '80px'} ${neonColorGlow}`,
+            borderRadius: '2px',
           }}
         >
           {orp}
-          {/* Thick neon underline for ORP */}
-          <span 
-            className="absolute -bottom-1 left-0 right-0 h-1 md:h-1.5"
-            style={{ 
-              backgroundColor: neonColor,
-              boxShadow: `0 0 15px ${neonColor}, 0 0 30px ${neonColor}, 0 0 45px ${neonColor}`
-            }}
-          />
         </span>
         
         <span 

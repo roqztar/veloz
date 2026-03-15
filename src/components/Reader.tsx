@@ -121,7 +121,7 @@ export function Reader({ className = '' }: ReaderProps) {
   const neonColorGlow = `hsl(${hue}, 100%, 50%, 0.5)`;
   const orpColor = getContrastColor(neonColor);
   
-  // Track elapsed time when playing
+  // Track elapsed time when playing - update every second for stability
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     
@@ -130,8 +130,8 @@ export function Reader({ className = '' }: ReaderProps) {
         setStartTime(Date.now());
       }
       interval = setInterval(() => {
-        setElapsedTime((Date.now() - (startTime || Date.now())) / 1000);
-      }, 100);
+        setElapsedTime(Math.floor((Date.now() - (startTime || Date.now())) / 1000));
+      }, 1000);
     }
     
     return () => clearInterval(interval);
@@ -334,8 +334,8 @@ export function Reader({ className = '' }: ReaderProps) {
     }
   }, [prev, next, showScrubber]);
   
-  // Calculate statistics - TIME SAVED in seconds
-  const timeSaved = calculateTimeSaved(currentIndex + 1, wpm);
+  // Calculate statistics - TIME SAVED in seconds, rounded to 1 decimal
+  const timeSaved = Math.round(calculateTimeSaved(currentIndex + 1, wpm) * 10) / 10;
   
   // Get text around current position for scrubber
   const getScrubberText = () => {
@@ -361,6 +361,7 @@ export function Reader({ className = '' }: ReaderProps) {
   return (
     <div 
       className={`min-h-screen w-full ${bgClass} ${className} transition-colors duration-500`}
+      style={{ '--neon-color': neonColor } as React.CSSProperties}
       onMouseMove={resetInactivityTimer}
       onMouseLeave={() => setShowControls(false)}
       onClick={resetInactivityTimer}
