@@ -238,39 +238,30 @@ async function parsePDF(file: File): Promise<string> {
       pageText = pageText.replace(/([A-Za-z])\n+([a-zäöüß]{2,})/g, '$1$2');
       
       // COLUMN LAYOUT DETECTION (Newspaper-style layouts)
-      // If a line ends with a complete word (no hyphen) and next line starts with lowercase,
-      // it's likely a column break within a sentence, not a paragraph break.
-      // Pattern: "word\nword" where second word starts with lowercase -> "word word"
-      pageText = pageText.replace(/([a-zA-ZäöüÄÖÜß])\n+([a-zäöüß][a-zäöüß]*)/g, '$1 $2');
-      
-      // Join lines that end without punctuation (likely continued sentences)
-      // But preserve paragraph breaks (lines ending with punctuation or blank lines)
-      pageText = pageText.replace(/([^.!?;:\n])\n+([a-zäöüß])/g, '$1 $2');
-      
-      // Fix broken words at line breaks where word was split without hyphen
-      // Pattern: lowercase at end + lowercase at start of next line (continuation)
-      pageText = pageText.replace(/([a-zäöüß]{2,})\n+([a-zäöüß]{2,})/g, '$1$2');
-      
-      // Fix short line breaks in multi-column layouts
-      // If line is short (<50 chars) and next line starts with lowercase, join them
-      // This handles newspaper/magazine column layouts
+      // If line is short (<45 chars) and ends with a word (no hyphen) 
+      // AND next line starts with lowercase letter AND is short (<45 chars),
+      // it's likely a column break within a sentence.
       const lines = pageText.split('\n');
       const mergedLines: string[] = [];
       let i = 0;
       while (i < lines.length) {
-        const current = lines[i];
-        const next = lines[i + 1];
+        const current = lines[i].trim();
+        const next = lines[i + 1]?.trim();
         
-        // Check if current line looks like end of column (short, no ending punctuation)
-        // and next line starts with lowercase (continuation of sentence)
+        // Check if current line looks like end of column in multi-column layout:
+        // - short line (<45 chars)
+        // - doesn't end with punctuation (not a sentence end)
+        // - next line exists, is also short (<45 chars)
+        // - next line starts with lowercase (continuation of sentence)
         if (next && 
-            current.length < 50 && 
-            !current.match(/[.!?;:]\s*$/) &&
+            current.length < 45 && 
+            next.length < 45 &&
+            !current.match(/[.!?;:,\-]\s*$/) &&
             next.match(/^[a-zäöüß]/)) {
           mergedLines.push(current + ' ' + next);
           i += 2;
         } else {
-          mergedLines.push(current);
+          mergedLines.push(lines[i]);
           i++;
         }
       }
