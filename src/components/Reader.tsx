@@ -61,8 +61,8 @@ export function Reader({ className = '' }: ReaderProps) {
   const [inputText, setInputText] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   
-  // Rainbow color picker state
-  const [hue, setHue] = useState(180); // Cyan default (cyberpunk aesthetic)
+  // Rainbow color picker state - random hue on each visit
+  const [hue, setHue] = useState(() => Math.floor(Math.random() * 360));
   const [showColorPicker, setShowColorPicker] = useState(false);
   
   // Visual effects (default off for cleaner reading experience)
