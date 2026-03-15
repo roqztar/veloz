@@ -391,13 +391,13 @@ export function Reader({ className = '' }: ReaderProps) {
         >
           <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
           <div 
-            className={`relative w-full max-w-3xl ${glassClass} rounded-t-3xl sm:rounded-3xl p-1 animate-in zoom-in-95 duration-300 max-h-[95vh] sm:max-h-none overflow-y-auto sm:overflow-visible`}
+            className={`relative w-full max-w-3xl ${glassClass} rounded-t-3xl sm:rounded-3xl p-1 animate-in zoom-in-95 duration-300 h-[85vh] sm:h-auto sm:max-h-[90vh] overflow-hidden flex flex-col`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Inner glow effect */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
             
-            <div className="relative p-4 sm:p-6 lg:p-8">
+            <div className="relative p-4 sm:p-6 lg:p-8 flex flex-col h-full">
               {/* Header */}
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <div className="flex items-center gap-2 sm:gap-3">
@@ -423,14 +423,14 @@ export function Reader({ className = '' }: ReaderProps) {
                 </button>
               </div>
               
-              {/* Textarea with glass effect */}
-              <div className={`rounded-2xl p-1 ${isDarkMode ? 'bg-black/30' : 'bg-white/50'}`}>
+              {/* Textarea with glass effect - full height on mobile */}
+              <div className={`flex-1 rounded-2xl p-1 ${isDarkMode ? 'bg-black/30' : 'bg-white/50'} min-h-0`}>
                 <textarea
                   id="editor-textarea"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder="Füge hier deinen Text ein..."
-                  className={`w-full h-48 sm:h-64 p-4 sm:p-5 rounded-xl resize-none focus:outline-none text-base sm:text-lg leading-relaxed ${
+                  className={`w-full h-full min-h-[200px] sm:min-h-[250px] p-4 sm:p-5 rounded-xl resize-none focus:outline-none text-base sm:text-lg leading-relaxed ${
                     isDarkMode 
                       ? 'bg-transparent text-slate-200 placeholder-slate-600' 
                       : 'bg-transparent text-gray-800 placeholder-gray-400'
@@ -440,7 +440,7 @@ export function Reader({ className = '' }: ReaderProps) {
               </div>
               
               {/* Action Buttons */}
-              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-4 sm:mt-6">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-4 sm:mt-6 flex-shrink-0">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <button 
                     onClick={() => setInputText('')}

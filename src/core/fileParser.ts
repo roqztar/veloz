@@ -227,16 +227,23 @@ async function parsePDF(file: File): Promise<string> {
         .trim();
       
       // Fix hyphenation at line breaks (common in PDFs)
-      // Pattern: word-
-word -> wordword
+      // Pattern: word- followed by word on next line -> wordword
       pageText = pageText.replace(/(\w)-\n+(\w)/g, '$1$2');
       
       // Also handle soft hyphens and common hyphenation patterns
       pageText = pageText.replace(/(\w)[\u00AD\u2010\u2011]\n*(\w)/g, '$1$2');
       
+      // Fix broken words: single letter (often capital) followed by rest of word
+      // Pattern: "M\nachine" -> "Machine" (common in PDF column layouts)
+      pageText = pageText.replace(/([A-Za-z])\n+([a-zäöüß]{2,})/g, '$1$2');
+      
       // Join lines that end without punctuation (likely continued sentences)
       // But preserve paragraph breaks (lines ending with punctuation or blank lines)
       pageText = pageText.replace(/([^.!?;:\n])\n+([a-zäöüß])/g, '$1 $2');
+      
+      // Fix broken words at line breaks where word was split without hyphen
+      // Pattern: lowercase at end + lowercase at start of next line (continuation)
+      pageText = pageText.replace(/([a-zäöüß]{2,})\n+([a-zäöüß]{2,})/g, '$1$2');
       
       if (pageText) {
         fullText += pageText + '\n\n';
