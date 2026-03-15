@@ -178,32 +178,18 @@ export function WordDisplay({
           {before}
         </span>
         
-        {/* ORP - highlighted with enhanced glow */}
+        {/* ORP - subtle highlight */}
         <span 
-          className="relative font-black px-2 py-1 mx-1"
+          className="relative font-bold px-1 py-0.5 mx-0.5"
           style={{ 
             color: '#000000',
             backgroundColor: neonColor,
             textShadow: 'none',
-            boxShadow: `0 0 ${isMobile ? '25px' : '50px'} ${neonColor}, 0 0 ${isMobile ? '50px' : '100px'} ${neonColorGlow}, inset 0 0 10px rgba(255,255,255,0.3)`,
-            borderRadius: '6px',
-            border: `2px solid rgba(255,255,255,0.5)`,
+            boxShadow: `0 0 ${isMobile ? '8px' : '15px'} ${neonColor}`,
+            borderRadius: '3px',
           }}
         >
           {orp}
-          {/* Subtle scanline effect - slow and faint */}
-          <span 
-            className="absolute inset-0 overflow-hidden rounded pointer-events-none"
-            style={{ borderRadius: '4px' }}
-          >
-            <span 
-              className="absolute w-full h-px bg-white/20"
-              style={{
-                animation: 'scanline 8s ease-in-out infinite',
-                top: '20%',
-              }}
-            />
-          </span>
         </span>
         
         {/* After ORP - fixed width for stability */}
