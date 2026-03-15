@@ -41,7 +41,6 @@ export function WordDisplay({
 
     const calculateFontSize = () => {
       const containerWidth = containerRef.current?.offsetWidth || window.innerWidth;
-      const containerHeight = containerRef.current?.offsetHeight || window.innerHeight;
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       
@@ -57,22 +56,18 @@ export function WordDisplay({
       const maxLength = longestWord.length;
       if (maxLength === 0) return mobile ? 56 : 72;
 
-      // Mobile: use more available width, less padding
-      const availableWidth = containerWidth * (mobile ? 0.95 : 0.9);
-      const sidePaddingRatio = mobile ? 0.25 : 0.35;
-      const effectiveWidth = availableWidth * (1 - sidePaddingRatio * 2);
-
-      // Mobile: slightly larger char width ratio for readability
-      const charWidthRatio = mobile ? 0.6 : 0.55;
-      const baseSize = Math.floor(effectiveWidth / (maxLength * charWidthRatio));
+      // Calculate base font size to fit longest word
+      const availableWidth = containerWidth * (mobile ? 0.9 : 0.8);
+      const charWidthRatio = mobile ? 0.65 : 0.6;
+      const baseSize = Math.floor(availableWidth / (maxLength * charWidthRatio));
 
       // Apply font size level (-5 to +5 levels)
       const levelMultiplier = 1.0 + (fontSizeLevel * 0.15);
       const adjustedSize = Math.floor(baseSize * levelMultiplier);
 
-      // Mobile: smaller min/max, but ensure readability
-      const minSize = mobile ? 20 : 24;
-      const maxSize = mobile ? Math.min(containerHeight * 0.25, 100) : 150;
+      // Clamp to reasonable range
+      const minSize = mobile ? 24 : 32;
+      const maxSize = mobile ? 80 : 120;
       
       return Math.max(minSize, Math.min(maxSize, adjustedSize));
     };
@@ -105,7 +100,7 @@ export function WordDisplay({
     );
   }
 
-  // Calculate ORP - adjusted for mobile
+  // Calculate ORP position
   const orpIndex = Math.min(
     currentWord.text.length <= 1 ? 0 :
     currentWord.text.length <= 5 ? 1 :
@@ -117,20 +112,20 @@ export function WordDisplay({
   const orp = currentWord.text[orpIndex] || '';
   const after = currentWord.text.slice(orpIndex + 1);
   
-  // Cyberpunk word type colors - using the neon theme
+  // Word color based on type
   const getWordColor = (type: DisplayWord['type']): string => {
     switch (type) {
       case 'url':
       case 'code':
-        return 'text-amber-400';
+        return 'text-amber-300';
       case 'parenthetical':
-        return 'text-slate-500';
+        return 'text-slate-400';
       case 'number':
-        return 'text-green-400';
+        return 'text-cyan-300';
       case 'heading':
         return 'text-white';
       default:
-        return 'text-slate-200';
+        return 'text-white';
     }
   };
   
@@ -147,15 +142,10 @@ export function WordDisplay({
     normal: 'font-normal',
     bold: 'font-bold'
   }[fontWeight];
-  
-  // Responsive side padding - smaller on mobile
-  const sidePadding = isMobile 
-    ? Math.max(60, fontSize * 1.5)
-    : Math.max(120, fontSize * 2.2);
 
   return (
     <div ref={containerRef} className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}>
-      {/* Cyberpunk glow effect using neon color */}
+      {/* Background glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div 
           className="w-32 h-32 md:w-48 md:h-48 rounded-full blur-3xl"
@@ -163,21 +153,21 @@ export function WordDisplay({
         />
       </div>
       
+      {/* Word display - simple inline layout */}
       <div 
-        className={`flex items-baseline tracking-tight animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
+        className={`relative z-10 whitespace-nowrap animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
         style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
       >
-        {/* Before ORP */}
-        <span 
-          className={`text-right whitespace-pre ${wordColor}`}
-          style={{ minWidth: '0.5em' }}
-        >
-          {before}
-        </span>
+        {/* Full word with ORP highlighted */}
+        {before && (
+          <span className={wordColor}>
+            {before}
+          </span>
+        )}
         
-        {/* ORP character - INVERTED for maximum visibility */}
+        {/* ORP - highlighted */}
         <span 
-          className="relative font-black px-1.5 py-0.5 mx-0.5"
+          className="inline-block font-black px-1.5 py-0.5 mx-0.5"
           style={{ 
             color: '#000000',
             backgroundColor: neonColor,
@@ -190,12 +180,11 @@ export function WordDisplay({
         </span>
         
         {/* After ORP */}
-        <span 
-          className={`text-left whitespace-pre ${wordColor}`}
-          style={{ minWidth: '0.5em' }}
-        >
-          {after}
-        </span>
+        {after && (
+          <span className={wordColor}>
+            {after}
+          </span>
+        )}
       </div>
     </div>
   );
