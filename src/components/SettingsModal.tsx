@@ -12,7 +12,12 @@ interface SettingsModalProps {
   setFontWeight: (w: 'normal' | 'bold' | 'light') => void;
   fontSizeLevel: number;
   setFontSizeLevel: (l: number) => void;
-
+  
+  // Visual effects
+  showGrid: boolean;
+  setShowGrid: (v: boolean) => void;
+  showGlow: boolean;
+  setShowGlow: (v: boolean) => void;
   
   // Cleaning
   cleanOptions: CleanOptions;
@@ -32,6 +37,10 @@ export function SettingsModal({
   setFontWeight,
   fontSizeLevel,
   setFontSizeLevel,
+  showGrid,
+  setShowGrid,
+  showGlow,
+  setShowGlow,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
   neonColor = '#00ffff',
@@ -173,6 +182,38 @@ export function SettingsModal({
                   +
                 </button>
               </div>
+            </div>
+          </section>
+          
+          <hr className="border-t border-slate-700" />
+          
+          {/* Visual Effects */}
+          <section className="space-y-4">
+            <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Visual_Effects</h3>
+            
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowGrid(!showGrid)}
+                className={`flex-1 py-2 px-3 text-sm font-mono transition-all border ${
+                  showGrid 
+                    ? 'text-black font-bold' 
+                    : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
+                }`}
+                style={showGrid ? { backgroundColor: neonColor } : {}}
+              >
+                GRID
+              </button>
+              <button
+                onClick={() => setShowGlow(!showGlow)}
+                className={`flex-1 py-2 px-3 text-sm font-mono transition-all border ${
+                  showGlow 
+                    ? 'text-black font-bold' 
+                    : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
+                }`}
+                style={showGlow ? { backgroundColor: neonColor } : {}}
+              >
+                GLOW
+              </button>
             </div>
           </section>
         </div>

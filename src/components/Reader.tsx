@@ -404,6 +404,10 @@ export function Reader({ className = '' }: ReaderProps) {
         setFontWeight={setFontWeight}
         fontSizeLevel={fontSizeLevel}
         setFontSizeLevel={setFontSizeLevel}
+        showGrid={showGrid}
+        setShowGrid={setShowGrid}
+        showGlow={showGlow}
+        setShowGlow={setShowGlow}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}
         neonColor={neonColor}
@@ -863,6 +867,13 @@ export function Reader({ className = '' }: ReaderProps) {
                   }}
                 />
               </div>
+              
+              {/* CyberEye Time Saved Display - right of WPM slider */}
+              <CyberEye 
+                timeSaved={timeSaved}
+                neonColor={neonColor}
+                className="hidden sm:block ml-3"
+              />
             </div>
             
             {/* Editor Button */}
@@ -1000,43 +1011,8 @@ export function Reader({ className = '' }: ReaderProps) {
             </button>
           </div>
           
-          {/* Visual Effects & Color Picker Buttons */}
+          {/* Color Picker Button */}
           <div className="flex items-center justify-end gap-2">
-            {/* CyberEye Time Saved Display - left of controls */}
-            <CyberEye 
-              timeSaved={timeSaved}
-              neonColor={neonColor}
-              className="hidden sm:block mr-1"
-            />
-            
-            {/* Grid Toggle */}
-            <button 
-              onClick={() => setShowGrid(!showGrid)}
-              className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded text-xs font-mono"
-              style={{ 
-                backgroundColor: showGrid ? neonColor : 'rgba(0,0,0,0.4)',
-                color: showGrid ? '#000' : undefined,
-                border: `1px solid ${neonColor}50`
-              }}
-              title="Grid"
-            >
-              #
-            </button>
-            
-            {/* Glow Toggle */}
-            <button 
-              onClick={() => setShowGlow(!showGlow)}
-              className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded text-xs font-mono"
-              style={{ 
-                backgroundColor: showGlow ? neonColor : 'rgba(0,0,0,0.4)',
-                color: showGlow ? '#000' : undefined,
-                border: `1px solid ${neonColor}50`
-              }}
-              title="Glow"
-            >
-              ✦
-            </button>
-            
             <button 
               onClick={() => setShowColorPicker(true)}
               className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
