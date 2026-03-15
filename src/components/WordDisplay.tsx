@@ -157,7 +157,6 @@ export function WordDisplay({
     <div 
       ref={containerRef} 
       className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}
-      onClick={() => setShowNavBuffer(!showNavBuffer)}
     >
       {/* Click hint */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-slate-600 font-mono opacity-50 pointer-events-none">
