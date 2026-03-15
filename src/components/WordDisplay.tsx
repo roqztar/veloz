@@ -178,7 +178,7 @@ export function WordDisplay({
           {before}
         </span>
         
-        <span className={`relative animate-orp-pulse ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+        <span className={`relative ${isDarkMode ? 'text-red-400 drop-shadow-[0_0_30px_rgba(248,113,113,0.5)]' : 'text-red-600'}`}>
           {orp}
         </span>
         

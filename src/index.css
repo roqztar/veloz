@@ -99,25 +99,6 @@ body {
   }
 }
 
-/* ORP Pulse Animation - Futuristic glow effect */
-@keyframes orp-pulse {
-  0%, 100% {
-    text-shadow: 0 0 20px rgba(248, 113, 113, 0.4),
-                 0 0 40px rgba(248, 113, 113, 0.2),
-                 0 0 60px rgba(248, 113, 113, 0.1);
-    transform: scale(1);
-  }
-  50% {
-    text-shadow: 0 0 30px rgba(248, 113, 113, 0.6),
-                 0 0 60px rgba(248, 113, 113, 0.3),
-                 0 0 90px rgba(248, 113, 113, 0.15);
-    transform: scale(1.02);
-  }
-}
-
-.animate-orp-pulse {
-  animation: orp-pulse 2s ease-in-out infinite;
-}
 
 @keyframes slide-in-from-top {
   from {
