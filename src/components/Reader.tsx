@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { WordDisplay } from './WordDisplay';
 import { ProgressBar } from './ProgressBar';
 import { SettingsModal } from './SettingsModal';
+import { CyberEye } from './CyberEye';
 import { useSpritz } from '../hooks/useSpritz';
 import { calculateTimeSaved } from '../core/textCleaner';
 import { parseFile, getSupportedFileTypes, getSupportedMimeTypes } from '../core/fileParser';
@@ -55,7 +56,12 @@ function formatTimeCyberpunk(totalSeconds: number): string {
 
 export function Reader({ className = '' }: ReaderProps) {
   // Cyberpunk is always dark mode
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(false);
+  
+  // Inactivity timer for auto-hiding controls
+  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const INACTIVITY_DELAY = 2000; // 2 seconds
   const [showSettings, setShowSettings] = useState(false);
   const [showScrubber, setShowScrubber] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -190,12 +196,16 @@ export function Reader({ className = '' }: ReaderProps) {
         case 'Escape':
           // Just closes modals now
           break;
+        case 'KeyF':
+          e.preventDefault();
+          toggleFullscreen();
+          break;
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggle, next, prev, showSettings, showScrubber, showEditor, showColorPicker]);
+  }, [toggle, next, prev, showSettings, showScrubber, showEditor, showColorPicker, toggleFullscreen]);
   
   const openEditor = useCallback(() => {
     setInputText(rawText);
@@ -221,6 +231,42 @@ export function Reader({ className = '' }: ReaderProps) {
       scrubIntervalRef.current = null;
     }
     isLongPressRef.current = false;
+    setShowControls(false);
+  }, []);
+  
+  // Inactivity detection - hide controls after cursor is still for 2 seconds
+  const resetInactivityTimer = useCallback(() => {
+    setShowControls(true);
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+    inactivityTimerRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, INACTIVITY_DELAY);
+  }, []);
+  
+  // Fullscreen toggle
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch {
+      // Fullscreen not supported or failed
+    }
+  }, []);
+  
+  // Listen for fullscreen changes (e.g., user presses Escape)
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
   
   // Touch/Swipe handlers for mobile navigation
@@ -324,8 +370,9 @@ export function Reader({ className = '' }: ReaderProps) {
   return (
     <div 
       className={`min-h-screen w-full ${bgClass} ${className} transition-colors duration-500`}
-      onMouseEnter={() => setShowControls(true)}
+      onMouseMove={resetInactivityTimer}
       onMouseLeave={() => setShowControls(false)}
+      onClick={resetInactivityTimer}
     >
       {/* Cyberpunk Grid Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -847,21 +894,42 @@ export function Reader({ className = '' }: ReaderProps) {
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
               </svg>
             </button>
+            
+            {/* Fullscreen Button */}
+            <button
+              onClick={toggleFullscreen}
+              className={`w-11 h-11 sm:w-10 sm:h-10 ${terminalClass} text-slate-300 hover:text-white flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 min-w-[44px]`}
+              style={{ borderColor: neonColorDim }}
+              title="Vollbild (F)"
+            >
+              {isFullscreen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
+              )}
+            </button>
           </div>
           
           {/* Stats - TIME SAVED in HH:MM:SS format */}
-          <div 
-            className={`flex items-center justify-between sm:justify-start gap-2 sm:gap-4 px-3 sm:px-4 py-2 ${terminalClass} font-mono`}
-            style={{ borderColor: neonColorDim }}
-          >
-            <span 
-              className={`text-xs sm:text-sm font-bold tracking-wider hidden sm:inline`}
-              style={{ color: neonColor, textShadow: `0 0 5px ${neonColorGlow}` }}
+          <div className="flex items-center gap-4">
+            {/* CyberEye Time Saved Display */}
+            <CyberEye 
+              timeSaved={timeSaved} 
+              neonColor={neonColor}
+              className="hidden sm:block"
+            />
+            
+            {/* Word Counter */}
+            <div 
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 ${terminalClass} font-mono`}
+              style={{ borderColor: neonColorDim }}
             >
-              TIME_SAVED: {formatTimeCyberpunk(timeSaved)}
-            </span>
-            <span className={`text-xs sm:text-sm ${mutedColorClass} hidden sm:inline`}>|</span>
-            <span className={`text-sm font-bold`} style={{ color: neonColor }}>{currentIndex + 1} / {words.length}</span>
+              <span className={`text-sm font-bold`} style={{ color: neonColor }}>{currentIndex + 1} / {words.length}</span>
+            </div>
           </div>
           
           {/* Color Picker Button */}
@@ -1001,9 +1069,17 @@ export function Reader({ className = '' }: ReaderProps) {
             </button>
           </div>
           
-          {/* Progress Bar */}
+          {/* Progress Bar - Draggable with word preview */}
           <div className="mt-4 sm:mt-6">
-            <ProgressBar progress={progress} isDarkMode={true} neonColor={neonColor} />
+            <ProgressBar 
+              progress={progress} 
+              currentIndex={currentIndex}
+              totalWords={words.length}
+              words={words.map(w => w.text)}
+              onSeek={goTo}
+              isDarkMode={true} 
+              neonColor={neonColor} 
+            />
           </div>
         </div>
       </div>
