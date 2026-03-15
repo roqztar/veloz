@@ -13,7 +13,7 @@ export function useSpeech() {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [options, setOptions] = useState<SpeechOptions>({
     gender: 'off',
-    rate: 1.6, // Faster for RSVP
+    rate: 2.0, // Maximum speed for RSVP - browser limit
     volume: 1,
     pitch: 1
   });
@@ -125,11 +125,13 @@ export function useSpeech() {
     const voice = getVoice(detectedLang);
     if (!voice) return;
     
-    // Adjust rate based on WPM if provided (200-1000 WPM range)
-    // Base rate 1.6 for ~300 WPM, scale up to 2.0 for higher WPM
+    // Adjust rate based on WPM - always use max speed to keep up with RSVP
+    // Browser TTS needs to be at maximum to not fall behind
     let rate = options.rate;
     if (wpm) {
-      rate = Math.min(2.0, Math.max(1.2, 1.2 + (wpm - 200) / 800 * 0.8));
+      // Always use max rate (2.0) for RSVP - speech will be cut off by next word anyway
+      // This prevents words from overlapping/piling up
+      rate = 2.0;
     }
     
     const utterance = new SpeechSynthesisUtterance(text);
