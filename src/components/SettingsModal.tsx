@@ -23,8 +23,6 @@ interface SettingsModalProps {
   // Speech synthesis - eSpeak
   speechEnabled: SpeechState;
   toggleSpeech: () => void;
-  speechSupported: boolean;
-  isSpeechLoaded: boolean;
   serverAvailable: boolean;
   
   // Cleaning
@@ -51,8 +49,6 @@ export function SettingsModal({
   setShowGlow,
   speechEnabled,
   toggleSpeech,
-  speechSupported,
-  isSpeechLoaded,
   serverAvailable,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
