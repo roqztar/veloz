@@ -176,9 +176,9 @@ export function useSpritz({
     setCleanOptionsState(prev => ({ ...prev, ...options }));
   }, []);
   
-  // Setze WPM
+  // Setze WPM - erlaubt 50-1000 WPM (50 für sehr langsames Lesen mit Voice)
   const updateWPM = useCallback((newWPM: number) => {
-    setWPMState(Math.max(200, Math.min(1000, newWPM)));
+    setWPMState(Math.max(50, Math.min(1000, newWPM)));
   }, []);
   
   // Reset

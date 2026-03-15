@@ -172,6 +172,13 @@ export function Reader({ className = '' }: ReaderProps) {
     }
   }, [currentWord, isPlaying, speak, speechEnabled]);
   
+  // Cap WPM at 275 when Voice is enabled (research shows comprehension drops above 275 WPM)
+  useEffect(() => {
+    if (speechEnabled === 'on' && wpm > 275) {
+      setWPM(275);
+    }
+  }, [speechEnabled, wpm, setWPM]);
+  
   // Initial spotlight effect on page load
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -946,7 +953,7 @@ export function Reader({ className = '' }: ReaderProps) {
               
               {/* Minus Button */}
               <button
-                onClick={() => setWPM(Math.max(200, wpm - 10))}
+                onClick={() => setWPM(Math.max(50, wpm - 10))}
                 className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
@@ -968,13 +975,13 @@ export function Reader({ className = '' }: ReaderProps) {
               
               {/* Plus Button */}
               <button
-                onClick={() => setWPM(Math.min(1000, wpm + 10))}
+                onClick={() => setWPM(Math.min(speechEnabled === 'on' ? 275 : 1000, wpm + 10))}
                 className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
                 }}
-                title="WPM +10"
+                title={speechEnabled === 'on' ? 'WPM +10 (max 275 with Voice)' : 'WPM +10'}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
@@ -985,17 +992,26 @@ export function Reader({ className = '' }: ReaderProps) {
               <div className="relative flex items-center flex-1 sm:flex-none ml-1">
                 <input
                   type="range"
-                  min={200}
-                  max={1000}
+                  min={50}
+                  max={speechEnabled === 'on' ? 275 : 1000}
                   step={10}
                   value={wpm}
                   onChange={(e) => setWPM(Number(e.target.value))}
                   className="w-full sm:w-24 h-8 sm:h-6 appearance-none cursor-pointer bg-transparent touch-manipulation"
                   style={{ 
-                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${(wpm-200)/8}%, rgba(51,65,85,0.5) ${(wpm-200)/8}%, rgba(51,65,85,0.5) 100%)`,
+                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${(wpm-50)/(speechEnabled === 'on' ? 2.25 : 9.5)}%, rgba(51,65,85,0.5) ${(wpm-50)/(speechEnabled === 'on' ? 2.25 : 9.5)}%, rgba(51,65,85,0.5) 100%)`,
                     height: '8px'
                   }}
                 />
+                {/* Voice limit indicator */}
+                {speechEnabled === 'on' && (
+                  <div 
+                    className="absolute -top-5 right-0 text-[10px] font-mono text-slate-400 whitespace-nowrap"
+                    style={{ color: neonColor }}
+                  >
+                    max 275 with Voice
+                  </div>
+                )}
               </div>
               
               {/* CyberEye Time Saved Display - right of WPM slider */}
