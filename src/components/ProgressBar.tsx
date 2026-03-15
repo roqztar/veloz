@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface ProgressBarProps {
   progress: number;
@@ -26,6 +26,7 @@ export function ProgressBar({
   const [isDragging, setIsDragging] = useState(false);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState(0);
+  const isDraggingRef = useRef(false);
   
   const calculateIndexFromPosition = useCallback((clientX: number) => {
     if (!containerRef.current) return 0;
@@ -35,9 +36,51 @@ export function ProgressBar({
     return Math.floor(percentage * (totalWords - 1));
   }, [totalWords]);
   
+  // Update ref when state changes
+  useEffect(() => {
+    isDraggingRef.current = isDragging;
+  }, [isDragging]);
+  
+  // Global mouse move/up handlers
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current || !containerRef.current) return;
+      
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, x / rect.width));
+      setTooltipPosition(percentage * 100);
+      
+      const index = Math.floor(percentage * (totalWords - 1));
+      setHoverIndex(index);
+      onSeek(index);
+    };
+    
+    const handleGlobalMouseUp = () => {
+      if (isDraggingRef.current) {
+        setIsDragging(false);
+        isDraggingRef.current = false;
+      }
+    };
+    
+    // Add global listeners when dragging starts
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+      document.addEventListener('mouseleave', handleGlobalMouseUp);
+    }
+    
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('mouseleave', handleGlobalMouseUp);
+    };
+  }, [isDragging, onSeek, totalWords]);
+  
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
+    isDraggingRef.current = true;
     const index = calculateIndexFromPosition(e.clientX);
     onSeek(index);
   }, [calculateIndexFromPosition, onSeek]);
@@ -51,19 +94,12 @@ export function ProgressBar({
     
     const index = Math.floor(percentage * (totalWords - 1));
     setHoverIndex(index);
-    
-    if (isDragging) {
-      onSeek(index);
-    }
-  }, [calculateIndexFromPosition, isDragging, onSeek, totalWords]);
-  
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+  }, [totalWords]);
   
   const handleMouseLeave = useCallback(() => {
-    setIsDragging(false);
-    setHoverIndex(null);
+    if (!isDraggingRef.current) {
+      setHoverIndex(null);
+    }
   }, []);
   
   const previewWord = hoverIndex !== null && words[hoverIndex] 
@@ -80,7 +116,6 @@ export function ProgressBar({
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
         {/* Progress Fill */}
@@ -103,7 +138,7 @@ export function ProgressBar({
         
         {/* Draggable Handle - larger for easier grabbing */}
         <div 
-          className="absolute top-1/2 -translate-y-1/2 w-6 h-10 rounded-lg cursor-grab active:cursor-grabbing transition-transform hover:scale-110 border-2 border-white"
+          className="absolute top-1/2 -translate-y-1/2 w-6 h-10 rounded-lg cursor-grab active:cursor-grabbing transition-transform hover:scale-110 border-2 border-white pointer-events-none"
           style={{ 
             left: `calc(${clampedProgress}% - 12px)`,
             backgroundColor: neonColor,
@@ -111,7 +146,7 @@ export function ProgressBar({
           }}
         >
           {/* Grip lines */}
-          <div className="absolute inset-0 flex items-center justify-center gap-1">
+          <div className="absolute inset-0 flex items-center justify-center gap-1 pointer-events-none">
             <div className="w-0.5 h-4 bg-black/30 rounded-full" />
             <div className="w-0.5 h-4 bg-black/30 rounded-full" />
             <div className="w-0.5 h-4 bg-black/30 rounded-full" />
@@ -147,7 +182,6 @@ export function ProgressBar({
               borderTop: `10px solid ${neonColor}`
             }}
           />
-          {/* Inner tail for border effect */}
           <div 
             className="absolute -bottom-1.5 left-1/2 -translate-x-1/2"
             style={{
@@ -161,8 +195,8 @@ export function ProgressBar({
           
           {/* Word index */}
           <span 
-            className="text-xs block mb-1 opacity-70"
-            style={{ color: neonColor }}
+            className="text-xs block mb-1"
+            style={{ color: neonColor, opacity: 0.7 }}
           >
             [{hoverIndex + 1}/{totalWords}]
           </span>

@@ -446,16 +446,20 @@ export function Reader({ className = '' }: ReaderProps) {
                   };
                   
                   const onMouseDown = (e: MouseEvent) => {
+                    e.preventDefault();
                     handleMove(e.clientX);
                     const onMouseMove = (moveEvent: MouseEvent) => {
+                      moveEvent.preventDefault();
                       handleMove(moveEvent.clientX);
                     };
                     const onMouseUp = () => {
                       document.removeEventListener('mousemove', onMouseMove);
                       document.removeEventListener('mouseup', onMouseUp);
+                      document.removeEventListener('mouseleave', onMouseUp);
                     };
                     document.addEventListener('mousemove', onMouseMove);
                     document.addEventListener('mouseup', onMouseUp);
+                    document.addEventListener('mouseleave', onMouseUp);
                   };
                   
                   const onTouchStart = (e: TouchEvent) => {
@@ -940,9 +944,10 @@ export function Reader({ className = '' }: ReaderProps) {
           
           {/* Stats - TIME SAVED in HH:MM:SS format */}
           <div className="flex items-center gap-4">
-            {/* CyberEye Time Saved Display */}
+            {/* CyberEye Stats Display */}
             <CyberEye 
-              timeSaved={timeSaved} 
+              timeSaved={timeSaved}
+              wordsSeen={currentIndex + 1}
               neonColor={neonColor}
               className="hidden sm:block"
             />
