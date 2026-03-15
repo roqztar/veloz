@@ -20,6 +20,8 @@ interface WordDisplayProps {
 export function WordDisplay({ 
   currentWord,
   words,
+  prevWords = [],
+  nextWords = [],
   isDarkMode: _isDarkMode,
   fontFamily = 'mono',
   fontWeight = 'bold',
@@ -33,6 +35,7 @@ export function WordDisplay({
   const containerRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState(64);
   const [isMobile, setIsMobile] = useState(false);
+  const [showNavBuffer, setShowNavBuffer] = useState(false);
 
   // Detect mobile and calculate font size
   useEffect(() => {
@@ -151,7 +154,16 @@ export function WordDisplay({
   const sidePadding = Math.max(charWidth * 3, (maxWordLength * charWidth) / 2);
 
   return (
-    <div ref={containerRef} className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}>
+    <div 
+      ref={containerRef} 
+      className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}
+      onClick={() => setShowNavBuffer(!showNavBuffer)}
+    >
+      {/* Click hint */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-slate-600 font-mono opacity-50 pointer-events-none">
+        [CLICK FOR NAV_BUFFER]
+      </div>
+      
       {/* Optional background glow */}
       {showGlow && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -162,9 +174,28 @@ export function WordDisplay({
         </div>
       )}
       
+      {/* NAV_Buffer - Previous words */}
+      {showNavBuffer && prevWords.length > 0 && (
+        <div 
+          className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 flex flex-col items-end gap-1 animate-in fade-in duration-200"
+          style={{ maxWidth: '30%' }}
+        >
+          <div className="text-[10px] text-slate-500 font-mono mb-1">// PREV</div>
+          {prevWords.map((word, i) => (
+            <span 
+              key={`prev-${i}`}
+              className="text-sm md:text-base text-slate-400 font-mono truncate"
+              style={{ opacity: 0.6 - (i * 0.15) }}
+            >
+              {word.text}
+            </span>
+          ))}
+        </div>
+      )}
+      
       {/* Word display with fixed positioning for ORP centering */}
       <div 
-        className={`flex items-baseline animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass}`}
+        className={`flex items-baseline animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass} cursor-pointer hover:opacity-90 transition-opacity`}
         style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
       >
         {/* Before ORP - fixed width for stability */}
@@ -203,6 +234,25 @@ export function WordDisplay({
           {after}
         </span>
       </div>
+      
+      {/* NAV_Buffer - Next words */}
+      {showNavBuffer && nextWords.length > 0 && (
+        <div 
+          className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 flex flex-col items-start gap-1 animate-in fade-in duration-200"
+          style={{ maxWidth: '30%' }}
+        >
+          <div className="text-[10px] text-slate-500 font-mono mb-1">// NEXT</div>
+          {nextWords.map((word, i) => (
+            <span 
+              key={`next-${i}`}
+              className="text-sm md:text-base text-slate-400 font-mono truncate"
+              style={{ opacity: 0.6 - (i * 0.15) }}
+            >
+              {word.text}
+            </span>
+          ))}
+        </div>
+      )}
       
       {/* Slow subtle scanline animation */}
       <style>{`
