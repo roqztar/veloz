@@ -182,26 +182,21 @@ function cleanSpecialChars(text: string): string {
 
 /**
  * Entfernt Fußnoten-Referenzen aus PDF-Texten
- * Erkennt: hochgestellte Zahlen am Satzende, [1], (1), etc.
+ * Erkennt NUR eindeutige Fußnoten-Marker:
+ * - [1], [12], [123] - Zahlen in eckigen Klammern
+ * - (1), (12) - Zahlen in runden Klammern am Wortende
+ * NICHT: Zahlen im Fließtext wie "250 WPM" oder "Chapter 1"
  */
 function cleanFootnotes(text: string): string {
-  // Entferne einzelne Zahlen, die zwischen Satzzeichen und Leerzeichen stehen
-  // z.B. "Text. 1 Nächster Satz" -> "Text. Nächster Satz"
-  // Aber nicht Zahlen wie "250" in "start: 250 WPM" (die Teil des Inhalts sind)
-  // Nur entfernen wenn es eine einzelne Ziffer ist (typisch für Fußnoten)
-  let cleaned = text.replace(/([.!?;,])\s+(\d)\s+(?=[A-ZÄÖÜ])/g, '$1 ');
+  let cleaned = text;
   
-  // Entferne Zahlen in eckigen Klammern am Wortende (typisch für akademische Fußnoten)
-  // z.B. "Wort[12]" -> "Wort"
-  cleaned = cleaned.replace(/(\w)\[\d{1,3}\]/g, '$1');
+  // Entferne Zahlen in eckigen Klammern (einzeln oder mehrere)
+  // z.B. "word[1]", "text[12,13]" -> "word", "text"
+  cleaned = cleaned.replace(/\[\d+(?:[-,]\d+)*\]/g, '');
   
-  // Entferne Fußnoten-Referenzen direkt am Wortende (z.B. "recognition1-4", "circuits11")
-  // Pattern: word followed by number or number range (1-4, 5-7, 9,10, 8, etc.)
-  cleaned = cleaned.replace(/(\w)(\d{1,2}(?:[-,]\d{1,2})?)(?=[\s.!?;,]|$)/g, '$1');
-  
-  // Entferne isolierte Zahlen am Zeilenanfang/ende (häufig bei PDF-Extraktion)
-  // Nur wenn es sich um sehr kurze Zeilen handelt (weniger als 5 Zeichen)
-  cleaned = cleaned.replace(/^\s*\d{1,3}\s*$/gm, '');
+  // Entferne Zahlen in runden Klammern nur am Wortende (einzelne Ziffern = Fußnoten)
+  // z.B. "word(1)" -> "word", aber NICHT "Appendix (A)" oder "Figure (1.2)"
+  cleaned = cleaned.replace(/(\w)\((\d{1,2})\)(?=[\s.!?;,]|$)/g, '$1');
   
   // Entferne mehrfache Leerzeichen, die durch die Bereinigung entstanden sein könnten
   cleaned = cleaned.replace(/ +/g, ' ');
