@@ -2,20 +2,18 @@ import { useState } from 'react';
 
 interface CyberEyeProps {
   timeSaved: number; // in seconds
-  wordsSeen: number;
   neonColor: string;
   className?: string;
 }
 
-export function CyberEye({ timeSaved, wordsSeen, neonColor, className = '' }: CyberEyeProps) {
+export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps) {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Calculate eye animation based on reading progress
-  const maxTime = 30;
-  const openness = Math.min(1, timeSaved / maxTime);
-  const irisScale = 0.6 + (openness * 0.4);
+  // Calculate sand level based on time saved (max 60 seconds for full)
+  const maxTime = 60;
+  const fillLevel = Math.min(1, timeSaved / maxTime);
   
-  // Format numbers with fixed width
+  // Format time for display
   const formatTime = (seconds: number) => {
     if (seconds >= 3600) {
       return `${(seconds / 3600).toFixed(1)}h`;
@@ -25,32 +23,26 @@ export function CyberEye({ timeSaved, wordsSeen, neonColor, className = '' }: Cy
     return `${Math.floor(seconds)}s`;
   };
   
-  const formatWords = (count: number) => {
-    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
-    if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
-    return `${count}`;
-  };
-  
   return (
     <div 
       className={`relative ${className}`}
-      style={{ width: '90px' }}
+      style={{ width: '70px' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Container with fixed dimensions */}
       <div className="flex flex-col items-center">
         
-        {/* Pixel Eye Icon */}
+        {/* Pixel Hourglass Icon */}
         <svg 
-          width="48" 
-          height="32" 
-          viewBox="0 0 48 32" 
+          width="32" 
+          height="40" 
+          viewBox="0 0 32 40" 
           className="overflow-visible cursor-help flex-shrink-0"
           shapeRendering="crispEdges"
         >
           <defs>
-            <filter id="pixelGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="hourglassGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
               <feMerge>
                 <feMergeNode in="coloredBlur"/>
@@ -59,110 +51,63 @@ export function CyberEye({ timeSaved, wordsSeen, neonColor, className = '' }: Cy
             </filter>
           </defs>
           
-          {/* Pixel Eye Outline */}
-          <g filter="url(#pixelGlow)">
-            {/* Top row */}
-            <rect x="12" y="4" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.7} />
-            <rect x="16" y="4" width="4" height="4" fill={neonColor} opacity={0.5 + openness * 0.5} />
-            <rect x="20" y="4" width="8" height="4" fill={neonColor} opacity={0.8} />
-            <rect x="28" y="4" width="4" height="4" fill={neonColor} opacity={0.5 + openness * 0.5} />
-            <rect x="32" y="4" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.7} />
+          <g filter="url(#hourglassGlow)">
+            {/* Top cap */}
+            <rect x="8" y="0" width="16" height="2" fill={neonColor} opacity="0.9" />
+            <rect x="6" y="2" width="20" height="2" fill={neonColor} opacity="0.8" />
             
-            {/* Second row - opens with time saved */}
-            <rect x="8" y="8" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.7} />
-            <rect x="12" y="8" width="4" height="4" fill={neonColor} opacity={0.6} />
+            {/* Top bulb (emptying) */}
+            <rect x="8" y="4" width="16" height="2" fill={neonColor} opacity={0.3 + (1 - fillLevel) * 0.5} />
+            <rect x="10" y="6" width="12" height="2" fill={neonColor} opacity={0.3 + (1 - fillLevel) * 0.5} />
+            <rect x="12" y="8" width="8" height="2" fill={neonColor} opacity={0.3 + (1 - fillLevel) * 0.4} />
             
-            {/* Iris area - scales with time */}
-            <rect x="20" y="8" width="8" height="4" fill={neonColor} opacity={0.9} />
+            {/* Middle neck */}
+            <rect x="14" y="10" width="4" height="4" fill={neonColor} opacity="0.6" />
             
-            <rect x="32" y="8" width="4" height="4" fill={neonColor} opacity={0.6} />
-            <rect x="36" y="8" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.7} />
+            {/* Falling sand particle (animated) */}
+            <rect x="15" y="12" width="2" height="2" fill={neonColor} opacity="0.9">
+              <animate attributeName="y" values="12;18;12" dur="0.8s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.9;0.3;0.9" dur="0.8s" repeatCount="indefinite" />
+            </rect>
             
-            {/* Middle row - center (pupil) */}
-            <rect x="4" y="12" width="4" height="4" fill={neonColor} opacity={0.4} />
-            <rect x="8" y="12" width="4" height="4" fill={neonColor} opacity={0.6} />
+            {/* Bottom bulb (filling) */}
+            <rect x="12" y="16" width="8" height="2" fill={neonColor} opacity={0.3 + fillLevel * 0.4} />
+            <rect x="10" y="18" width="12" height="2" fill={neonColor} opacity={0.3 + fillLevel * 0.5} />
+            <rect x="8" y="20" width="16" height="2" fill={neonColor} opacity={0.3 + fillLevel * 0.6} />
+            <rect x="10" y="22" width="12" height="2" fill={neonColor} opacity={0.4 + fillLevel * 0.5} />
+            <rect x="12" y="24" width="8" height="2" fill={neonColor} opacity={0.5 + fillLevel * 0.4} />
+            <rect x="14" y="26" width="4" height="2" fill={neonColor} opacity={0.6 + fillLevel * 0.3} />
             
-            {/* Iris left */}
-            <rect x="16" y="12" width="4" height="4" fill={neonColor} opacity={0.7} />
-            <rect x="20" y="12" width="2" height="4" fill="#000" opacity={0.8} />
-            <rect x="22" y="12" width="4" height="4" fill="#000" opacity={0.9} />
-            <rect x="26" y="12" width="2" height="4" fill="#000" opacity={0.8} />
-            {/* Iris right */}
-            <rect x="28" y="12" width="4" height="4" fill={neonColor} opacity={0.7} />
+            {/* Bottom cap */}
+            <rect x="6" y="28" width="20" height="2" fill={neonColor} opacity="0.8" />
+            <rect x="8" y="30" width="16" height="2" fill={neonColor} opacity="0.9" />
             
-            <rect x="36" y="12" width="4" height="4" fill={neonColor} opacity={0.6} />
-            <rect x="40" y="12" width="4" height="4" fill={neonColor} opacity={0.4} />
+            {/* Side frame lines */}
+            <rect x="4" y="0" width="2" height="32" fill={neonColor} opacity="0.4" />
+            <rect x="26" y="0" width="2" height="32" fill={neonColor} opacity="0.4" />
             
-            {/* Lower middle */}
-            <rect x="4" y="16" width="4" height="4" fill={neonColor} opacity={0.4} />
-            <rect x="8" y="16" width="4" height="4" fill={neonColor} opacity={0.6} />
-            
-            <rect x="16" y="16" width="4" height="4" fill={neonColor} opacity={0.7} />
-            <rect x="20" y="16" width="8" height="4" fill={neonColor} opacity={0.5 + irisScale * 0.4} />
-            <rect x="28" y="16" width="4" height="4" fill={neonColor} opacity={0.7} />
-            
-            <rect x="36" y="16" width="4" height="4" fill={neonColor} opacity={0.6} />
-            <rect x="40" y="16" width="4" height="4" fill={neonColor} opacity={0.4} />
-            
-            {/* Bottom row - opens with time saved */}
-            <rect x="8" y="20" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.7} />
-            <rect x="12" y="20" width="4" height="4" fill={neonColor} opacity={0.6} />
-            <rect x="20" y="20" width="8" height="4" fill={neonColor} opacity={0.8} />
-            <rect x="32" y="20" width="4" height="4" fill={neonColor} opacity={0.6} />
-            <rect x="36" y="20" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.7} />
-            
-            {/* Bottom most */}
-            <rect x="12" y="24" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.5} />
-            <rect x="16" y="24" width="4" height="4" fill={neonColor} opacity={0.4 + openness * 0.4} />
-            <rect x="20" y="24" width="8" height="4" fill={neonColor} opacity={0.5 + openness * 0.3} />
-            <rect x="28" y="24" width="4" height="4" fill={neonColor} opacity={0.4 + openness * 0.4} />
-            <rect x="32" y="24" width="4" height="4" fill={neonColor} opacity={0.3 + openness * 0.5} />
+            {/* Corner accents */}
+            <rect x="2" y="2" width="2" height="2" fill={neonColor} opacity="0.6" />
+            <rect x="28" y="2" width="2" height="2" fill={neonColor} opacity="0.6" />
+            <rect x="2" y="28" width="2" height="2" fill={neonColor} opacity="0.6" />
+            <rect x="28" y="28" width="2" height="2" fill={neonColor} opacity="0.6" />
           </g>
-          
-          {/* Scan line animation */}
-          <line 
-            x1="4" 
-            y1="14" 
-            x2="44" 
-            y2="14" 
-            stroke={neonColor} 
-            strokeWidth="1" 
-            opacity={0.3 + openness * 0.4}
-          >
-            <animate attributeName="y1" values="8;24;8" dur="2s" repeatCount="indefinite" />
-            <animate attributeName="y2" values="8;24;8" dur="2s" repeatCount="indefinite" />
-          </line>
         </svg>
         
-        {/* Fixed-size data panel */}
+        {/* Time display - minimal */}
         <div 
-          className="mt-2 px-2 py-1.5 rounded font-mono text-xs text-center w-full"
+          className="mt-2 px-2 py-1 rounded font-mono text-xs text-center w-full"
           style={{ 
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            border: `1px solid ${neonColor}40`,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            border: `1px solid ${neonColor}30`,
           }}
         >
-          {/* Time saved row */}
-          <div className="flex justify-between items-center mb-1">
-            <span style={{ color: neonColor, opacity: 0.6 }}>⏱</span>
-            <span 
-              className="font-bold tabular-nums"
-              style={{ color: neonColor }}
-            >
-              {formatTime(timeSaved)}
-            </span>
-          </div>
-          
-          {/* Words seen row */}
-          <div className="flex justify-between items-center">
-            <span style={{ color: neonColor, opacity: 0.6 }}>✓</span>
-            <span 
-              className="font-bold tabular-nums"
-              style={{ color: neonColor }}
-            >
-              {formatWords(wordsSeen)}
-            </span>
-          </div>
+          <span 
+            className="font-bold tabular-nums"
+            style={{ color: neonColor }}
+          >
+            {formatTime(timeSaved)}
+          </span>
         </div>
       </div>
       
@@ -191,35 +136,19 @@ export function CyberEye({ timeSaved, wordsSeen, neonColor, className = '' }: Cy
         {/* Content */}
         <div className="font-mono text-center">
           <div 
-            className="text-xs mb-2"
+            className="text-xs mb-1"
             style={{ color: neonColor, opacity: 0.7 }}
           >
-            // STATS
+            // TIME_SAVED
           </div>
-          
-          <div className="space-y-1">
-            <div className="flex justify-between gap-4">
-              <span style={{ color: neonColor, opacity: 0.6 }}>TIME_SAVED:</span>
-              <span 
-                className="font-bold"
-                style={{ color: neonColor }}
-              >
-                {formatTime(timeSaved)}
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span style={{ color: neonColor, opacity: 0.6 }}>WORDS_SEEN:</span>
-              <span 
-                className="font-bold"
-                style={{ color: neonColor }}
-              >
-                {formatWords(wordsSeen)}
-              </span>
-            </div>
-          </div>
-          
           <div 
-            className="text-xs mt-2 pt-2 border-t border-slate-700"
+            className="text-lg font-bold"
+            style={{ color: neonColor }}
+          >
+            {formatTime(timeSaved)}
+          </div>
+          <div 
+            className="text-xs mt-1"
             style={{ color: neonColor, opacity: 0.5 }}
           >
             VS NORMAL_READ (250WPM)

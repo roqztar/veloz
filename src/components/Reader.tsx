@@ -942,10 +942,9 @@ export function Reader({ className = '' }: ReaderProps) {
             </button>
           </div>
           
-          {/* CyberEye Stats Display */}
+          {/* CyberEye Time Saved Display */}
           <CyberEye 
             timeSaved={timeSaved}
-            wordsSeen={currentIndex + 1}
             neonColor={neonColor}
             className="hidden sm:block"
           />
