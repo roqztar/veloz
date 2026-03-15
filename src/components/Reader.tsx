@@ -407,7 +407,17 @@ export function Reader({ className = '' }: ReaderProps) {
       {showColorPicker && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setShowColorPicker(false)}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('bg-black/80')) {
+              (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop = 'true';
+            }
+          }}
+          onMouseUp={(e) => {
+            if ((e.currentTarget as HTMLElement).dataset.clickedOnBackdrop === 'true') {
+              setShowColorPicker(false);
+            }
+            delete (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop;
+          }}
         >
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
           <div 
@@ -522,7 +532,17 @@ export function Reader({ className = '' }: ReaderProps) {
       {showScrubber && (
         <div 
           className="fixed inset-0 z-40 flex items-end sm:items-center justify-center p-0 sm:p-4 lg:p-8 animate-in fade-in duration-200"
-          onClick={() => setShowScrubber(false)}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('bg-black/90')) {
+              (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop = 'true';
+            }
+          }}
+          onMouseUp={(e) => {
+            if ((e.currentTarget as HTMLElement).dataset.clickedOnBackdrop === 'true') {
+              setShowScrubber(false);
+            }
+            delete (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop;
+          }}
         >
           <div className="absolute inset-0 bg-black/90 backdrop-blur-md" />
           <div 
@@ -587,8 +607,18 @@ export function Reader({ className = '' }: ReaderProps) {
       {showEditor && (
         <div 
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-300"
-          onClick={() => {
-            saveEditor();
+          onMouseDown={(e) => {
+            // Only close if clicking on the backdrop (not the modal content)
+            if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('bg-black/90')) {
+              (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop = 'true';
+            }
+          }}
+          onMouseUp={(e) => {
+            // Only close if the click started on the backdrop
+            if ((e.currentTarget as HTMLElement).dataset.clickedOnBackdrop === 'true') {
+              saveEditor();
+            }
+            delete (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop;
           }}
         >
           <div className="absolute inset-0 bg-black/90 backdrop-blur-md" />

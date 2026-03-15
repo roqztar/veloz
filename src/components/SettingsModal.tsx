@@ -48,7 +48,17 @@ export function SettingsModal({
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in"
-      onClick={onClose}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('bg-black/80')) {
+          (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop = 'true';
+        }
+      }}
+      onMouseUp={(e) => {
+        if ((e.currentTarget as HTMLElement).dataset.clickedOnBackdrop === 'true') {
+          onClose();
+        }
+        delete (e.currentTarget as HTMLElement).dataset.clickedOnBackdrop;
+      }}
     >
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
       
