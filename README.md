@@ -2,7 +2,7 @@
 
 A modern, blazing-fast RSVP (Rapid Serial Visual Presentation) speed reading application built with React and TypeScript.
 
-🌐 **Live Demo**: [eyedance-kappa.vercel.app](https://eyedance-kappa.vercel.app)
+🌐 **Live Demo**: [eyedance.xyz](https://eyedance.xyz)
 
 ![Eyedance](https://img.shields.io/badge/Eyedance-Speed%20Reader-ef4444)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
@@ -27,7 +27,7 @@ A modern, blazing-fast RSVP (Rapid Serial Visual Presentation) speed reading app
 ## Quick Start
 
 ### Online
-Visit [eyedance-kappa.vercel.app](https://eyedance-kappa.vercel.app) to use Eyedance instantly in your browser.
+Visit [eyedance.xyz](https://eyedance.xyz) to use Eyedance instantly in your browser.
 
 ### Local Development
 
