@@ -226,6 +226,29 @@ async function parsePDF(file: File): Promise<string> {
         .join('\n')
         .trim();
       
+      // Fix isolated punctuation marks (common in PDF extraction)
+      // Lines with only a single punctuation mark should be merged with adjacent lines
+      const punctLines = pageText.split('\n');
+      const mergedLines: string[] = [];
+      for (let i = 0; i < punctLines.length; i++) {
+        const line = punctLines[i];
+        const trimmed = line.trim();
+        // If this line is just a single punctuation mark (comma, period, etc.)
+        if (/^[,;:.!?]$/.test(trimmed)) {
+          // Attach to previous line if exists, otherwise to next line
+          if (mergedLines.length > 0) {
+            mergedLines[mergedLines.length - 1] += trimmed;
+          } else if (i < punctLines.length - 1) {
+            punctLines[i + 1] = trimmed + punctLines[i + 1];
+          } else {
+            mergedLines.push(line);
+          }
+        } else {
+          mergedLines.push(line);
+        }
+      }
+      pageText = mergedLines.join('\n');
+      
       // Fix hyphenation at line breaks (common in PDFs)
       // Pattern: word- followed by word on next line -> wordword
       pageText = pageText.replace(/(\w)-\n+(\w)/g, '$1$2');
