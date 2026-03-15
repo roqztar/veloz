@@ -1,5 +1,4 @@
 import type { CleanOptions } from '../core/textCleaner';
-import type { SpeechState } from '../hooks/useSpeech';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -19,11 +18,6 @@ interface SettingsModalProps {
   setShowGrid: (v: boolean) => void;
   showGlow: boolean;
   setShowGlow: (v: boolean) => void;
-  
-  // Speech synthesis - eSpeak
-  speechEnabled: SpeechState;
-  toggleSpeech: () => void;
-  serverAvailable: boolean;
   
   // Cleaning
   cleanOptions: CleanOptions;
@@ -47,9 +41,6 @@ export function SettingsModal({
   setShowGrid,
   showGlow,
   setShowGlow,
-  speechEnabled,
-  toggleSpeech,
-  serverAvailable,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
   neonColor = '#00ffff',
@@ -224,45 +215,6 @@ export function SettingsModal({
             </div>
           </section>
           
-          <hr className="border-t border-slate-700" />
-          
-          {/* Speech Synthesis - eSpeak */}
-          <section className="space-y-4">
-            <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech (eSpeak)</h3>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <div className={`text-sm ${textColor} font-mono`}>TTS</div>
-                <div className={`text-xs font-mono mt-1 ${serverAvailable ? 'text-green-500' : 'text-amber-500'}`}>
-                  {serverAvailable ? 'eSpeak Server Ready' : 'Start: npm run tts'}
-                </div>
-              </div>
-              <button
-                onClick={toggleSpeech}
-                disabled={!serverAvailable}
-                className={`py-2 px-4 text-sm font-mono transition-all border ${
-                  speechEnabled === 'on'
-                    ? 'text-black font-bold' 
-                    : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
-                } ${!serverAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
-                style={speechEnabled === 'on' ? { backgroundColor: neonColor } : {}}
-              >
-                {speechEnabled === 'on' ? 'ON' : 'OFF'}
-              </button>
-            </div>
-            
-            {speechEnabled === 'on' && serverAvailable && (
-              <div className="text-xs text-slate-500 font-mono">
-                Up to 400 WPM with local eSpeak
-              </div>
-            )}
-            
-            {!serverAvailable && (
-              <div className="text-xs text-slate-600 font-mono">
-                Run: cd server && npm install && npm start
-              </div>
-            )}
-          </section>
         </div>
       </div>
     </div>

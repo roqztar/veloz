@@ -4,7 +4,6 @@ import { ProgressBar } from './ProgressBar';
 import { SettingsModal } from './SettingsModal';
 import { CyberEye } from './CyberEye';
 import { useSpritz } from '../hooks/useSpritz';
-import { useSpeech } from '../hooks/useSpeech';
 import { calculateTimeSaved } from '../core/textCleaner';
 import { parseFile, getSupportedFileTypes, getSupportedMimeTypes } from '../core/fileParser';
 
@@ -161,29 +160,6 @@ export function Reader({ className = '' }: ReaderProps) {
   const neonColorGlow = `hsl(${hue}, 100%, 50%, 0.5)`;
   const orpColor = getContrastColor(neonColor);
   
-  // Speech synthesis - simplified: just ON/OFF, auto-optimized for speed
-  const { 
-    speak, 
-    stop: stopSpeech, 
-    enabled: speechEnabled,
-    toggle: toggleSpeech,
-    serverAvailable
-  } = useSpeech();
-  
-  // Speak current word when it changes - pass current WPM to eSpeak
-  useEffect(() => {
-    if (isPlaying && currentWord?.text && speechEnabled === 'on') {
-      speak(currentWord.text, wpm);
-    }
-  }, [currentWord, isPlaying, speak, speechEnabled, wpm]);
-  
-  // Cap WPM at 400 when Voice is enabled (eSpeak can handle up to 400+ WPM)
-  useEffect(() => {
-    if (speechEnabled === 'on' && wpm > 400) {
-      setWPM(400);
-    }
-  }, [speechEnabled, wpm, setWPM]);
-  
   // Initial spotlight effect on page load
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -307,17 +283,16 @@ export function Reader({ className = '' }: ReaderProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggle, next, prev, showSettings, showScrubber, showEditor, showColorPicker, toggleFullscreen]);
   
-  // Wrapped pause that also stops speech
-  const handlePause = useCallback(() => {
-    pause();
-    stopSpeech();
-  }, [pause, stopSpeech]);
+  // Simple toggle without speech
+  const handleToggle = useCallback(() => {
+    toggle();
+  }, [toggle]);
   
   const openEditor = useCallback(() => {
     setInputText(rawText);
     setShowEditor(true);
-    handlePause();
-  }, [rawText, handlePause]);
+    pause();
+  }, [rawText, pause]);
   
   const saveEditor = useCallback(() => {
     if (inputText.trim()) {
@@ -327,14 +302,6 @@ export function Reader({ className = '' }: ReaderProps) {
     }
     setShowEditor(false);
   }, [inputText, setText, triggerSpotlight]);
-  
-  // Wrapped toggle that also stops speech when pausing
-  const handleToggle = useCallback(() => {
-    if (isPlaying) {
-      stopSpeech();
-    }
-    toggle();
-  }, [isPlaying, toggle, stopSpeech]);
   
   const handlePointerLeave = useCallback(() => {
     if (longPressTimerRef.current) {
@@ -415,7 +382,7 @@ export function Reader({ className = '' }: ReaderProps) {
         }
       }, 150);
     }, 500);
-  }, [currentIndex, words.length, goTo, handlePause]);
+  }, [currentIndex, words.length, goTo, pause]);
   
   const handlePointerUp = useCallback((direction: 'prev' | 'next') => {
     if (longPressTimerRef.current) {
@@ -546,9 +513,6 @@ export function Reader({ className = '' }: ReaderProps) {
         setShowGrid={setShowGrid}
         showGlow={showGlow}
         setShowGlow={setShowGlow}
-        speechEnabled={speechEnabled}
-        toggleSpeech={toggleSpeech}
-        serverAvailable={serverAvailable}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}
         neonColor={neonColor}
@@ -979,13 +943,13 @@ export function Reader({ className = '' }: ReaderProps) {
               
               {/* Plus Button */}
               <button
-                onClick={() => setWPM(Math.min(speechEnabled === 'on' ? 400 : 1000, wpm + 10))}
+                onClick={() => setWPM(Math.min(1000, wpm + 10))}
                 className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
                 }}
-                title={speechEnabled === 'on' ? 'WPM +10 (max 400 with Voice)' : 'WPM +10'}
+                title="WPM +10"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
@@ -997,25 +961,16 @@ export function Reader({ className = '' }: ReaderProps) {
                 <input
                   type="range"
                   min={50}
-                  max={speechEnabled === 'on' ? 400 : 1000}
+                  max={1000}
                   step={10}
                   value={wpm}
                   onChange={(e) => setWPM(Number(e.target.value))}
                   className="w-full sm:w-24 h-8 sm:h-6 appearance-none cursor-pointer bg-transparent touch-manipulation"
                   style={{ 
-                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${(wpm-50)/(speechEnabled === 'on' ? 3.5 : 9.5)}%, rgba(51,65,85,0.5) ${(wpm-50)/(speechEnabled === 'on' ? 3.5 : 9.5)}%, rgba(51,65,85,0.5) 100%)`,
+                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${(wpm-50)/9.5}%, rgba(51,65,85,0.5) ${(wpm-50)/9.5}%, rgba(51,65,85,0.5) 100%)`,
                     height: '8px'
                   }}
                 />
-                {/* Voice limit indicator */}
-                {speechEnabled === 'on' && (
-                  <div 
-                    className="absolute -top-5 right-0 text-[10px] font-mono text-slate-400 whitespace-nowrap"
-                    style={{ color: neonColor }}
-                  >
-                    max 400 with eSpeak
-                  </div>
-                )}
               </div>
               
               {/* CyberEye Time Saved Display - right of WPM slider */}
