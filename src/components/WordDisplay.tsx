@@ -14,6 +14,8 @@ interface WordDisplayProps {
   neonColor?: string;
   neonColorGlow?: string;
   showGlow?: boolean;
+  showNavBuffer?: boolean;
+  onToggleNavBuffer?: () => void;
   className?: string;
 }
 
@@ -30,12 +32,13 @@ export function WordDisplay({
   neonColor = '#00ffff',
   neonColorGlow = 'rgba(0, 255, 255, 0.5)',
   showGlow = false,
+  showNavBuffer = false,
+  onToggleNavBuffer,
   className = '' 
 }: WordDisplayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState(64);
   const [isMobile, setIsMobile] = useState(false);
-  const [showNavBuffer, setShowNavBuffer] = useState(false);
 
   // Detect mobile and calculate font size
   useEffect(() => {
@@ -192,14 +195,17 @@ export function WordDisplay({
         </div>
       )}
       
-      {/* Word display with fixed positioning for ORP centering */}
+      {/* Word display with fixed positioning for ORP centering - clickable to toggle NAV_BUFFER */}
       <div 
-        className={`flex items-baseline animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass} cursor-pointer hover:opacity-90 transition-opacity select-none`}
+        className={`flex items-baseline animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass} cursor-pointer hover:opacity-90 transition-opacity select-none z-10`}
         style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
         onClick={(e) => {
+          e.preventDefault();
           e.stopPropagation();
-          setShowNavBuffer(!showNavBuffer);
+          onToggleNavBuffer?.();
         }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
       >
         {/* Before ORP - fixed width for stability */}
         <span 

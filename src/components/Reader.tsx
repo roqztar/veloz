@@ -82,6 +82,7 @@ export function Reader({ className = '' }: ReaderProps) {
   // Spotlight and scan animation states
   const [spotlightActive, setSpotlightActive] = useState(false);
   const [orpScanActive, setOrpScanActive] = useState(false);
+  const [showNavBuffer, setShowNavBuffer] = useState(false);
   const [gridFlashActive, setGridFlashActive] = useState(false);
   const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
@@ -1161,6 +1162,8 @@ export function Reader({ className = '' }: ReaderProps) {
             neonColor={neonColor}
             neonColorGlow={neonColorGlow}
             showGlow={showGlow}
+            showNavBuffer={showNavBuffer}
+            onToggleNavBuffer={() => setShowNavBuffer(!showNavBuffer)}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
           
