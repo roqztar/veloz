@@ -308,6 +308,9 @@ export function parseToDisplayWords(text: string, options: Partial<CleanOptions>
     const cleaned = cleanText(para, opts);
     const rawWords = cleaned.split(/\s+/).filter(w => w.length > 0);
     
+    // Track if we're inside parentheses
+    let inParentheses = false;
+    
     for (let i = 0; i < rawWords.length; i++) {
       const word = rawWords[i];
       const original = word;
@@ -318,11 +321,21 @@ export function parseToDisplayWords(text: string, options: Partial<CleanOptions>
       // Prüfe ob letztes Wort im Absatz (außer letzter Absatz)
       const isLastWordInParagraph = (i === rawWords.length - 1) && (p < paragraphs.length - 1);
       
-      // Prüfe auf Parentheses-Marker
-      if (display.includes('\uFFF9') || display.includes('\uFFFB')) {
+      // Check for parentheses markers to track state
+      if (display.includes('\uFFF9')) {
+        inParentheses = true;
+      }
+      if (display.includes('\uFFFB')) {
+        // Remove markers and mark as parenthetical
         display = display.replace(/[\uFFF9\uFFFB]/g, '');
         type = 'parenthetical';
-        delayMultiplier = 0.5;
+        delayMultiplier = 1.2; // Slightly slower for parenthetical content
+        inParentheses = false;
+      } else if (inParentheses || display.includes('\uFFF9')) {
+        // Still inside parentheses or just started
+        display = display.replace(/[\uFFF9\uFFFB]/g, '');
+        type = 'parenthetical';
+        delayMultiplier = 1.2;
       }
       
       // Prüfe auf URL

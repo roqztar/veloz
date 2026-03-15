@@ -13,6 +13,7 @@ interface WordDisplayProps {
   orpColor?: string;
   neonColor?: string;
   neonColorGlow?: string;
+  showGlow?: boolean;
   className?: string;
 }
 
@@ -26,6 +27,7 @@ export function WordDisplay({
   orpColor: _orpColor,
   neonColor = '#00ffff',
   neonColorGlow = 'rgba(0, 255, 255, 0.5)',
+  showGlow = false,
   className = '' 
 }: WordDisplayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -150,13 +152,15 @@ export function WordDisplay({
 
   return (
     <div ref={containerRef} className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}>
-      {/* Background glow */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div 
-          className="w-32 h-32 md:w-48 md:h-48 rounded-full blur-3xl"
-          style={{ backgroundColor: neonColorGlow }}
-        />
-      </div>
+      {/* Optional background glow */}
+      {showGlow && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div 
+            className="w-32 h-32 md:w-48 md:h-48 rounded-full blur-3xl"
+            style={{ backgroundColor: neonColorGlow }}
+          />
+        </div>
+      )}
       
       {/* Word display with fixed positioning for ORP centering */}
       <div 

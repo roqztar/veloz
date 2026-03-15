@@ -64,6 +64,10 @@ export function Reader({ className = '' }: ReaderProps) {
   const [hue, setHue] = useState(180); // Cyan default (cyberpunk aesthetic)
   const [showColorPicker, setShowColorPicker] = useState(false);
   
+  // Visual effects (default off for cleaner reading experience)
+  const [showGrid, setShowGrid] = useState(false);
+  const [showGlow, setShowGlow] = useState(false);
+  
   // Upload state
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -366,26 +370,28 @@ export function Reader({ className = '' }: ReaderProps) {
       onMouseLeave={() => setShowControls(false)}
       onClick={resetInactivityTimer}
     >
-      {/* Cyberpunk Grid Background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div 
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, ${neonColorDim} 1px, transparent 1px),
-              linear-gradient(to bottom, ${neonColorDim} 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px'
-          }}
-        />
-        {/* Scanline effect */}
-        <div 
-          className="absolute inset-0 opacity-5"
-          style={{
-            background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, #000 2px, #000 4px)'
-          }}
-        />
-      </div>
+      {/* Optional Cyberpunk Grid Background */}
+      {showGrid && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, ${neonColorDim} 1px, transparent 1px),
+                linear-gradient(to bottom, ${neonColorDim} 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px'
+            }}
+          />
+          {/* Scanline effect */}
+          <div 
+            className="absolute inset-0 opacity-5"
+            style={{
+              background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, #000 2px, #000 4px)'
+            }}
+          />
+        </div>
+      )}
       
       {/* Settings Modal */}
       <SettingsModal
@@ -994,14 +1000,43 @@ export function Reader({ className = '' }: ReaderProps) {
             </button>
           </div>
           
-          {/* Color Picker Button */}
+          {/* Visual Effects & Color Picker Buttons */}
           <div className="flex items-center justify-end gap-2">
-            {/* CyberEye Time Saved Display - left of color picker */}
+            {/* CyberEye Time Saved Display - left of controls */}
             <CyberEye 
               timeSaved={timeSaved}
               neonColor={neonColor}
               className="hidden sm:block mr-1"
             />
+            
+            {/* Grid Toggle */}
+            <button 
+              onClick={() => setShowGrid(!showGrid)}
+              className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded text-xs font-mono"
+              style={{ 
+                backgroundColor: showGrid ? neonColor : 'rgba(0,0,0,0.4)',
+                color: showGrid ? '#000' : undefined,
+                border: `1px solid ${neonColor}50`
+              }}
+              title="Grid"
+            >
+              #
+            </button>
+            
+            {/* Glow Toggle */}
+            <button 
+              onClick={() => setShowGlow(!showGlow)}
+              className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded text-xs font-mono"
+              style={{ 
+                backgroundColor: showGlow ? neonColor : 'rgba(0,0,0,0.4)',
+                color: showGlow ? '#000' : undefined,
+                border: `1px solid ${neonColor}50`
+              }}
+              title="Glow"
+            >
+              ✦
+            </button>
+            
             <button 
               onClick={() => setShowColorPicker(true)}
               className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
@@ -1045,6 +1080,7 @@ export function Reader({ className = '' }: ReaderProps) {
             orpColor={orpColor}
             neonColor={neonColor}
             neonColorGlow={neonColorGlow}
+            showGlow={showGlow}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
           {/* Mobile touch hint */}
