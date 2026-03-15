@@ -1,6 +1,5 @@
 import type { CleanOptions } from '../core/textCleaner';
-import type { VoiceGender } from '../hooks/useSpeech';
-import { useState, useEffect } from 'react';
+import type { SpeechState } from '../hooks/useSpeech';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -21,14 +20,11 @@ interface SettingsModalProps {
   showGlow: boolean;
   setShowGlow: (v: boolean) => void;
   
-  // Speech synthesis
-  voiceGender: VoiceGender;
-  setVoiceGender: (g: VoiceGender) => void;
-  speechRate: number;
-  setSpeechRate: (r: number) => void;
-  speechPitch: number;
-  setSpeechPitch: (p: number) => void;
+  // Speech synthesis - simplified
+  speechEnabled: SpeechState;
+  toggleSpeech: () => void;
   speechSupported: boolean;
+  currentVoice: SpeechSynthesisVoice | null;
   
   // Cleaning
   cleanOptions: CleanOptions;
@@ -52,13 +48,10 @@ export function SettingsModal({
   setShowGrid,
   showGlow,
   setShowGlow,
-  voiceGender,
-  setVoiceGender,
-  speechRate,
-  setSpeechRate,
-  speechPitch,
-  setSpeechPitch,
+  speechEnabled,
+  toggleSpeech,
   speechSupported,
+  currentVoice,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
   neonColor = '#00ffff',
@@ -69,23 +62,6 @@ export function SettingsModal({
   const mutedColor = 'text-slate-500';
   const terminalClass = 'bg-black/60 border border-slate-700/50';
   const accentBg = 'bg-slate-800 hover:bg-slate-700';
-  
-  // Get available voices for display
-  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      const loadVoices = () => {
-        const voices = window.speechSynthesis.getVoices();
-        // Filter to German and English voices only
-        const filtered = voices.filter(v => /^de-|^en-/.test(v.lang));
-        setAvailableVoices(filtered.length > 0 ? filtered : voices);
-      };
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-  }, []);
-
-  
 
   return (
     <div 
@@ -252,136 +228,35 @@ export function SettingsModal({
           
           <hr className="border-t border-slate-700" />
           
-          {/* Speech Synthesis */}
+          {/* Speech Synthesis - Simplified */}
           {speechSupported && (
             <section className="space-y-4">
-              <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech_Synthesis</h3>
+              <h3 className={`text-xs font-bold uppercase tracking-widest ${mutedColor} font-mono`}>// Speech</h3>
               
-              {/* Voice Gender */}
-              <div className="flex gap-2">
-                {(['off', 'female', 'male'] as const).map((g) => (
-                  <button
-                    key={g}
-                    onClick={() => setVoiceGender(g)}
-                    className={`flex-1 py-2 px-3 text-sm font-mono transition-all border ${
-                      voiceGender === g 
-                        ? 'text-black font-bold' 
-                        : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
-                    }`}
-                    style={voiceGender === g ? { backgroundColor: neonColor } : {}}
-                  >
-                    {g === 'off' && 'OFF'}
-                    {g === 'female' && 'FEMALE'}
-                    {g === 'male' && 'MALE'}
-                  </button>
-                ))}
-              </div>
-              
-              {/* Voice Info */}
-              {voiceGender !== 'off' && availableVoices.length > 0 && (
-                <div className="pt-2 text-xs text-slate-400 font-mono">
-                  <div className="flex items-center gap-2">
-                    <span>Available: {availableVoices.length} voices</span>
-                    <span className="text-slate-600">|</span>
-                    <span>
-                      Best: {availableVoices.find(v => /Google/i.test(v.name))?.name || 
-                             availableVoices.find(v => /Microsoft/i.test(v.name))?.name || 
-                             availableVoices[0]?.name}
-                    </span>
-                  </div>
-                  <div className="mt-1 text-slate-500">
-                    (Google/Microsoft voices work best at high speeds)
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className={`text-sm ${textColor} font-mono`}>TTS</div>
+                  <div className="text-xs text-slate-500 font-mono mt-1">
+                    {currentVoice ? currentVoice.name : 'Loading...'}
                   </div>
                 </div>
-              )}
+                <button
+                  onClick={toggleSpeech}
+                  className={`py-2 px-4 text-sm font-mono transition-all border ${
+                    speechEnabled === 'on'
+                      ? 'text-black font-bold' 
+                      : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
+                  }`}
+                  style={speechEnabled === 'on' ? { backgroundColor: neonColor } : {}}
+                >
+                  {speechEnabled === 'on' ? 'ON' : 'OFF'}
+                </button>
+              </div>
               
-              {/* Rate - max 2.0 (browser limit), user can only decrease */}
-              {voiceGender !== 'off' && (
-                <>
-                  <div className="space-y-2 pt-2">
-                    <div className="flex justify-between items-center">
-                      <span className={`text-sm ${textColor} font-mono`}>RATE</span>
-                      <span 
-                        className={`text-lg font-mono font-bold`}
-                        style={{ color: neonColor }}
-                      >
-                        {speechRate.toFixed(1)}x
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setSpeechRate(Math.max(0.5, speechRate - 0.1))}
-                        disabled={speechRate <= 0.5}
-                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                      >
-                        -
-                      </button>
-                      <input
-                        type="range"
-                        min={0.5}
-                        max={2.0}
-                        step={0.1}
-                        value={speechRate}
-                        onChange={(e) => setSpeechRate(Number(e.target.value))}
-                        className="flex-1 h-2 appearance-none cursor-pointer"
-                        style={{
-                          background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechRate - 0.5) / 1.5) * 100}%, rgba(51,65,85,0.5) ${((speechRate - 0.5) / 1.5) * 100}%)`,
-                          height: '8px'
-                        }}
-                      />
-                      <button
-                        onClick={() => setSpeechRate(Math.min(2.0, speechRate + 0.1))}
-                        disabled={speechRate >= 2.0}
-                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                        title="Maximum speed (browser limit)"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  
-                  {/* Pitch */}
-                  <div className="space-y-2 pt-4">
-                    <div className="flex justify-between items-center">
-                      <span className={`text-sm ${textColor} font-mono`}>PITCH</span>
-                      <span 
-                        className={`text-lg font-mono font-bold`}
-                        style={{ color: neonColor }}
-                      >
-                        {speechPitch.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setSpeechPitch(Math.max(0.5, speechPitch - 0.05))}
-                        disabled={speechPitch <= 0.5}
-                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                      >
-                        -
-                      </button>
-                      <input
-                        type="range"
-                        min={0.5}
-                        max={1.5}
-                        step={0.05}
-                        value={speechPitch}
-                        onChange={(e) => setSpeechPitch(Number(e.target.value))}
-                        className="flex-1 h-2 appearance-none cursor-pointer"
-                        style={{
-                          background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechPitch - 0.5) / 1.0) * 100}%, rgba(51,65,85,0.5) ${((speechPitch - 0.5) / 1.0) * 100}%)`,
-                          height: '8px'
-                        }}
-                      />
-                      <button
-                        onClick={() => setSpeechPitch(Math.min(1.5, speechPitch + 0.05))}
-                        disabled={speechPitch >= 1.5}
-                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </>
+              {speechEnabled === 'on' && currentVoice && (
+                <div className="text-xs text-slate-500 font-mono">
+                  Auto-optimized for high-speed reading
+                </div>
               )}
             </section>
           )}

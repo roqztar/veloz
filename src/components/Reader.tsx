@@ -150,23 +150,22 @@ export function Reader({ className = '' }: ReaderProps) {
   const neonColorGlow = `hsl(${hue}, 100%, 50%, 0.5)`;
   const orpColor = getContrastColor(neonColor);
   
-  // Speech synthesis
+  // Speech synthesis - simplified: just ON/OFF, auto-optimized for speed
   const { 
     speak, 
     stop: stopSpeech, 
     isSupported: speechSupported,
-    options: speechOptions,
-    setGender,
-    setRate,
-    setPitch: setSpeechPitch,
+    enabled: speechEnabled,
+    toggle: toggleSpeech,
+    currentVoice
   } = useSpeech();
   
   // Speak current word when it changes
   useEffect(() => {
-    if (isPlaying && currentWord?.text && speechOptions.gender !== 'off') {
-      speak(currentWord.text, wpm);
+    if (isPlaying && currentWord?.text && speechEnabled === 'on') {
+      speak(currentWord.text);
     }
-  }, [currentWord, isPlaying, speak, speechOptions.gender, wpm]);
+  }, [currentWord, isPlaying, speak, speechEnabled]);
   
   // Initial spotlight effect on page load
   useEffect(() => {
@@ -530,13 +529,10 @@ export function Reader({ className = '' }: ReaderProps) {
         setShowGrid={setShowGrid}
         showGlow={showGlow}
         setShowGlow={setShowGlow}
-        voiceGender={speechOptions.gender}
-        setVoiceGender={setGender}
-        speechRate={speechOptions.rate}
-        setSpeechRate={setRate}
-        speechPitch={speechOptions.pitch}
-        setSpeechPitch={setSpeechPitch}
+        speechEnabled={speechEnabled}
+        toggleSpeech={toggleSpeech}
         speechSupported={speechSupported}
+        currentVoice={currentVoice}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}
         neonColor={neonColor}
