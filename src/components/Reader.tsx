@@ -777,7 +777,7 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Minus Button */}
               <button
                 onClick={() => setWPM(Math.max(200, wpm - 10))}
-                className="w-9 h-9 flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
+                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
@@ -799,7 +799,7 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Plus Button */}
               <button
                 onClick={() => setWPM(Math.min(1000, wpm + 10))}
-                className="w-9 h-9 flex items-center justify-center transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
+                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
@@ -832,7 +832,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Editor Button */}
             <button
               onClick={openEditor}
-              className="relative w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="relative w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -887,7 +887,7 @@ export function Reader({ className = '' }: ReaderProps) {
             />
             <label 
               htmlFor="file-upload" 
-              className={`w-11 h-11 flex items-center justify-center cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              className={`w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -911,7 +911,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Delete Button */}
             <button 
               onClick={reset}
-              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-red-400 transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -929,7 +929,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Settings Button */}
             <button
               onClick={() => setShowSettings(true)}
-              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded sm:ml-4"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded sm:ml-4"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -945,7 +945,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -974,7 +974,7 @@ export function Reader({ className = '' }: ReaderProps) {
             />
             <button 
               onClick={() => setShowColorPicker(true)}
-              className="w-11 h-11 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}`,
@@ -1036,7 +1036,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Skip to Start */}
             <button
               onClick={() => goTo(0)}
-              className="w-12 h-12 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-12 h-12 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1056,7 +1056,7 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('prev')}
               onTouchEnd={() => handlePointerUp('prev')}
-              className="w-14 h-14 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
+              className="w-14 h-14 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1097,7 +1097,7 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('next')}
               onTouchEnd={() => handlePointerUp('next')}
-              className="w-14 h-14 flex items-center justify-center transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
+              className="w-14 h-14 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
