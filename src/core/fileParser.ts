@@ -1,5 +1,5 @@
 /**
- * Secure File Parser for Veloz Speed Reader
+ * Secure File Parser for Neuro-Read
  * Handles PDF, DOC, DOCX, PPT, PPTX, and TXT file parsing
  * All parsing happens client-side for privacy/security
  */

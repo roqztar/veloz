@@ -10,7 +10,7 @@ import { parseFile, getSupportedFileTypes, getSupportedMimeTypes } from '../core
 // Default Text - Cyberpunk themed welcome message
 const DEFAULT_TEXT = `SYSTEM INITIALIZED
 
-Welcome to NEURO-READ v2.0
+Welcome to Neuro-Read v2.0
 This speed reading interface uses Rapid Serial Visual Presentation technology to maximize your data absorption rate.
 
 PROTOCOL:
