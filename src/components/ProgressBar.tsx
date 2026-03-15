@@ -6,6 +6,7 @@ interface ProgressBarProps {
   totalWords: number;
   words: string[];
   onSeek: (index: number) => void;
+  onSeekStart?: () => void;
   isDarkMode?: boolean;
   neonColor?: string;
   className?: string;
@@ -17,6 +18,7 @@ export function ProgressBar({
   totalWords,
   words,
   onSeek,
+  onSeekStart,
   isDarkMode = true, 
   neonColor = '#00ffff', 
   className = '' 
@@ -81,9 +83,10 @@ export function ProgressBar({
     e.preventDefault();
     setIsDragging(true);
     isDraggingRef.current = true;
+    onSeekStart?.(); // Pause playback when seeking
     const index = calculateIndexFromPosition(e.clientX);
     onSeek(index);
-  }, [calculateIndexFromPosition, onSeek]);
+  }, [calculateIndexFromPosition, onSeek, onSeekStart]);
   
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!containerRef.current) return;

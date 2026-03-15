@@ -1168,6 +1168,7 @@ export function Reader({ className = '' }: ReaderProps) {
               totalWords={words.length}
               words={words.map(w => w.text)}
               onSeek={goTo}
+              onSeekStart={pause}
               isDarkMode={true} 
               neonColor={neonColor} 
             />
