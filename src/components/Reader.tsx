@@ -161,6 +161,37 @@ export function Reader({ className = '' }: ReaderProps) {
   const neonColorGlow = `hsl(${hue}, 100%, 50%, 0.5)`;
   const orpColor = getContrastColor(neonColor);
   
+  // Update favicon with current neon color
+  useEffect(() => {
+    const hslColor = `hsl(${hue}, 100%, 50%)`;
+    const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+      <rect width="100" height="100" rx="20" fill="#000"/>
+      <ellipse cx="50" cy="50" rx="45" ry="30" fill="none" stroke="${hslColor}" stroke-width="3"/>
+      <ellipse cx="50" cy="50" rx="20" ry="20" fill="none" stroke="${hslColor}" stroke-width="2" opacity="0.6"/>
+      <circle cx="50" cy="50" r="8" fill="${hslColor}"/>
+      <circle cx="50" cy="50" r="4" fill="#000"/>
+      <line x1="50" y1="10" x2="50" y2="30" stroke="${hslColor}" stroke-width="1" opacity="0.5"/>
+      <line x1="50" y1="70" x2="50" y2="90" stroke="${hslColor}" stroke-width="1" opacity="0.5"/>
+      <line x1="10" y1="50" x2="30" y2="50" stroke="${hslColor}" stroke-width="1" opacity="0.5"/>
+      <line x1="70" y1="50" x2="90" y2="50" stroke="${hslColor}" stroke-width="1" opacity="0.5"/>
+      <path d="M5 5 L15 5 L5 15 Z" fill="${hslColor}" opacity="0.8"/>
+      <path d="M95 5 L85 5 L95 15 Z" fill="${hslColor}" opacity="0.8"/>
+      <path d="M5 95 L15 95 L5 85 Z" fill="${hslColor}" opacity="0.8"/>
+      <path d="M95 95 L85 95 L95 85 Z" fill="${hslColor}" opacity="0.8"/>
+    </svg>`;
+    
+    const dataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgContent)}`;
+    
+    // Update favicon link
+    let link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.href = dataUri;
+  }, [hue]);
+  
   // Initial spotlight effect on page load
   useEffect(() => {
     const timer = setTimeout(() => {
