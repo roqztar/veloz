@@ -69,7 +69,7 @@ export function Reader({ className = '' }: ReaderProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   
-  // Font settings - mono default for terminal look
+  // Font settings - mono default for terminal look, but sans/serif available for optimal reading
   const [fontFamily, setFontFamily] = useState<'sans' | 'serif' | 'mono'>('mono');
   const [fontWeight, setFontWeight] = useState<'normal' | 'bold' | 'light'>('bold');
   const [fontSizeLevel, setFontSizeLevel] = useState(0); // -5 to +5 levels
