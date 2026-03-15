@@ -158,14 +158,15 @@ export function Reader({ className = '' }: ReaderProps) {
     options: speechOptions,
     setGender,
     setRate,
+    setPitch: setSpeechPitch,
   } = useSpeech();
   
   // Speak current word when it changes
   useEffect(() => {
     if (isPlaying && currentWord?.text && speechOptions.gender !== 'off') {
-      speak(currentWord.text);
+      speak(currentWord.text, wpm);
     }
-  }, [currentWord, isPlaying, speak, speechOptions.gender]);
+  }, [currentWord, isPlaying, speak, speechOptions.gender, wpm]);
   
   // Initial spotlight effect on page load
   useEffect(() => {
@@ -533,6 +534,8 @@ export function Reader({ className = '' }: ReaderProps) {
         setVoiceGender={setGender}
         speechRate={speechOptions.rate}
         setSpeechRate={setRate}
+        speechPitch={speechOptions.pitch}
+        setSpeechPitch={setSpeechPitch}
         speechSupported={speechSupported}
         cleanOptions={cleanOptions}
         setCleanOptions={setCleanOptions}

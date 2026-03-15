@@ -25,6 +25,8 @@ interface SettingsModalProps {
   setVoiceGender: (g: VoiceGender) => void;
   speechRate: number;
   setSpeechRate: (r: number) => void;
+  speechPitch: number;
+  setSpeechPitch: (p: number) => void;
   speechSupported: boolean;
   
   // Cleaning
@@ -53,6 +55,8 @@ export function SettingsModal({
   setVoiceGender,
   speechRate,
   setSpeechRate,
+  speechPitch,
+  setSpeechPitch,
   speechSupported,
   cleanOptions: _cleanOptions,
   setCleanOptions: _setCleanOptions,
@@ -259,46 +263,90 @@ export function SettingsModal({
               
               {/* Rate */}
               {voiceGender !== 'off' && (
-                <div className="space-y-2 pt-2">
-                  <div className="flex justify-between items-center">
-                    <span className={`text-sm ${textColor} font-mono`}>RATE</span>
-                    <span 
-                      className={`text-lg font-mono font-bold`}
-                      style={{ color: neonColor }}
-                    >
-                      {speechRate.toFixed(1)}x
-                    </span>
+                <>
+                  <div className="space-y-2 pt-2">
+                    <div className="flex justify-between items-center">
+                      <span className={`text-sm ${textColor} font-mono`}>RATE</span>
+                      <span 
+                        className={`text-lg font-mono font-bold`}
+                        style={{ color: neonColor }}
+                      >
+                        {speechRate.toFixed(1)}x
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setSpeechRate(Math.max(1.2, speechRate - 0.1))}
+                        disabled={speechRate <= 1.2}
+                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="range"
+                        min={1.2}
+                        max={2.0}
+                        step={0.1}
+                        value={speechRate}
+                        onChange={(e) => setSpeechRate(Number(e.target.value))}
+                        className="flex-1 h-2 appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechRate - 1.2) / 0.8) * 100}%, rgba(51,65,85,0.5) ${((speechRate - 1.2) / 0.8) * 100}%)`,
+                          height: '8px'
+                        }}
+                      />
+                      <button
+                        onClick={() => setSpeechRate(Math.min(2.0, speechRate + 0.1))}
+                        disabled={speechRate >= 2.0}
+                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setSpeechRate(Math.max(0.5, speechRate - 0.1))}
-                      disabled={speechRate <= 0.5}
-                      className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                    >
-                      -
-                    </button>
-                    <input
-                      type="range"
-                      min={0.5}
-                      max={2.0}
-                      step={0.1}
-                      value={speechRate}
-                      onChange={(e) => setSpeechRate(Number(e.target.value))}
-                      className="flex-1 h-2 appearance-none cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechRate - 0.5) / 1.5) * 100}%, rgba(51,65,85,0.5) ${((speechRate - 0.5) / 1.5) * 100}%)`,
-                        height: '8px'
-                      }}
-                    />
-                    <button
-                      onClick={() => setSpeechRate(Math.min(2.0, speechRate + 0.1))}
-                      disabled={speechRate >= 2.0}
-                      className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
-                    >
-                      +
-                    </button>
+                  
+                  {/* Pitch */}
+                  <div className="space-y-2 pt-4">
+                    <div className="flex justify-between items-center">
+                      <span className={`text-sm ${textColor} font-mono`}>PITCH</span>
+                      <span 
+                        className={`text-lg font-mono font-bold`}
+                        style={{ color: neonColor }}
+                      >
+                        {speechPitch.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setSpeechPitch(Math.max(0.5, speechPitch - 0.05))}
+                        disabled={speechPitch <= 0.5}
+                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="range"
+                        min={0.5}
+                        max={1.5}
+                        step={0.05}
+                        value={speechPitch}
+                        onChange={(e) => setSpeechPitch(Number(e.target.value))}
+                        className="flex-1 h-2 appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${((speechPitch - 0.5) / 1.0) * 100}%, rgba(51,65,85,0.5) ${((speechPitch - 0.5) / 1.0) * 100}%)`,
+                          height: '8px'
+                        }}
+                      />
+                      <button
+                        onClick={() => setSpeechPitch(Math.min(1.5, speechPitch + 0.05))}
+                        disabled={speechPitch >= 1.5}
+                        className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </section>
           )}
