@@ -256,6 +256,36 @@ async function parsePDF(file: File): Promise<string> {
       }
       pageText = processedLines.join('\n');
       
+      // Remove author affiliation lines (common in academic papers)
+      // Pattern: "1Facebook AI Research", "2New York University", "3Department..."
+      const lines3 = pageText.split('\n');
+      const filteredLines: string[] = [];
+      let skipUntilContent = false;
+      
+      for (let i = 0; i < lines3.length; i++) {
+        const line = lines3[i];
+        const trimmed = line.trim();
+        
+        // Detect affiliation: starts with digit + uppercase, contains university/research org
+        const isAffiliationStart = /^\d+[A-Z]/.test(trimmed) && 
+          /(?:University|Research|College|Institute|Department|Google|Facebook)/i.test(trimmed);
+        
+        // Detect address continuation
+        const isAddressLine = /^(?:\d+)?(?:PO\s*Box|Broadway|Parkway|California|Québec|Montreal|Toronto|Canada|USA)/i.test(trimmed);
+        
+        if (isAffiliationStart) {
+          skipUntilContent = true;
+          continue;
+        } else if (skipUntilContent && (isAddressLine || trimmed.length < 50)) {
+          continue;
+        } else if (skipUntilContent && trimmed.length > 0) {
+          skipUntilContent = false;
+        }
+        
+        filteredLines.push(line);
+      }
+      pageText = filteredLines.join('\n');
+      
       // Remove footnote reference lines (standalone numbers or number ranges)
       // Pattern: lines with only numbers like "8", "9,10", "11", "12,13", "1-4", "5-7"
       pageText = pageText.replace(/^\s*\d{1,2}(?:[-,]\d{1,2})?\s*$/gm, '');
