@@ -187,7 +187,9 @@ function cleanSpecialChars(text: string): string {
 function cleanFootnotes(text: string): string {
   // Entferne einzelne Zahlen, die zwischen Satzzeichen und Leerzeichen stehen
   // z.B. "Text. 1 Nächster Satz" -> "Text. Nächster Satz"
-  let cleaned = text.replace(/([.!?;,])\s+(\d{1,3})\s+(?=[A-ZÄÖÜ])/g, '$1 ');
+  // Aber nicht Zahlen wie "250" in "start: 250 WPM" (die Teil des Inhalts sind)
+  // Nur entfernen wenn es eine einzelne Ziffer ist (typisch für Fußnoten)
+  let cleaned = text.replace(/([.!?;,])\s+(\d)\s+(?=[A-ZÄÖÜ])/g, '$1 ');
   
   // Entferne Zahlen in eckigen Klammern am Wortende (typisch für akademische Fußnoten)
   // z.B. "Wort[12]" -> "Wort"
