@@ -195,8 +195,12 @@ export function WordDisplay({
       
       {/* Word display with fixed positioning for ORP centering */}
       <div 
-        className={`flex items-baseline animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass} cursor-pointer hover:opacity-90 transition-opacity`}
+        className={`flex items-baseline animate-in zoom-in-95 duration-75 ${fontFamilyClass} ${fontWeightClass} cursor-pointer hover:opacity-90 transition-opacity select-none`}
         style={{ fontSize: `${fontSize}px`, lineHeight: 1.2 }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowNavBuffer(!showNavBuffer);
+        }}
       >
         {/* Before ORP - fixed width for stability */}
         <span 
