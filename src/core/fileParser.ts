@@ -287,8 +287,11 @@ async function parsePDF(file: File): Promise<string> {
       pageText = filteredLines.join('\n');
       
       // Remove footnote reference lines (standalone numbers or number ranges)
-      // Pattern: lines with only numbers like "8", "9,10", "11", "12,13", "1-4", "5-7"
-      pageText = pageText.replace(/^\s*\d{1,2}(?:[-,]\d{1,2})?\s*$/gm, '');
+      // Pattern: "8", "9,10", "11", "1-4", "5-7" (with optional trailing comma/period)
+      pageText = pageText.replace(/^\s*\d{1,2}(?:[-,]\d{1,2})?[,.]?\s*$/gm, '');
+      
+      // Remove lines with only punctuation (isolated commas, periods, etc.)
+      pageText = pageText.replace(/^\s*[,.;:]\s*$/gm, '');
       
       // Move leading punctuation to previous line
       // Pattern: "\n, " -> ", " (comma at start of line)
