@@ -64,14 +64,14 @@ export function Reader({ className = '' }: ReaderProps) {
   // Rainbow color picker state - random hue on each visit
   const [hue, setHue] = useState(180); // Default during SSR/build
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const hasRandomizedHue = useRef(false);
+  const hueInitialized = useRef(false);
   
-  // Set random hue after mount (client-side only)
+  // Set random hue after mount (client-side only) - prevents hydration mismatch
   useEffect(() => {
-    if (!hasRandomizedHue.current) {
-      hasRandomizedHue.current = true;
+    // Only run once after hydration
+    if (!hueInitialized.current) {
+      hueInitialized.current = true;
       const randomHue = Math.floor(Math.random() * 360);
-      console.log('[Eyedance] Random hue:', randomHue);
       setHue(randomHue);
     }
   }, []);
