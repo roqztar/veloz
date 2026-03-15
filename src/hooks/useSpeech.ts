@@ -67,6 +67,7 @@ export function useSpeech() {
   }, [options.gender]);
 
   // Select voice based on gender and language preference
+  // Prioritize voices that handle high speech rates better
   const getVoice = useCallback((preferredLang?: 'de' | 'en'): SpeechSynthesisVoice | null => {
     if (options.gender === 'off') return null;
     
@@ -85,7 +86,6 @@ export function useSpeech() {
       primaryVoices = englishVoices;
       secondaryVoices = germanVoices;
     } else {
-      // Default: German first, then English
       primaryVoices = germanVoices;
       secondaryVoices = englishVoices;
     }
@@ -97,19 +97,44 @@ export function useSpeech() {
         ? secondaryVoices 
         : voices;
     
-    if (options.gender === 'female') {
-      // Look for female voice names - expanded for DE/EN
-      const femaleVoice = candidates.find(v => 
-        /female|woman|girl|frau|weiblich|anna|maria|lena|sarah|julia|laura|sophie|emma|victoria|emily|helena|samantha|victoria|kate|amy|joanna|salli|kimberly|kendra|joey|ivy|justin|matthew|geraint|nicole|russell|amy|emma|brian|cam|catherine|lucy|mathieu|chantal|celine|lea|louise|mads|naja|lotte|ruben|laura|linda|lisa|maja|marlene|mathilde|nora|therese|hannah|grace|ashley|libby|tiffany|microsoft|google/i.test(v.name)
+    if (candidates.length === 0) return null;
+    
+    // Priority order for voices that handle high speeds better:
+    // 1. Google voices (excellent at high rates)
+    // 2. Microsoft voices (good quality, handles speed well)
+    // 3. Apple/Siri voices (decent at high rates)
+    // 4. Default to first available
+    
+    const prioritizeVoices = (voiceList: SpeechSynthesisVoice[]) => {
+      // First try Google voices - they handle high rates best
+      const googleVoice = voiceList.find(v => 
+        /Google\s+(?:US|UK|Deutsch)/i.test(v.name) || 
+        /^Google\s/i.test(v.name)
       );
-      return femaleVoice || candidates[0] || null;
-    } else {
-      // Look for male voice names - expanded for DE/EN
-      const maleVoice = candidates.find(v => 
-        /male|man|boy|mann|männlich|hans|peter|stefan|max|tom|david|john|michael|alex|daniel|jonas|james|robert|michael|william|david|joseph|thomas|christopher|daniel|paul|mark|donald|kenneth|steven|edward|brian|ronald|anthony|kevin|jason|matthew|gary|timothy|jose|larry|jeffrey|frank|scott|eric|stephen|andrew|raymond|gregory|joshua|jerry|dennis|walter|patrick|peter|harold|douglas|henry|carl|arthur|ryan|roger|joe|juan|jack|albert|jonathan|justin|terry|gerald|keith|samuel|willie|ralph|lawrence|nicholas|roy|benjamin|bruce|brandon|adam|harry|fred|wayne|bill|steve|howard|ernest|philip|todd|craig|alan|philip|carl|daryl|matt|nate|tony|chris|sean|kyle|jordan|liam|noah|oliver|elijah|lucas|mason|ethan|logan|aiden|jayden|william|alexander|benjamin|samuel|henry|jacob|owen|dylan|luke|gabriel|anthony|isaac|grayson|jackson|levi|mateo|david|wyatt|carter|julian|ryan|jaxon|nathan|adrian|eli|aaron|charles|thomas|hunter|christian|connor|ezra|landon|adrian|jonathan|nolan|jeremiah|easton|emmett|colton|josiah|roman|axel|hudson|silas|jordan|atlas|ryker|luke|cole|charlie|sam|dean|microsoft|google/i.test(v.name)
+      if (googleVoice) return googleVoice;
+      
+      // Then try Microsoft voices
+      const msVoice = voiceList.find(v => 
+        /Microsoft/i.test(v.name) && !/Mobile/i.test(v.name)
       );
-      return maleVoice || candidates[0] || null;
-    }
+      if (msVoice) return msVoice;
+      
+      // Try Apple/Siri voices
+      const appleVoice = voiceList.find(v => 
+        /Siri|Apple|iOS/i.test(v.name)
+      );
+      if (appleVoice) return appleVoice;
+      
+      // Try to find voices with "Enhanced" or "Premium" in name
+      const enhancedVoice = voiceList.find(v => 
+        /Enhanced|Premium|Neural/i.test(v.name)
+      );
+      if (enhancedVoice) return enhancedVoice;
+      
+      return voiceList[0];
+    };
+    
+    return prioritizeVoices(candidates);
   }, [voices, options.gender]);
 
   const speak = useCallback((text: string, wpm?: number) => {
@@ -172,6 +197,7 @@ export function useSpeech() {
     stop,
     isSpeaking,
     isSupported,
+    voices,
     options,
     setGender,
     setRate: (rate: number) => setOptions(prev => ({ ...prev, rate: Math.min(2.0, Math.max(0.5, rate)) })),

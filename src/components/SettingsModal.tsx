@@ -1,5 +1,6 @@
 import type { CleanOptions } from '../core/textCleaner';
 import type { VoiceGender } from '../hooks/useSpeech';
+import { useState, useEffect } from 'react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -68,6 +69,21 @@ export function SettingsModal({
   const mutedColor = 'text-slate-500';
   const terminalClass = 'bg-black/60 border border-slate-700/50';
   const accentBg = 'bg-slate-800 hover:bg-slate-700';
+  
+  // Get available voices for display
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        // Filter to German and English voices only
+        const filtered = voices.filter(v => /^de-|^en-/.test(v.lang));
+        setAvailableVoices(filtered.length > 0 ? filtered : voices);
+      };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }, []);
 
   
 
@@ -260,6 +276,24 @@ export function SettingsModal({
                   </button>
                 ))}
               </div>
+              
+              {/* Voice Info */}
+              {voiceGender !== 'off' && availableVoices.length > 0 && (
+                <div className="pt-2 text-xs text-slate-400 font-mono">
+                  <div className="flex items-center gap-2">
+                    <span>Available: {availableVoices.length} voices</span>
+                    <span className="text-slate-600">|</span>
+                    <span>
+                      Best: {availableVoices.find(v => /Google/i.test(v.name))?.name || 
+                             availableVoices.find(v => /Microsoft/i.test(v.name))?.name || 
+                             availableVoices[0]?.name}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-slate-500">
+                    (Google/Microsoft voices work best at high speeds)
+                  </div>
+                </div>
+              )}
               
               {/* Rate - max 2.0 (browser limit), user can only decrease */}
               {voiceGender !== 'off' && (
