@@ -19,7 +19,7 @@ interface WordDisplayProps {
 export function WordDisplay({ 
   currentWord,
   words,
-  isDarkMode = true,
+  isDarkMode: _isDarkMode,
   fontFamily = 'mono',
   fontWeight = 'bold',
   fontSizeLevel = 0,

@@ -24,7 +24,7 @@ interface SettingsModalProps {
 export function SettingsModal({
   isOpen,
   onClose,
-  isDarkMode,
+  isDarkMode: _isDarkMode,
   fontFamily,
   setFontFamily,
   fontWeight,

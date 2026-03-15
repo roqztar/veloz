@@ -13,7 +13,7 @@ interface ProgressBarProps {
 
 export function ProgressBar({ 
   progress, 
-  currentIndex,
+  currentIndex: _currentIndex,
   totalWords,
   words,
   onSeek,

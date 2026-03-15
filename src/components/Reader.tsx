@@ -46,14 +46,6 @@ function getContrastColor(hslColor: string): string {
   return '#ffffff';
 }
 
-// Format time as HH:MM:SS with cyberpunk styling
-function formatTimeCyberpunk(totalSeconds: number): string {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = Math.floor(totalSeconds % 60);
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
 export function Reader({ className = '' }: ReaderProps) {
   // Cyberpunk is always dark mode
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -144,6 +136,30 @@ export function Reader({ className = '' }: ReaderProps) {
     
     return () => clearInterval(interval);
   }, [isPlaying, startTime]);
+  
+  // Fullscreen toggle - defined early for use in keyboard shortcuts
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch {
+      // Fullscreen not supported or failed
+    }
+  }, []);
+  
+  // Listen for fullscreen changes (e.g., user presses Escape)
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
   
   // Cleanup timers
   useEffect(() => {
@@ -245,30 +261,6 @@ export function Reader({ className = '' }: ReaderProps) {
     }, INACTIVITY_DELAY);
   }, []);
   
-  // Fullscreen toggle
-  const toggleFullscreen = useCallback(async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-        setIsFullscreen(true);
-      } else {
-        await document.exitFullscreen();
-        setIsFullscreen(false);
-      }
-    } catch {
-      // Fullscreen not supported or failed
-    }
-  }, []);
-  
-  // Listen for fullscreen changes (e.g., user presses Escape)
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
-  
   // Touch/Swipe handlers for mobile navigation
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -361,7 +353,7 @@ export function Reader({ className = '' }: ReaderProps) {
   
   // Cyberpunk dark theme classes
   const bgClass = 'bg-[#050505]';
-  const textColorClass = 'text-slate-200';
+  const _textColorClass = 'text-slate-200';
   const mutedColorClass = 'text-slate-500';
   
   // Cyberpunk terminal-style glass class with neon borders
