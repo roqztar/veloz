@@ -1084,16 +1084,17 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       {/* Main Content */}
       <div className="relative h-screen w-full flex flex-col">
         
-        {/* Top Bar - Cyberpunk Terminal */}
+        {/* Top Bar - Cyberpunk Terminal - Mobile Optimized */}
         <div 
-          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-6 sm:px-10 lg:px-16 py-4 sm:py-6 gap-3 sm:gap-0 transition-all duration-700 ease-in-out ${
+          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-10 lg:px-16 py-3 sm:py-6 gap-2 sm:gap-0 transition-all duration-700 ease-in-out ${
             showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
         >
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            {/* WPM Display - Terminal Style */}
+          {/* Mobile: First row - WPM and essential controls */}
+          <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3 w-full sm:w-auto">
+            {/* WPM Display - Compact on Mobile */}
             <div 
-              className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 ${terminalClass} flex-1 sm:flex-none rounded-xl ml-4 sm:ml-6`}
+              className={`flex items-center gap-2 px-2 sm:px-4 py-2 sm:py-3 ${terminalClass} rounded-xl sm:ml-6`}
               style={{ borderColor: neonColorDim }}
             >
               <span 
@@ -1106,20 +1107,20 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               {/* Minus Button */}
               <button
                 onClick={() => setWPM(Math.max(50, wpm - 10))}
-                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
                 }}
                 title="WPM -10"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
               </button>
               
               <span 
-                className={`text-lg sm:text-xl font-bold min-w-[3.5ch] text-center font-mono`}
+                className={`text-base sm:text-xl font-bold min-w-[3ch] text-center font-mono`}
                 style={{ color: neonColor, textShadow: `0 0 10px ${neonColorGlow}` }}
               >
                 {wpm}
@@ -1128,36 +1129,20 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               {/* Plus Button */}
               <button
                 onClick={() => setWPM(Math.min(1000, wpm + 10))}
-                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
                 }}
                 title="WPM +10"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
               </button>
               
-              <div className="relative flex items-center flex-1 sm:flex-none ml-1">
-                <input
-                  type="range"
-                  min={50}
-                  max={1000}
-                  step={10}
-                  value={wpm}
-                  onChange={(e) => setWPM(Number(e.target.value))}
-                  className="w-full sm:w-24 h-8 sm:h-6 appearance-none cursor-pointer bg-transparent touch-manipulation"
-                  style={{ 
-                    background: `linear-gradient(to right, ${neonColor} 0%, ${neonColor} ${(wpm-50)/9.5}%, rgba(51,65,85,0.5) ${(wpm-50)/9.5}%, rgba(51,65,85,0.5) 100%)`,
-                    height: '8px'
-                  }}
-                />
-              </div>
-              
-              {/* CyberEye Time Saved Display - right of WPM slider */}
+              {/* CyberEye - Desktop only */}
               <CyberEye 
                 timeSaved={timeSaved}
                 neonColor={neonColor}
@@ -1165,10 +1150,26 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               />
             </div>
             
-            {/* Editor Button */}
+            {/* Mobile: Editor button prominent */}
             <button
               onClick={openEditor}
-              className="relative w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
+              className="sm:hidden w-10 h-10 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
+              title="Text bearbeiten"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+            </button>
+            
+            {/* Desktop: Editor, Upload, Delete, Settings, Fullscreen */}
+            <button
+              onClick={openEditor}
+              className="hidden sm:flex relative w-11 h-11 items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1190,7 +1191,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               )}
             </button>
             
-            {/* Upload Button */}
             <input
               type="file"
               accept={getSupportedMimeTypes() + ',' + getSupportedFileTypes()}
@@ -1224,7 +1224,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
             />
             <label 
               htmlFor="file-upload" 
-              className={`w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              className={`hidden sm:flex w-11 h-11 items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1245,10 +1245,9 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               )}
             </label>
             
-            {/* Delete Button */}
             <button 
               onClick={reset}
-              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-red-400 transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
+              className="hidden sm:flex w-11 h-11 items-center justify-center text-slate-300 hover:text-red-400 transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1263,10 +1262,9 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               </svg>
             </button>
             
-            {/* Settings Button */}
             <button
               onClick={() => setShowSettings(true)}
-              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl sm:ml-4"
+              className="hidden sm:flex w-11 h-11 items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl sm:ml-4"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1279,10 +1277,9 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               </svg>
             </button>
             
-            {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
+              className="hidden sm:flex w-11 h-11 items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1298,6 +1295,53 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
                   <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
                 </svg>
               )}
+            </button>
+          </div>
+          
+          {/* Mobile: Compact button row */}
+          <div className="flex sm:hidden items-center justify-between gap-1 mt-1">
+            <label 
+              htmlFor="file-upload" 
+              className={`flex-1 h-9 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-all duration-300 ease-out active:scale-95 rounded-lg text-xs font-mono ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
+            >
+              {isUploading ? '...' : 'IMPORT'}
+            </label>
+            
+            <button 
+              onClick={reset}
+              className="flex-1 h-9 flex items-center justify-center text-slate-300 hover:text-red-400 transition-all duration-300 ease-out active:scale-95 rounded-lg text-xs font-mono"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
+            >
+              CLEAR
+            </button>
+            
+            <button
+              onClick={() => setShowSettings(true)}
+              className="flex-1 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out active:scale-95 rounded-lg text-xs font-mono"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
+            >
+              SETTINGS
+            </button>
+            
+            <button
+              onClick={toggleFullscreen}
+              className="flex-1 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out active:scale-95 rounded-lg text-xs font-mono"
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                border: `1px solid ${neonColor}30`
+              }}
+            >
+              FULL
             </button>
           </div>
           
@@ -1348,43 +1392,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
             className="w-full max-w-5xl px-2 sm:px-4"
           />
           
-          {/* ORP Scan Effect */}
-          {orpScanActive && (
-            <div className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-hidden">
-              {/* Scan line - vertical beam */}
-              <div className="orp-scan absolute w-full flex items-center justify-center">
-                <div 
-                  className="w-32 h-1"
-                  style={{
-                    background: `linear-gradient(90deg, 
-                      transparent 0%, 
-                      ${neonColor}40 20%, 
-                      ${neonColor} 50%, 
-                      ${neonColor}40 80%, 
-                      transparent 100%
-                    )`,
-                    boxShadow: `0 0 30px ${neonColorGlow}, 0 0 60px ${neonColorGlow}`,
-                    filter: 'blur(2px)'
-                  }}
-                />
-              </div>
-              {/* Center glow pulse */}
-              <div 
-                className="absolute w-48 h-48 rounded-full orp-pulse"
-                style={{
-                  background: `radial-gradient(circle, ${neonColorGlow} 0%, transparent 70%)`,
-                  opacity: 0.4
-                }}
-              />
-            </div>
-          )}
-          
-          {/* Mobile touch hint */}
-          <div className="absolute bottom-32 left-1/2 -translate-x-1/2 md:hidden">
-            <span className={`text-xs ${mutedColorClass} opacity-50 font-mono`}>
-              [TAP WORD] NAV • [SWIPE] PLAY/PAUSE
-            </span>
-          </div>
+
         </div>
         
         {/* Bottom Controls */}

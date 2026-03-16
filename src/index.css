@@ -340,6 +340,28 @@ body {
   animation: grid-flash-dual 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* Mobile: Simpler, lighter effects */
+@media (max-width: 768px) {
+  .spotlight-horizontal,
+  .spotlight-vertical,
+  .spotlight-radial,
+  .spotlight-dual-left,
+  .spotlight-dual-right {
+    animation-duration: 1.5s;
+  }
+  
+  .grid-flash-horizontal,
+  .grid-flash-vertical,
+  .grid-flash-radial,
+  .grid-flash-dual {
+    animation-duration: 1.5s;
+  }
+  
+  .orp-spotlight-glow {
+    animation-duration: 1.5s;
+  }
+}
+
 /* Ambient glow pulse - very subtle */
 @keyframes ambient-pulse {
   0%, 100% { opacity: 0.05; }
