@@ -86,7 +86,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   const [spotlightActive, setSpotlightActive] = useState(false);
   const [currentSpotlightType, setCurrentSpotlightType] = useState<SpotlightType>('horizontal');
   const [orpScanActive, setOrpScanActive] = useState(false);
-  const [showNavBuffer, setShowNavBuffer] = useState(false);
   const [gridFlashActive, setGridFlashActive] = useState(false);
   const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
@@ -1320,19 +1319,10 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
           className="flex-1 flex items-center justify-center px-4 sm:px-8 lg:px-12 touch-pan-y relative"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          onClick={(e) => {
-            // Only toggle if clicking on the word display area, not on nav buttons
-            const target = e.target as HTMLElement;
-            if (!target.closest('button')) {
-              setShowNavBuffer(!showNavBuffer);
-            }
-          }}
         >
           <WordDisplay 
             currentWord={currentWord}
             words={words.map(w => w.text)}
-            prevWords={contextBuffer.prev}
-            nextWords={contextBuffer.next}
             isDarkMode={true}
             fontFamily={fontFamily}
             fontWeight={fontWeight}
@@ -1341,8 +1331,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
             neonColor={neonColor}
             neonColorGlow={neonColorGlow}
             showGlow={showGlow}
-            showNavBuffer={showNavBuffer}
-            onClick={() => setShowNavBuffer(!showNavBuffer)}
+            onClick={() => { setShowScrubber(true); pause(); }}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
           
@@ -1380,7 +1369,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
           {/* Mobile touch hint */}
           <div className="absolute bottom-32 left-1/2 -translate-x-1/2 md:hidden">
             <span className={`text-xs ${mutedColorClass} opacity-50 font-mono`}>
-              [TAP] PLAY/PAUSE • [SWIPE] NAV
+              [TAP WORD] NAV • [SWIPE] PLAY/PAUSE
             </span>
           </div>
         </div>

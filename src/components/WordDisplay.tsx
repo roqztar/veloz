@@ -4,8 +4,6 @@ import type { DisplayWord } from '../core/textCleaner';
 interface WordDisplayProps {
   currentWord: DisplayWord;
   words: string[];
-  prevWords?: DisplayWord[];
-  nextWords?: DisplayWord[];
   isDarkMode?: boolean;
   fontFamily?: 'sans' | 'serif' | 'mono';
   fontWeight?: 'normal' | 'bold' | 'light';
@@ -14,7 +12,6 @@ interface WordDisplayProps {
   neonColor?: string;
   neonColorGlow?: string;
   showGlow?: boolean;
-  showNavBuffer?: boolean;
   onClick?: () => void;
   className?: string;
 }
@@ -22,8 +19,6 @@ interface WordDisplayProps {
 export function WordDisplay({ 
   currentWord,
   words,
-  prevWords = [],
-  nextWords = [],
   isDarkMode: _isDarkMode,
   fontFamily = 'mono',
   fontWeight = 'bold',
@@ -32,7 +27,6 @@ export function WordDisplay({
   neonColor = '#00ffff',
   neonColorGlow = 'rgba(0, 255, 255, 0.5)',
   showGlow = false,
-  showNavBuffer = false,
   onClick,
   className = '' 
 }: WordDisplayProps) {
@@ -162,11 +156,6 @@ export function WordDisplay({
       className={`relative flex items-center justify-center h-32 md:h-48 cursor-pointer ${className}`}
       onClick={onClick}
     >
-      {/* Click hint */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono opacity-60 pointer-events-none select-none">
-        [CLICK WORD TO TOGGLE NAV]
-      </div>
-      
       {/* Optional background glow */}
       {showGlow && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -174,25 +163,6 @@ export function WordDisplay({
             className="w-32 h-32 md:w-48 md:h-48 rounded-full blur-3xl"
             style={{ backgroundColor: neonColorGlow }}
           />
-        </div>
-      )}
-      
-      {/* NAV_Buffer - Previous words */}
-      {showNavBuffer && prevWords.length > 0 && (
-        <div 
-          className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 flex flex-col items-end gap-1 animate-in fade-in duration-200"
-          style={{ maxWidth: '30%' }}
-        >
-          <div className="text-[10px] text-slate-500 font-mono mb-1">// PREV</div>
-          {prevWords.map((word, i) => (
-            <span 
-              key={`prev-${i}`}
-              className="text-sm md:text-base text-slate-400 font-mono truncate"
-              style={{ opacity: 0.6 - (i * 0.15) }}
-            >
-              {word.text}
-            </span>
-          ))}
         </div>
       )}
       
@@ -237,25 +207,6 @@ export function WordDisplay({
           {after}
         </span>
       </div>
-      
-      {/* NAV_Buffer - Next words */}
-      {showNavBuffer && nextWords.length > 0 && (
-        <div 
-          className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 flex flex-col items-start gap-1 animate-in fade-in duration-200"
-          style={{ maxWidth: '30%' }}
-        >
-          <div className="text-[10px] text-slate-500 font-mono mb-1">// NEXT</div>
-          {nextWords.map((word, i) => (
-            <span 
-              key={`next-${i}`}
-              className="text-sm md:text-base text-slate-400 font-mono truncate"
-              style={{ opacity: 0.6 - (i * 0.15) }}
-            >
-              {word.text}
-            </span>
-          ))}
-        </div>
-      )}
       
       {/* Slow subtle scanline animation */}
       <style>{`
