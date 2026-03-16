@@ -54,7 +54,7 @@ export function Reader({ className = '' }: ReaderProps) {
   
   // Inactivity timer for auto-hiding controls
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const INACTIVITY_DELAY = 4000; // 4 seconds before fade-out starts
+  const INACTIVITY_DELAY = 3000; // 3 seconds before fade-out starts
   const [showSettings, setShowSettings] = useState(false);
   const [showScrubber, setShowScrubber] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -434,6 +434,15 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     setShowCursorGlow(false);
   }, []);
   
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (wpmTimeoutRef.current) clearTimeout(wpmTimeoutRef.current);
+      if (wpmIntervalRef.current) clearTimeout(wpmIntervalRef.current);
+      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+    };
+  }, []);
+  
   // Touch/Swipe handlers for mobile navigation
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -785,40 +794,44 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       )}
       
       {/* Cursor-lit Grid Background - only visible around cursor */}
-      <div 
-        className={`fixed inset-0 pointer-events-none z-10 transition-opacity duration-700 ease-out ${showControls ? 'opacity-100' : 'opacity-0'}`}
-        style={{
-          maskImage: `radial-gradient(circle 125px at ${cursorPos.x}px ${cursorPos.y}px, black 0%, transparent 70%)`,
-          WebkitMaskImage: `radial-gradient(circle 125px at ${cursorPos.x}px ${cursorPos.y}px, black 0%, transparent 70%)`
-        }}
-      >
+      {showControls && (
         <div 
-          className="absolute inset-0"
+          className="fixed inset-0 pointer-events-none z-10 animate-in fade-in duration-300"
           style={{
-            backgroundImage: `
-              linear-gradient(to right, ${neonColorDim} 1px, transparent 1px),
-              linear-gradient(to bottom, ${neonColorDim} 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px',
-            opacity: 0.3
+            maskImage: `radial-gradient(circle 125px at ${cursorPos.x}px ${cursorPos.y}px, black 0%, transparent 70%)`,
+            WebkitMaskImage: `radial-gradient(circle 125px at ${cursorPos.x}px ${cursorPos.y}px, black 0%, transparent 70%)`
+          }}
+        >
+          <div 
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, ${neonColorDim} 1px, transparent 1px),
+                linear-gradient(to bottom, ${neonColorDim} 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px',
+              opacity: 0.3
+            }}
+          />
+        </div>
+      )}
+      
+      {/* Cursor Glow Effect - follows mouse with heavy blur, only visible when controls shown */}
+      {showControls && (
+        <div 
+          className="fixed pointer-events-none z-20 animate-in fade-in duration-300"
+          style={{
+            left: cursorPos.x,
+            top: cursorPos.y,
+            transform: 'translate(-50%, -50%)',
+            width: '250px',
+            height: '250px',
+            background: `radial-gradient(circle, ${neonColor} 0%, ${neonColor} 15%, ${neonColorGlow} 40%, transparent 70%)`,
+            filter: 'blur(60px)',
+            opacity: 0.6
           }}
         />
-      </div>
-      
-      {/* Cursor Glow Effect - follows mouse with heavy blur, fades with controls */}
-      <div 
-        className={`fixed pointer-events-none z-20 transition-opacity duration-700 ease-out ${showControls ? 'opacity-100' : 'opacity-0'}`}
-        style={{
-          left: cursorPos.x,
-          top: cursorPos.y,
-          transform: 'translate(-50%, -50%)',
-          width: '250px',
-          height: '250px',
-          background: `radial-gradient(circle, ${neonColor} 0%, ${neonColor} 15%, ${neonColorGlow} 40%, transparent 70%)`,
-          filter: 'blur(60px)',
-          opacity: 0.6
-        }}
-      />
+      )}
       
       {/* Settings Modal */}
       <SettingsModal
