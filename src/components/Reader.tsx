@@ -145,7 +145,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     words,
     currentIndex,
     currentWord,
-    contextBuffer,
     isPlaying,
     wpm,
     progress,
@@ -164,8 +163,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   } = useSpritz({ 
     initialWPM: 300,
     initialText: DEFAULT_TEXT,
-    enableContextBuffer: true,
-    contextBufferSize: 1,
     skipCodeBlocks: false,
   });
   
