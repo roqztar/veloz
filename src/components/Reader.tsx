@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+// Build timestamp: force new deploy
 import { WordDisplay } from './WordDisplay';
 import { ProgressBar } from './ProgressBar';
 import { SettingsModal } from './SettingsModal';
