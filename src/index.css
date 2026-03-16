@@ -112,84 +112,84 @@ body {
 
 /* ===== FAST SPOTLIGHT EFFECTS (2s max) ===== */
 
-/* Effect 1: Horizontal Sweep - fast with smooth fade */
+/* Effect 1: Horizontal Sweep - MASSIVE BLUR for realistic light */
 @keyframes spotlight-horizontal {
   0% {
     opacity: 0;
     transform: translateX(-120%) scaleX(0.3);
-    filter: blur(80px);
+    filter: blur(120px);
   }
   30% {
-    opacity: 0.55;
+    opacity: 0.7;
     transform: translateX(0%) scaleX(1);
-    filter: blur(50px);
+    filter: blur(80px);
   }
   50% {
-    opacity: 0.5;
-    filter: blur(60px);
+    opacity: 0.6;
+    filter: blur(100px);
   }
   80% {
-    opacity: 0.15;
-    filter: blur(100px);
+    opacity: 0.2;
+    filter: blur(180px);
   }
   100% {
     opacity: 0;
     transform: translateX(120%) scaleX(0.3);
-    filter: blur(150px);
+    filter: blur(250px);
   }
 }
 
-/* Effect 2: Vertical Sweep - fast with smooth fade */
+/* Effect 2: Vertical Sweep - MASSIVE BLUR for realistic light */
 @keyframes spotlight-vertical {
   0% {
     opacity: 0;
     transform: translateY(-120%) scaleY(0.3);
-    filter: blur(80px);
+    filter: blur(120px);
   }
   30% {
-    opacity: 0.55;
+    opacity: 0.7;
     transform: translateY(0%) scaleY(1);
-    filter: blur(50px);
+    filter: blur(80px);
   }
   50% {
-    opacity: 0.5;
-    filter: blur(60px);
+    opacity: 0.6;
+    filter: blur(100px);
   }
   80% {
-    opacity: 0.15;
-    filter: blur(100px);
+    opacity: 0.2;
+    filter: blur(180px);
   }
   100% {
     opacity: 0;
     transform: translateY(120%) scaleY(0.3);
-    filter: blur(150px);
+    filter: blur(250px);
   }
 }
 
-/* Effect 3: Radial Burst - fast center expansion with smooth fade */
+/* Effect 3: Radial Burst - MASSIVE BLUR for realistic light */
 @keyframes spotlight-radial {
   0% {
     opacity: 0;
     transform: scale(0);
-    filter: blur(100px);
+    filter: blur(150px);
   }
   30% {
-    opacity: 0.6;
+    opacity: 0.75;
     transform: scale(1);
-    filter: blur(40px);
-  }
-  50% {
-    opacity: 0.5;
     filter: blur(60px);
   }
+  50% {
+    opacity: 0.65;
+    filter: blur(90px);
+  }
   80% {
-    opacity: 0.12;
-    filter: blur(120px);
+    opacity: 0.2;
+    filter: blur(200px);
   }
   100% {
     opacity: 0;
-    transform: scale(2);
-    filter: blur(200px);
+    transform: scale(2.5);
+    filter: blur(300px);
   }
 }
 
@@ -198,25 +198,25 @@ body {
   0% {
     opacity: 0;
     transform: translateX(-120%) scaleX(0.4);
-    filter: blur(80px);
+    filter: blur(120px);
   }
   30% {
-    opacity: 0.6;
+    opacity: 0.75;
     transform: translateX(-15%) scaleX(1);
-    filter: blur(40px);
+    filter: blur(60px);
   }
   50% {
-    opacity: 0.45;
-    filter: blur(55px);
+    opacity: 0.6;
+    filter: blur(90px);
   }
   80% {
-    opacity: 0.12;
-    filter: blur(100px);
+    opacity: 0.2;
+    filter: blur(180px);
   }
   100% {
     opacity: 0;
     transform: translateX(0%) scaleX(0.6);
-    filter: blur(150px);
+    filter: blur(250px);
   }
 }
 
@@ -224,25 +224,25 @@ body {
   0% {
     opacity: 0;
     transform: translateX(120%) scaleX(0.4);
-    filter: blur(80px);
+    filter: blur(120px);
   }
   30% {
-    opacity: 0.6;
+    opacity: 0.75;
     transform: translateX(15%) scaleX(1);
-    filter: blur(40px);
+    filter: blur(60px);
   }
   50% {
-    opacity: 0.45;
-    filter: blur(55px);
+    opacity: 0.6;
+    filter: blur(90px);
   }
   80% {
-    opacity: 0.12;
-    filter: blur(100px);
+    opacity: 0.2;
+    filter: blur(180px);
   }
   100% {
     opacity: 0;
     transform: translateX(0%) scaleX(0.6);
-    filter: blur(150px);
+    filter: blur(250px);
   }
 }
 
@@ -340,25 +340,25 @@ body {
   animation: grid-flash-dual 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Mobile: Simpler, lighter effects */
+/* Mobile: Same massive blur effects for realistic lighting */
 @media (max-width: 768px) {
   .spotlight-horizontal,
   .spotlight-vertical,
   .spotlight-radial,
   .spotlight-dual-left,
   .spotlight-dual-right {
-    animation-duration: 1.5s;
+    animation-duration: 2s;
   }
   
   .grid-flash-horizontal,
   .grid-flash-vertical,
   .grid-flash-radial,
   .grid-flash-dual {
-    animation-duration: 1.5s;
+    animation-duration: 2s;
   }
   
   .orp-spotlight-glow {
-    animation-duration: 1.5s;
+    animation-duration: 2s;
   }
 }
 
