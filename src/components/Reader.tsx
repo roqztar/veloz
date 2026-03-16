@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { WordDisplay } from './WordDisplay';
 import { ProgressBar } from './ProgressBar';
 import { SettingsModal } from './SettingsModal';
@@ -435,8 +435,8 @@ export function Reader({ className = '' }: ReaderProps) {
   // Calculate statistics - TIME SAVED in seconds, rounded to 1 decimal
   const timeSaved = Math.round(calculateTimeSaved(currentIndex + 1, wpm) * 10) / 10;
   
-  // Get text around current position for scrubber
-  const getScrubberText = () => {
+  // Get text around current position for scrubber - memoized to update when index changes
+  const scrubberText = useMemo(() => {
     const windowSize = 200;
     const start = Math.max(0, currentIndex - windowSize);
     const end = Math.min(words.length, currentIndex + windowSize);
@@ -445,9 +445,7 @@ export function Reader({ className = '' }: ReaderProps) {
       globalIndex: start + i,
       isCurrent: start + i === currentIndex
     }));
-  };
-  
-  const scrubberText = getScrubberText();
+  }, [currentIndex, words]);
   
   // Cyberpunk dark theme classes
   const bgClass = 'bg-[#050505]';
@@ -1179,6 +1177,13 @@ export function Reader({ className = '' }: ReaderProps) {
           className="flex-1 flex items-center justify-center px-2 sm:px-4 touch-pan-y relative"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
+          onClick={(e) => {
+            // Only toggle if clicking on the word display area, not on nav buttons
+            const target = e.target as HTMLElement;
+            if (!target.closest('button')) {
+              setShowNavBuffer(!showNavBuffer);
+            }
+          }}
         >
           <WordDisplay 
             currentWord={currentWord}
@@ -1194,7 +1199,6 @@ export function Reader({ className = '' }: ReaderProps) {
             neonColorGlow={neonColorGlow}
             showGlow={showGlow}
             showNavBuffer={showNavBuffer}
-            onToggleNavBuffer={() => setShowNavBuffer(!showNavBuffer)}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
           
