@@ -753,8 +753,19 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
                   POS: {Math.round(progress)}% | WORD: {currentIndex + 1}/{words.length}
                 </p>
               </div>
-              <button 
-                onClick={() => setShowScrubber(false)} 
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => { setShowScrubber(false); openEditor(); }}
+                  className="px-3 py-2 text-sm font-mono border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 transition-all rounded-lg flex items-center gap-2"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                  EDIT
+                </button>
+                <button 
+                  onClick={() => setShowScrubber(false)} 
                 className={`p-2 sm:p-2 text-slate-400 hover:text-white transition-all hover:rotate-90 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center`}
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -981,14 +992,14 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
         
         {/* Top Bar - Cyberpunk Terminal */}
         <div 
-          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-8 lg:px-12 py-3 sm:py-5 gap-3 sm:gap-0 transition-all duration-300 ${
+          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-6 sm:px-10 lg:px-16 py-4 sm:py-6 gap-3 sm:gap-0 transition-all duration-300 ${
             showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
         >
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {/* WPM Display - Terminal Style */}
             <div 
-              className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 ${terminalClass} flex-1 sm:flex-none rounded-xl ml-2 sm:ml-4`}
+              className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 ${terminalClass} flex-1 sm:flex-none rounded-xl ml-4 sm:ml-6`}
               style={{ borderColor: neonColorDim }}
             >
               <span 
@@ -1252,7 +1263,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
         
         {/* Bottom Controls */}
         <div 
-          className={`px-4 sm:px-8 lg:px-12 pb-8 sm:pb-10 transition-all duration-300 ${
+          className={`px-6 sm:px-10 lg:px-16 pb-10 sm:pb-12 transition-all duration-300 ${
             showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
