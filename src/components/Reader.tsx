@@ -85,7 +85,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   // Spotlight and scan animation states
   const [spotlightActive, setSpotlightActive] = useState(false);
   const [currentSpotlightType, setCurrentSpotlightType] = useState<SpotlightType>('horizontal');
-  const [orpScanActive, setOrpScanActive] = useState(false);
+  // ORP glow state removed - using orpGlowActive only
   const [gridFlashActive, setGridFlashActive] = useState(false);
   const [orpGlowActive, setOrpGlowActive] = useState(false);
   const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -115,9 +115,9 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   
   // Trigger ORP scan animation
   const triggerOrpScan = useCallback(() => {
-    setOrpScanActive(true);
+    // ORP scan effect removed
     setTimeout(() => {
-      setOrpScanActive(false);
+      // ORP scan effect removed
     }, 1200);
   }, []);
   
