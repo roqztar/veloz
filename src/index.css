@@ -110,208 +110,159 @@ body {
 .duration-2000 { animation-duration: 2000ms; }
 .duration-3000 { animation-duration: 3000ms; }
 
-/* ===== SILKY SMOOTH SPOTLIGHT EFFECTS ===== */
-/* All effects have ultra-soft fade-out with extended blur phases */
+/* ===== FAST SPOTLIGHT EFFECTS (2s max) ===== */
 
-/* Effect 1: Horizontal Sweep - silky smooth with ultra-soft fade */
+/* Effect 1: Horizontal Sweep - fast with smooth fade */
 @keyframes spotlight-horizontal {
   0% {
     opacity: 0;
-    transform: translateX(-150%) scaleX(0.2);
-    filter: blur(120px);
+    transform: translateX(-120%) scaleX(0.3);
+    filter: blur(80px);
   }
-  15% {
-    opacity: 0.35;
-    filter: blur(100px);
-  }
-  35% {
+  30% {
     opacity: 0.55;
     transform: translateX(0%) scaleX(1);
-    filter: blur(70px);
+    filter: blur(50px);
   }
   50% {
     opacity: 0.5;
-    filter: blur(80px);
+    filter: blur(60px);
   }
-  70% {
-    opacity: 0.25;
+  80% {
+    opacity: 0.15;
     filter: blur(100px);
-  }
-  85% {
-    opacity: 0.08;
-    filter: blur(140px);
   }
   100% {
     opacity: 0;
-    transform: translateX(150%) scaleX(0.2);
-    filter: blur(200px);
+    transform: translateX(120%) scaleX(0.3);
+    filter: blur(150px);
   }
 }
 
-/* Effect 2: Vertical Sweep - silky smooth with ultra-soft fade */
+/* Effect 2: Vertical Sweep - fast with smooth fade */
 @keyframes spotlight-vertical {
   0% {
     opacity: 0;
-    transform: translateY(-150%) scaleY(0.2);
-    filter: blur(120px);
+    transform: translateY(-120%) scaleY(0.3);
+    filter: blur(80px);
   }
-  15% {
-    opacity: 0.35;
-    filter: blur(100px);
-  }
-  35% {
+  30% {
     opacity: 0.55;
     transform: translateY(0%) scaleY(1);
-    filter: blur(70px);
+    filter: blur(50px);
   }
   50% {
     opacity: 0.5;
-    filter: blur(80px);
+    filter: blur(60px);
   }
-  70% {
-    opacity: 0.25;
+  80% {
+    opacity: 0.15;
     filter: blur(100px);
-  }
-  85% {
-    opacity: 0.08;
-    filter: blur(140px);
   }
   100% {
     opacity: 0;
-    transform: translateY(150%) scaleY(0.2);
-    filter: blur(200px);
+    transform: translateY(120%) scaleY(0.3);
+    filter: blur(150px);
   }
 }
 
-/* Effect 3: Radial Burst - silky smooth center expansion with ultra-soft fade */
+/* Effect 3: Radial Burst - fast center expansion with smooth fade */
 @keyframes spotlight-radial {
   0% {
     opacity: 0;
     transform: scale(0);
-    filter: blur(150px);
-  }
-  20% {
-    opacity: 0.4;
     filter: blur(100px);
   }
-  40% {
+  30% {
     opacity: 0.6;
     transform: scale(1);
+    filter: blur(40px);
+  }
+  50% {
+    opacity: 0.5;
     filter: blur(60px);
   }
-  55% {
-    opacity: 0.5;
-    filter: blur(75px);
-  }
-  75% {
-    opacity: 0.2;
-    filter: blur(110px);
-  }
-  90% {
-    opacity: 0.05;
-    filter: blur(160px);
+  80% {
+    opacity: 0.12;
+    filter: blur(120px);
   }
   100% {
     opacity: 0;
-    transform: scale(3);
-    filter: blur(250px);
+    transform: scale(2);
+    filter: blur(200px);
   }
 }
 
-/* Effect 4: Dual Converge - silky smooth from sides with ultra-soft fade */
+/* Effect 4: Dual Converge - fast from sides with smooth fade */
 @keyframes spotlight-dual-left {
   0% {
     opacity: 0;
-    transform: translateX(-150%) scaleX(0.3);
-    filter: blur(100px);
-  }
-  20% {
-    opacity: 0.4;
+    transform: translateX(-120%) scaleX(0.4);
     filter: blur(80px);
   }
-  40% {
+  30% {
     opacity: 0.6;
-    transform: translateX(-20%) scaleX(1);
-    filter: blur(50px);
+    transform: translateX(-15%) scaleX(1);
+    filter: blur(40px);
   }
-  55% {
+  50% {
     opacity: 0.45;
-    filter: blur(65px);
+    filter: blur(55px);
   }
-  75% {
-    opacity: 0.18;
-    filter: blur(90px);
-  }
-  90% {
-    opacity: 0.05;
-    filter: blur(130px);
+  80% {
+    opacity: 0.12;
+    filter: blur(100px);
   }
   100% {
     opacity: 0;
     transform: translateX(0%) scaleX(0.6);
-    filter: blur(180px);
+    filter: blur(150px);
   }
 }
 
 @keyframes spotlight-dual-right {
   0% {
     opacity: 0;
-    transform: translateX(150%) scaleX(0.3);
-    filter: blur(100px);
-  }
-  20% {
-    opacity: 0.4;
+    transform: translateX(120%) scaleX(0.4);
     filter: blur(80px);
   }
-  40% {
+  30% {
     opacity: 0.6;
-    transform: translateX(20%) scaleX(1);
-    filter: blur(50px);
+    transform: translateX(15%) scaleX(1);
+    filter: blur(40px);
   }
-  55% {
+  50% {
     opacity: 0.45;
-    filter: blur(65px);
+    filter: blur(55px);
   }
-  75% {
-    opacity: 0.18;
-    filter: blur(90px);
-  }
-  90% {
-    opacity: 0.05;
-    filter: blur(130px);
+  80% {
+    opacity: 0.12;
+    filter: blur(100px);
   }
   100% {
     opacity: 0;
     transform: translateX(0%) scaleX(0.6);
-    filter: blur(180px);
+    filter: blur(150px);
   }
 }
 
-/* ===== ORP GLOW ANIMATION - Syncs with spotlight ===== */
+/* ===== ORP GLOW ANIMATION - Fast 2s version ===== */
 @keyframes orp-spotlight-glow {
   0% {
     box-shadow: 0 0 15px var(--neon-color, #00ffff), 0 0 30px var(--neon-color, #00ffff);
     transform: scale(1);
   }
-  20% {
-    box-shadow: 0 0 25px var(--neon-color, #00ffff), 0 0 50px var(--neon-color, #00ffff), 0 0 75px var(--neon-color, #00ffff);
-    transform: scale(1.05);
-  }
-  40% {
-    box-shadow: 0 0 35px var(--neon-color, #00ffff), 0 0 70px var(--neon-color, #00ffff), 0 0 100px var(--neon-color, #00ffff), 0 0 150px var(--neon-color, #00ffff);
+  30% {
+    box-shadow: 0 0 35px var(--neon-color, #00ffff), 0 0 70px var(--neon-color, #00ffff), 0 0 100px var(--neon-color, #00ffff), 0 0 140px var(--neon-color, #00ffff);
     transform: scale(1.1);
   }
-  55% {
+  50% {
     box-shadow: 0 0 30px var(--neon-color, #00ffff), 0 0 60px var(--neon-color, #00ffff), 0 0 90px var(--neon-color, #00ffff);
     transform: scale(1.08);
   }
-  75% {
-    box-shadow: 0 0 20px var(--neon-color, #00ffff), 0 0 40px var(--neon-color, #00ffff);
+  80% {
+    box-shadow: 0 0 15px var(--neon-color, #00ffff), 0 0 30px var(--neon-color, #00ffff);
     transform: scale(1.02);
-  }
-  90% {
-    box-shadow: 0 0 15px var(--neon-color, #00ffff), 0 0 25px var(--neon-color, #00ffff);
-    transform: scale(1);
   }
   100% {
     box-shadow: 0 0 15px var(--neon-color, #00ffff), 0 0 30px var(--neon-color, #00ffff);
@@ -320,73 +271,73 @@ body {
 }
 
 .orp-spotlight-glow {
-  animation: orp-spotlight-glow 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: orp-spotlight-glow 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Grid flash animations - synchronized with spotlights */
+/* Grid flash animations - synchronized with 2s spotlights */
 @keyframes grid-flash-horizontal {
   0%, 100% { opacity: 0; }
-  15%, 85% { opacity: 0.04; }
-  35%, 70% { opacity: 0.1; }
-  50% { opacity: 0.12; }
+  30% { opacity: 0.12; }
+  50% { opacity: 0.1; }
+  80% { opacity: 0.04; }
 }
 
 @keyframes grid-flash-vertical {
   0%, 100% { opacity: 0; }
-  15%, 85% { opacity: 0.04; }
-  35%, 70% { opacity: 0.1; }
-  50% { opacity: 0.12; }
+  30% { opacity: 0.12; }
+  50% { opacity: 0.1; }
+  80% { opacity: 0.04; }
 }
 
 @keyframes grid-flash-radial {
   0%, 100% { opacity: 0; }
-  20%, 90% { opacity: 0.06; }
-  40%, 75% { opacity: 0.12; }
-  55% { opacity: 0.15; }
+  30% { opacity: 0.15; }
+  50% { opacity: 0.12; }
+  80% { opacity: 0.05; }
 }
 
 @keyframes grid-flash-dual {
   0%, 100% { opacity: 0; }
-  20%, 90% { opacity: 0.05; }
-  40%, 75% { opacity: 0.11; }
-  55% { opacity: 0.13; }
+  30% { opacity: 0.13; }
+  50% { opacity: 0.11; }
+  80% { opacity: 0.04; }
 }
 
 /* Utility classes for spotlight effects */
 .spotlight-horizontal {
-  animation: spotlight-horizontal 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: spotlight-horizontal 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .spotlight-vertical {
-  animation: spotlight-vertical 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: spotlight-vertical 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .spotlight-radial {
-  animation: spotlight-radial 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: spotlight-radial 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .spotlight-dual-left {
-  animation: spotlight-dual-left 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: spotlight-dual-left 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .spotlight-dual-right {
-  animation: spotlight-dual-right 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: spotlight-dual-right 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .grid-flash-horizontal {
-  animation: grid-flash-horizontal 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: grid-flash-horizontal 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .grid-flash-vertical {
-  animation: grid-flash-vertical 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: grid-flash-vertical 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .grid-flash-radial {
-  animation: grid-flash-radial 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: grid-flash-radial 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .grid-flash-dual {
-  animation: grid-flash-dual 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: grid-flash-dual 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Ambient glow pulse - very subtle */
