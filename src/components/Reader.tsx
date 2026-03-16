@@ -87,6 +87,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   const [currentSpotlightType, setCurrentSpotlightType] = useState<SpotlightType>('horizontal');
   const [orpScanActive, setOrpScanActive] = useState(false);
   const [gridFlashActive, setGridFlashActive] = useState(false);
+  const [orpGlowActive, setOrpGlowActive] = useState(false);
   const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Available spotlight effects
@@ -104,10 +105,12 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     setCurrentSpotlightType(effectType);
     setSpotlightActive(true);
     setGridFlashActive(true);
+    setOrpGlowActive(true);
     setTimeout(() => {
       setSpotlightActive(false);
       setGridFlashActive(false);
-    }, 4000);
+      setOrpGlowActive(false);
+    }, 4500);
   }, [getRandomSpotlightType]);
   
   // Trigger ORP scan animation
@@ -1340,6 +1343,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
             neonColor={neonColor}
             neonColorGlow={neonColorGlow}
             showGlow={showGlow}
+            orpGlowActive={orpGlowActive}
             onClick={() => { setShowScrubber(true); pause(); }}
             className="w-full max-w-5xl px-2 sm:px-4"
           />

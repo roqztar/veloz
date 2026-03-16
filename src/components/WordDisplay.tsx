@@ -12,6 +12,7 @@ interface WordDisplayProps {
   neonColor?: string;
   neonColorGlow?: string;
   showGlow?: boolean;
+  orpGlowActive?: boolean;
   onClick?: () => void;
   className?: string;
 }
@@ -27,6 +28,7 @@ export function WordDisplay({
   neonColor = '#00ffff',
   neonColorGlow = 'rgba(0, 255, 255, 0.5)',
   showGlow = false,
+  orpGlowActive = false,
   onClick,
   className = '' 
 }: WordDisplayProps) {
@@ -182,14 +184,14 @@ export function WordDisplay({
           {before}
         </span>
         
-        {/* ORP - subtle highlight */}
+        {/* ORP - subtle highlight with optional spotlight glow */}
         <span 
-          className="relative font-bold px-1 py-0.5 mx-0.5"
+          className={`relative font-bold px-1 py-0.5 mx-0.5 ${orpGlowActive ? 'orp-spotlight-glow' : ''}`}
           style={{ 
             color: '#000000',
             backgroundColor: neonColor,
             textShadow: 'none',
-            boxShadow: `0 0 ${isMobile ? '8px' : '15px'} ${neonColor}`,
+            boxShadow: orpGlowActive ? undefined : `0 0 ${isMobile ? '8px' : '15px'} ${neonColor}`,
             borderRadius: '3px',
           }}
         >
