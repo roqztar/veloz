@@ -428,6 +428,12 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     resetInactivityTimer();
   }, [resetInactivityTimer]);
   
+  // Handle mouse leaving the window
+  const handleMouseLeave = useCallback(() => {
+    setShowControls(false);
+    setShowCursorGlow(false);
+  }, []);
+  
   // Touch/Swipe handlers for mobile navigation
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -581,7 +587,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       className={`min-h-screen w-full ${bgClass} ${className} transition-colors duration-500`}
       style={{ '--neon-color': neonColor } as React.CSSProperties}
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => { setShowControls(false); setShowCursorGlow(false); }}
+      onMouseLeave={handleMouseLeave}
       onClick={resetInactivityTimer}
     >
       {/* Optional Cyberpunk Grid Background */}
@@ -778,18 +784,39 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
         </div>
       )}
       
-      {/* Cursor Glow Effect - follows mouse with heavy blur */}
+      {/* Cursor-lit Grid Background - only visible around cursor */}
       <div 
-        className={`fixed pointer-events-none z-20 transition-opacity duration-700 ease-out ${showCursorGlow ? 'opacity-100' : 'opacity-0'}`}
+        className={`fixed inset-0 pointer-events-none z-10 transition-opacity duration-700 ease-out ${showControls ? 'opacity-100' : 'opacity-0'}`}
+        style={{
+          maskImage: `radial-gradient(circle 125px at ${cursorPos.x}px ${cursorPos.y}px, black 0%, transparent 70%)`,
+          WebkitMaskImage: `radial-gradient(circle 125px at ${cursorPos.x}px ${cursorPos.y}px, black 0%, transparent 70%)`
+        }}
+      >
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, ${neonColorDim} 1px, transparent 1px),
+              linear-gradient(to bottom, ${neonColorDim} 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+            opacity: 0.3
+          }}
+        />
+      </div>
+      
+      {/* Cursor Glow Effect - follows mouse with heavy blur, fades with controls */}
+      <div 
+        className={`fixed pointer-events-none z-20 transition-opacity duration-700 ease-out ${showControls ? 'opacity-100' : 'opacity-0'}`}
         style={{
           left: cursorPos.x,
           top: cursorPos.y,
           transform: 'translate(-50%, -50%)',
-          width: '300px',
-          height: '300px',
-          background: `radial-gradient(circle, ${neonColor} 0%, ${neonColorGlow} 30%, transparent 70%)`,
-          filter: 'blur(80px)',
-          opacity: 0.4
+          width: '250px',
+          height: '250px',
+          background: `radial-gradient(circle, ${neonColor} 0%, ${neonColor} 15%, ${neonColorGlow} 40%, transparent 70%)`,
+          filter: 'blur(60px)',
+          opacity: 0.6
         }}
       />
       
