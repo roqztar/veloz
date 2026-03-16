@@ -528,19 +528,19 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
           {currentSpotlightType === 'vertical' && (
             <>
               <div 
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[600px]"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[800px]"
                 style={{
                   background: `linear-gradient(180deg, transparent 0%, ${neonColorGlow} 20%, ${neonColor} 50%, ${neonColorGlow} 80%, transparent 100%)`,
-                  filter: 'blur(40px)',
-                  opacity: 0.4
+                  filter: 'blur(80px)',
+                  opacity: 0.5
                 }}
               />
               <div 
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[400px]"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[600px]"
                 style={{
                   background: `linear-gradient(180deg, transparent 0%, ${neonColor} 30%, ${neonColor} 70%, transparent 100%)`,
-                  filter: 'blur(80px)',
-                  opacity: 0.25
+                  filter: 'blur(150px)',
+                  opacity: 0.3
                 }}
               />
             </>
@@ -550,20 +550,20 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
           {currentSpotlightType === 'diagonal' && (
             <>
               <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px]"
                 style={{
                   background: `linear-gradient(135deg, transparent 0%, ${neonColorGlow} 25%, ${neonColor} 50%, ${neonColorGlow} 75%, transparent 100%)`,
-                  filter: 'blur(50px)',
-                  opacity: 0.5,
+                  filter: 'blur(100px)',
+                  opacity: 0.6,
                   transform: 'translate(-50%, -50%) rotate(45deg)'
                 }}
               />
               <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
                 style={{
                   background: `linear-gradient(135deg, transparent 10%, ${neonColor} 40%, ${neonColor} 60%, transparent 90%)`,
-                  filter: 'blur(60px)',
-                  opacity: 0.3,
+                  filter: 'blur(180px)',
+                  opacity: 0.35,
                   transform: 'translate(-50%, -50%) rotate(45deg)'
                 }}
               />
@@ -574,26 +574,26 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
           {currentSpotlightType === 'radial' && (
             <>
               <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vh] h-[100vh]"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vh] h-[120vh]"
                 style={{
                   background: `radial-gradient(circle, ${neonColor} 0%, ${neonColorGlow} 30%, transparent 70%)`,
-                  filter: 'blur(30px)',
-                  opacity: 0.6
+                  filter: 'blur(60px)',
+                  opacity: 0.7
                 }}
               />
               <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vh] h-[60vh]"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vh] h-[80vh]"
                 style={{
                   background: `radial-gradient(circle, ${neonColor} 0%, transparent 60%)`,
-                  filter: 'blur(20px)',
-                  opacity: 0.4
+                  filter: 'blur(120px)',
+                  opacity: 0.5
                 }}
               />
               <div 
                 className="absolute inset-0"
                 style={{
                   background: `radial-gradient(circle at 50% 50%, ${neonColorGlow} 0%, transparent 50%)`,
-                  opacity: 0.3
+                  opacity: 0.4
                 }}
               />
             </>
@@ -606,32 +606,32 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
                 className="absolute top-0 left-0 w-1/2 h-full spotlight-dual-left"
                 style={{
                   background: `linear-gradient(90deg, ${neonColorGlow} 0%, ${neonColor} 40%, transparent 100%)`,
-                  filter: 'blur(50px)',
-                  opacity: 0.5
+                  filter: 'blur(100px)',
+                  opacity: 0.6
                 }}
               />
               <div 
                 className="absolute top-0 right-0 w-1/2 h-full spotlight-dual-right"
                 style={{
                   background: `linear-gradient(270deg, ${neonColorGlow} 0%, ${neonColor} 40%, transparent 100%)`,
-                  filter: 'blur(50px)',
-                  opacity: 0.5
+                  filter: 'blur(100px)',
+                  opacity: 0.6
                 }}
               />
               <div 
-                className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[300px] h-[80vh]"
+                className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[400px] h-[90vh]"
                 style={{
                   background: `linear-gradient(90deg, ${neonColor} 0%, transparent 100%)`,
-                  filter: 'blur(60px)',
-                  opacity: 0.3
+                  filter: 'blur(120px)',
+                  opacity: 0.4
                 }}
               />
               <div 
-                className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[300px] h-[80vh]"
+                className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[90vh]"
                 style={{
                   background: `linear-gradient(270deg, ${neonColor} 0%, transparent 100%)`,
-                  filter: 'blur(60px)',
-                  opacity: 0.3
+                  filter: 'blur(120px)',
+                  opacity: 0.4
                 }}
               />
             </>
@@ -644,16 +644,16 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
                 className="absolute -top-1/4 -left-1/4 w-[150%] h-[150%]"
                 style={{
                   background: `conic-gradient(from 0deg at 30% 70%, transparent 0deg, ${neonColorGlow} 45deg, ${neonColor} 90deg, ${neonColorGlow} 135deg, transparent 180deg)`,
-                  filter: 'blur(40px)',
-                  opacity: 0.5
+                  filter: 'blur(80px)',
+                  opacity: 0.6
                 }}
               />
               <div 
                 className="absolute top-0 left-0 w-full h-full"
                 style={{
                   background: `linear-gradient(135deg, ${neonColor} 0%, transparent 40%, transparent 60%, ${neonColorGlow} 100%)`,
-                  filter: 'blur(60px)',
-                  opacity: 0.35
+                  filter: 'blur(120px)',
+                  opacity: 0.4
                 }}
               />
             </>

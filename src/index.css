@@ -112,84 +112,100 @@ body {
 
 /* ===== FAST SPOTLIGHT EFFECTS (2s max) ===== */
 
-/* Effect 1: Horizontal Sweep - MASSIVE BLUR for realistic light */
+/* Effect 1: Horizontal Sweep - EXTREME BLUR with motion blur fade */
 @keyframes spotlight-horizontal {
   0% {
     opacity: 0;
-    transform: translateX(-120%) scaleX(0.3);
-    filter: blur(120px);
+    transform: translateX(-150%) scaleX(0.2);
+    filter: blur(180px);
   }
-  30% {
+  25% {
+    opacity: 0.8;
+    transform: translateX(-20%) scaleX(1.2);
+    filter: blur(100px);
+  }
+  40% {
     opacity: 0.7;
     transform: translateX(0%) scaleX(1);
     filter: blur(80px);
   }
-  50% {
-    opacity: 0.6;
-    filter: blur(100px);
+  60% {
+    opacity: 0.5;
+    filter: blur(150px);
   }
-  80% {
-    opacity: 0.2;
-    filter: blur(180px);
+  85% {
+    opacity: 0.15;
+    filter: blur(300px);
   }
   100% {
     opacity: 0;
-    transform: translateX(120%) scaleX(0.3);
-    filter: blur(250px);
+    transform: translateX(180%) scaleX(0.2);
+    filter: blur(500px);
   }
 }
 
-/* Effect 2: Vertical Sweep - MASSIVE BLUR for realistic light */
+/* Effect 2: Vertical Sweep - EXTREME BLUR with motion blur fade */
 @keyframes spotlight-vertical {
   0% {
     opacity: 0;
-    transform: translateY(-120%) scaleY(0.3);
-    filter: blur(120px);
+    transform: translateY(-150%) scaleY(0.2);
+    filter: blur(180px);
   }
-  30% {
+  25% {
+    opacity: 0.8;
+    transform: translateY(-20%) scaleY(1.2);
+    filter: blur(100px);
+  }
+  40% {
     opacity: 0.7;
     transform: translateY(0%) scaleY(1);
     filter: blur(80px);
   }
-  50% {
-    opacity: 0.6;
-    filter: blur(100px);
+  60% {
+    opacity: 0.5;
+    filter: blur(150px);
   }
-  80% {
-    opacity: 0.2;
-    filter: blur(180px);
+  85% {
+    opacity: 0.15;
+    filter: blur(300px);
   }
   100% {
     opacity: 0;
-    transform: translateY(120%) scaleY(0.3);
-    filter: blur(250px);
+    transform: translateY(180%) scaleY(0.2);
+    filter: blur(500px);
   }
 }
 
-/* Effect 3: Radial Burst - MASSIVE BLUR for realistic light */
+/* Effect 3: Radial Burst - EXTREME BLUR with motion blur expansion */
 @keyframes spotlight-radial {
   0% {
     opacity: 0;
     transform: scale(0);
-    filter: blur(150px);
+    filter: blur(200px);
   }
-  30% {
+  20% {
+    opacity: 0.85;
+    transform: scale(0.8);
+    filter: blur(80px);
+  }
+  40% {
     opacity: 0.75;
     transform: scale(1);
     filter: blur(60px);
   }
-  50% {
-    opacity: 0.65;
-    filter: blur(90px);
+  60% {
+    opacity: 0.5;
+    transform: scale(1.8);
+    filter: blur(180px);
   }
-  80% {
-    opacity: 0.2;
-    filter: blur(200px);
+  85% {
+    opacity: 0.1;
+    filter: blur(400px);
   }
   100% {
     opacity: 0;
-    transform: scale(2.5);
-    filter: blur(300px);
+    transform: scale(4);
+    filter: blur(600px);
   }
 }
 
@@ -197,52 +213,62 @@ body {
 @keyframes spotlight-dual-left {
   0% {
     opacity: 0;
-    transform: translateX(-120%) scaleX(0.4);
-    filter: blur(120px);
+    transform: translateX(-150%) scaleX(0.3);
+    filter: blur(180px);
   }
-  30% {
-    opacity: 0.75;
-    transform: translateX(-15%) scaleX(1);
+  25% {
+    opacity: 0.85;
+    transform: translateX(-25%) scaleX(1.3);
+    filter: blur(80px);
+  }
+  40% {
+    opacity: 0.7;
+    transform: translateX(-10%) scaleX(1);
     filter: blur(60px);
   }
-  50% {
-    opacity: 0.6;
-    filter: blur(90px);
+  60% {
+    opacity: 0.45;
+    filter: blur(140px);
   }
-  80% {
-    opacity: 0.2;
-    filter: blur(180px);
+  85% {
+    opacity: 0.12;
+    filter: blur(320px);
   }
   100% {
     opacity: 0;
-    transform: translateX(0%) scaleX(0.6);
-    filter: blur(250px);
+    transform: translateX(20%) scaleX(0.4);
+    filter: blur(500px);
   }
 }
 
 @keyframes spotlight-dual-right {
   0% {
     opacity: 0;
-    transform: translateX(120%) scaleX(0.4);
-    filter: blur(120px);
+    transform: translateX(150%) scaleX(0.3);
+    filter: blur(180px);
   }
-  30% {
-    opacity: 0.75;
-    transform: translateX(15%) scaleX(1);
+  25% {
+    opacity: 0.85;
+    transform: translateX(25%) scaleX(1.3);
+    filter: blur(80px);
+  }
+  40% {
+    opacity: 0.7;
+    transform: translateX(10%) scaleX(1);
     filter: blur(60px);
   }
-  50% {
-    opacity: 0.6;
-    filter: blur(90px);
+  60% {
+    opacity: 0.45;
+    filter: blur(140px);
   }
-  80% {
-    opacity: 0.2;
-    filter: blur(180px);
+  85% {
+    opacity: 0.12;
+    filter: blur(320px);
   }
   100% {
     opacity: 0;
-    transform: translateX(0%) scaleX(0.6);
-    filter: blur(250px);
+    transform: translateX(-20%) scaleX(0.4);
+    filter: blur(500px);
   }
 }
 
