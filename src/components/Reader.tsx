@@ -91,6 +91,10 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   const [orpGlowActive, setOrpGlowActive] = useState(false);
   const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
+  // WPM long press state
+  const wpmIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const wpmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
   // Available spotlight effects
   const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'diagonal', 'radial', 'dual', 'corner'];
   
@@ -478,6 +482,59 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       else next();
     }
   }, [prev, next, showScrubber]);
+  
+  // WPM long press handlers for fast adjustment
+  const handleWPMPointerDown = useCallback((direction: 'increase' | 'decrease') => {
+    // Clear any existing intervals
+    if (wpmIntervalRef.current) clearInterval(wpmIntervalRef.current);
+    if (wpmTimeoutRef.current) clearTimeout(wpmTimeoutRef.current);
+    
+    // Immediate change
+    if (direction === 'increase') {
+      setWPM(Math.min(1000, wpm + 10));
+    } else {
+      setWPM(Math.max(50, wpm - 10));
+    }
+    
+    // After 400ms, start rapid change
+    wpmTimeoutRef.current = setTimeout(() => {
+      let speed = 100; // Start with 100ms interval
+      
+      const changeWPM = () => {
+        if (direction === 'increase') {
+          setWPM(prev => Math.min(1000, prev + 10));
+        } else {
+          setWPM(prev => Math.max(50, prev - 10));
+        }
+        
+        // Gradually increase speed (decrease interval)
+        if (speed > 30) speed -= 5;
+        
+        wpmIntervalRef.current = setTimeout(changeWPM, speed);
+      };
+      
+      changeWPM();
+    }, 400);
+  }, [wpm, setWPM]);
+  
+  const handleWPMPointerUp = useCallback(() => {
+    if (wpmTimeoutRef.current) {
+      clearTimeout(wpmTimeoutRef.current);
+      wpmTimeoutRef.current = null;
+    }
+    if (wpmIntervalRef.current) {
+      clearTimeout(wpmIntervalRef.current);
+      wpmIntervalRef.current = null;
+    }
+  }, []);
+  
+  // Cleanup WPM timers on unmount
+  useEffect(() => {
+    return () => {
+      if (wpmTimeoutRef.current) clearTimeout(wpmTimeoutRef.current);
+      if (wpmIntervalRef.current) clearTimeout(wpmIntervalRef.current);
+    };
+  }, []);
   
   // Calculate statistics - TIME SAVED in seconds, rounded to 1 decimal
   const timeSaved = Math.round(calculateTimeSaved(currentIndex + 1, wpm) * 10) / 10;
@@ -1139,13 +1196,17 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               
               {/* Minus Button */}
               <button
-                onClick={() => setWPM(Math.max(50, wpm - 10))}
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
+                onMouseDown={() => handleWPMPointerDown('decrease')}
+                onMouseUp={handleWPMPointerUp}
+                onMouseLeave={handleWPMPointerUp}
+                onTouchStart={() => handleWPMPointerDown('decrease')}
+                onTouchEnd={handleWPMPointerUp}
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg select-none"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
                 }}
-                title="WPM -10"
+                title="WPM -10 (halten für schnell)"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"/>
@@ -1161,13 +1222,17 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
               
               {/* Plus Button */}
               <button
-                onClick={() => setWPM(Math.min(1000, wpm + 10))}
-                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
+                onMouseDown={() => handleWPMPointerDown('increase')}
+                onMouseUp={handleWPMPointerUp}
+                onMouseLeave={handleWPMPointerUp}
+                onTouchStart={() => handleWPMPointerDown('increase')}
+                onTouchEnd={handleWPMPointerUp}
+                className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg select-none"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
                 }}
-                title="WPM +10"
+                title="WPM +10 (halten für schnell)"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
