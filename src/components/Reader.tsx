@@ -82,13 +82,15 @@ export function Reader({ className = '' }: ReaderProps) {
 // Spotlight effect types
 type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' | 'corner';
 
-  // Spotlight animation states
+  // Spotlight and scan animation states
   const [spotlightActive, setSpotlightActive] = useState(false);
   const [currentSpotlightType, setCurrentSpotlightType] = useState<SpotlightType>('horizontal');
+  const [orpScanActive, setOrpScanActive] = useState(false);
   const [gridFlashActive, setGridFlashActive] = useState(false);
+  const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
-  // Available spotlight effects (4 refined effects)
-  const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'radial', 'dual'];
+  // Available spotlight effects
+  const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'diagonal', 'radial', 'dual', 'corner'];
   
   // Get random spotlight type
   const getRandomSpotlightType = useCallback(() => {
@@ -107,6 +109,14 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       setGridFlashActive(false);
     }, 2500);
   }, [getRandomSpotlightType]);
+  
+  // Trigger ORP scan animation
+  const triggerOrpScan = useCallback(() => {
+    setOrpScanActive(true);
+    setTimeout(() => {
+      setOrpScanActive(false);
+    }, 1200);
+  }, []);
   
   // Upload state
   const [isUploading, setIsUploading] = useState(false);
@@ -200,6 +210,19 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     }, 500);
     return () => clearTimeout(timer);
   }, [triggerSpotlight]);
+  
+  // ORP scan every 45 seconds
+  useEffect(() => {
+    orpScanTimerRef.current = setInterval(() => {
+      triggerOrpScan();
+    }, 45000); // 45 seconds
+    
+    return () => {
+      if (orpScanTimerRef.current) {
+        clearInterval(orpScanTimerRef.current);
+      }
+    };
+  }, [triggerOrpScan]);
   
   // Track elapsed time when playing - update every second for stability
   useEffect(() => {
@@ -520,7 +543,31 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
             </>
           )}
           
-          {/* Effect 3: Radial Burst */}
+          {/* Effect 3: Diagonal Sweep */}
+          {currentSpotlightType === 'diagonal' && (
+            <>
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
+                style={{
+                  background: `linear-gradient(135deg, transparent 0%, ${neonColorGlow} 25%, ${neonColor} 50%, ${neonColorGlow} 75%, transparent 100%)`,
+                  filter: 'blur(50px)',
+                  opacity: 0.5,
+                  transform: 'translate(-50%, -50%) rotate(45deg)'
+                }}
+              />
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]"
+                style={{
+                  background: `linear-gradient(135deg, transparent 10%, ${neonColor} 40%, ${neonColor} 60%, transparent 90%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.3,
+                  transform: 'translate(-50%, -50%) rotate(45deg)'
+                }}
+              />
+            </>
+          )}
+          
+          {/* Effect 4: Radial Burst */}
           {currentSpotlightType === 'radial' && (
             <>
               <div 
@@ -539,11 +586,17 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
                   opacity: 0.4
                 }}
               />
-
+              <div 
+                className="absolute inset-0"
+                style={{
+                  background: `radial-gradient(circle at 50% 50%, ${neonColorGlow} 0%, transparent 50%)`,
+                  opacity: 0.3
+                }}
+              />
             </>
           )}
           
-          {/* Effect 4: Dual Spotlight */}
+          {/* Effect 5: Dual Spotlight */}
           {currentSpotlightType === 'dual' && (
             <>
               <div 
@@ -562,7 +615,44 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
                   opacity: 0.5
                 }}
               />
-
+              <div 
+                className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[300px] h-[80vh]"
+                style={{
+                  background: `linear-gradient(90deg, ${neonColor} 0%, transparent 100%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.3
+                }}
+              />
+              <div 
+                className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[300px] h-[80vh]"
+                style={{
+                  background: `linear-gradient(270deg, ${neonColor} 0%, transparent 100%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.3
+                }}
+              />
+            </>
+          )}
+          
+          {/* Effect 6: Corner Sweep */}
+          {currentSpotlightType === 'corner' && (
+            <>
+              <div 
+                className="absolute -top-1/4 -left-1/4 w-[150%] h-[150%]"
+                style={{
+                  background: `conic-gradient(from 0deg at 30% 70%, transparent 0deg, ${neonColorGlow} 45deg, ${neonColor} 90deg, ${neonColorGlow} 135deg, transparent 180deg)`,
+                  filter: 'blur(40px)',
+                  opacity: 0.5
+                }}
+              />
+              <div 
+                className="absolute top-0 left-0 w-full h-full"
+                style={{
+                  background: `linear-gradient(135deg, ${neonColor} 0%, transparent 40%, transparent 60%, ${neonColorGlow} 100%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.35
+                }}
+              />
             </>
           )}
           
@@ -765,14 +855,15 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
                   EDIT
                 </button>
                 <button 
-                  onClick={() => setShowScrubber(false)} 
-                className={`p-2 sm:p-2 text-slate-400 hover:text-white transition-all hover:rotate-90 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center`}
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
+                  onClick={() => setShowScrubber(false)}
+                  className="p-2 sm:p-2 text-slate-400 hover:text-white transition-all hover:rotate-90 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
             </div>
             
             <div className="w-full h-1 bg-slate-800 mb-6 overflow-hidden">
@@ -1252,6 +1343,37 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
             onClick={() => { setShowScrubber(true); pause(); }}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
+          
+          {/* ORP Scan Effect */}
+          {orpScanActive && (
+            <div className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-hidden">
+              {/* Scan line - vertical beam */}
+              <div className="orp-scan absolute w-full flex items-center justify-center">
+                <div 
+                  className="w-32 h-1"
+                  style={{
+                    background: `linear-gradient(90deg, 
+                      transparent 0%, 
+                      ${neonColor}40 20%, 
+                      ${neonColor} 50%, 
+                      ${neonColor}40 80%, 
+                      transparent 100%
+                    )`,
+                    boxShadow: `0 0 30px ${neonColorGlow}, 0 0 60px ${neonColorGlow}`,
+                    filter: 'blur(2px)'
+                  }}
+                />
+              </div>
+              {/* Center glow pulse */}
+              <div 
+                className="absolute w-48 h-48 rounded-full orp-pulse"
+                style={{
+                  background: `radial-gradient(circle, ${neonColorGlow} 0%, transparent 70%)`,
+                  opacity: 0.4
+                }}
+              />
+            </div>
+          )}
           
           {/* Mobile touch hint */}
           <div className="absolute bottom-32 left-1/2 -translate-x-1/2 md:hidden">
