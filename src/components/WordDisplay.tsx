@@ -15,6 +15,7 @@ interface WordDisplayProps {
   neonColorGlow?: string;
   showGlow?: boolean;
   showNavBuffer?: boolean;
+  onClick?: () => void;
   className?: string;
 }
 
@@ -32,6 +33,7 @@ export function WordDisplay({
   neonColorGlow = 'rgba(0, 255, 255, 0.5)',
   showGlow = false,
   showNavBuffer = false,
+  onClick,
   className = '' 
 }: WordDisplayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -157,11 +159,12 @@ export function WordDisplay({
   return (
     <div 
       ref={containerRef} 
-      className={`relative flex items-center justify-center h-32 md:h-48 ${className}`}
+      className={`relative flex items-center justify-center h-32 md:h-48 cursor-pointer ${className}`}
+      onClick={onClick}
     >
       {/* Click hint */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-slate-600 font-mono opacity-50 pointer-events-none">
-        [CLICK FOR NAV_BUFFER]
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono opacity-60 pointer-events-none select-none">
+        [CLICK WORD TO TOGGLE NAV]
       </div>
       
       {/* Optional background glow */}

@@ -1342,6 +1342,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
             neonColorGlow={neonColorGlow}
             showGlow={showGlow}
             showNavBuffer={showNavBuffer}
+            onClick={() => setShowNavBuffer(!showNavBuffer)}
             className="w-full max-w-5xl px-2 sm:px-4"
           />
           
