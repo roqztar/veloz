@@ -15,14 +15,11 @@ A modern, blazing-fast RSVP (Rapid Serial Visual Presentation) speed reading app
 - **⚡ RSVP Technology** - Words displayed one at a time with ORP (Optimal Recognition Point) highlighting
 - **🎯 Smart Delays** - Words display longer based on length, punctuation, and type
 - **🎚️ WPM Control** - Adjustable reading speed from 200 to 1000 words per minute
-- **🔊 Text-to-Speech** - Male/Female voice synthesis with adjustable rate
 - **💡 Neon Spotlight** - Atmospheric sweep effect on page load and text changes
-- **🔍 ORP Scan** - Periodic scan animation every 45 seconds
 - **🎨 Cyberpunk UI** - Glassmorphism design with customizable neon accents
 - **⌨️ Keyboard Shortcuts** - Space (play/pause), Arrows (navigate), F (focus mode), E (editor), S (speech)
 - **📱 Mobile Optimized** - Touch gestures (swipe to navigate, tap to play/pause), PWA support
 - **📄 File Support** - Upload PDF, DOCX, TXT, and more for reading
-- **🔌 Browser Extension** - Speed read selected text on any webpage
 
 ## Quick Start
 
