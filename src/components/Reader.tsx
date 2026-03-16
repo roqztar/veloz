@@ -92,8 +92,9 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // WPM long press state
-  const wpmIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const wpmIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wpmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentWPMRef = useRef(wpm);
   
   // Available spotlight effects
   const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'diagonal', 'radial', 'dual', 'corner'];
@@ -483,17 +484,22 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     }
   }, [prev, next, showScrubber]);
   
+  // Keep ref in sync with wpm state
+  useEffect(() => {
+    currentWPMRef.current = wpm;
+  }, [wpm]);
+  
   // WPM long press handlers for fast adjustment
   const handleWPMPointerDown = useCallback((direction: 'increase' | 'decrease') => {
     // Clear any existing intervals
-    if (wpmIntervalRef.current) clearInterval(wpmIntervalRef.current);
+    if (wpmIntervalRef.current) clearTimeout(wpmIntervalRef.current);
     if (wpmTimeoutRef.current) clearTimeout(wpmTimeoutRef.current);
     
     // Immediate change
     if (direction === 'increase') {
-      setWPM(Math.min(1000, wpm + 10));
+      setWPM(Math.min(1000, currentWPMRef.current + 10));
     } else {
-      setWPM(Math.max(50, wpm - 10));
+      setWPM(Math.max(50, currentWPMRef.current - 10));
     }
     
     // After 400ms, start rapid change
@@ -502,9 +508,9 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       
       const changeWPM = () => {
         if (direction === 'increase') {
-          setWPM(prev => Math.min(1000, prev + 10));
+          setWPM(Math.min(1000, currentWPMRef.current + 10));
         } else {
-          setWPM(prev => Math.max(50, prev - 10));
+          setWPM(Math.max(50, currentWPMRef.current - 10));
         }
         
         // Gradually increase speed (decrease interval)
@@ -515,7 +521,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       
       changeWPM();
     }, 400);
-  }, [wpm, setWPM]);
+  }, [setWPM]);
   
   const handleWPMPointerUp = useCallback(() => {
     if (wpmTimeoutRef.current) {
