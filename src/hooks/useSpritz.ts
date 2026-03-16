@@ -119,6 +119,12 @@ export function useSpritz({
     }
   }, []);
   
+  // Pausiere die Wiedergabe (muss vor next/prev/goTo definiert werden)
+  const pause = useCallback(() => {
+    setIsPlaying(false);
+    stopTimer();
+  }, [stopTimer]);
+  
   // Gehe zum nächsten Wort (pausiert automatisch)
   const next = useCallback(() => {
     pause();
@@ -150,12 +156,6 @@ export function useSpritz({
     setIsPlaying(true);
     startTimeRef.current = Date.now();
   }, [currentIndex, words.length]);
-  
-  // Pausiere die Wiedergabe
-  const pause = useCallback(() => {
-    setIsPlaying(false);
-    stopTimer();
-  }, [stopTimer]);
   
   // Toggle Play/Pause
   const toggle = useCallback(() => {
