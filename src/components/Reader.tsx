@@ -243,28 +243,68 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     return () => clearInterval(interval);
   }, [isPlaying, startTime]);
   
+  // Check if fullscreen is supported
+  const isFullscreenSupported = useCallback(() => {
+    return !!(
+      document.documentElement.requestFullscreen ||
+      (document.documentElement as any).webkitRequestFullscreen
+    );
+  }, []);
+  
+  // Check if running as installed PWA (standalone mode)
+  const isStandalone = useCallback(() => {
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true
+    );
+  }, []);
+  
   // Fullscreen toggle - defined early for use in keyboard shortcuts
   const toggleFullscreen = useCallback(async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-        setIsFullscreen(true);
-      } else {
-        await document.exitFullscreen();
-        setIsFullscreen(false);
-      }
-    } catch {
-      // Fullscreen not supported or failed
+    // iOS Safari doesn't support Fullscreen API unless in standalone mode
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    if (isIOS && !isStandalone()) {
+      // On iOS in browser, show alert to add to home screen for fullscreen
+      alert('Für Vollbild auf iOS:\n1. Teilen-Button unten tippen\n2. "Zum Startbildschirm" wählen\n3. Von dort öffnen');
+      return;
     }
-  }, []);
+    
+    try {
+      const doc = document as any;
+      if (!document.fullscreenElement && !doc.webkitFullscreenElement) {
+        // Try standard API first, then webkit prefix for Safari
+        const requestFS = document.documentElement.requestFullscreen || 
+                         doc.documentElement.webkitRequestFullscreen;
+        if (requestFS) {
+          await requestFS.call(document.documentElement);
+          setIsFullscreen(true);
+        }
+      } else {
+        const exitFS = document.exitFullscreen || doc.webkitExitFullscreen;
+        if (exitFS) {
+          await exitFS.call(document);
+          setIsFullscreen(false);
+        }
+      }
+    } catch (err) {
+      console.log('Fullscreen error:', err);
+      // Silently fail - fullscreen not supported
+    }
+  }, [isStandalone]);
   
   // Listen for fullscreen changes (e.g., user presses Escape)
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const doc = document as any;
+      setIsFullscreen(!!(document.fullscreenElement || doc.webkitFullscreenElement));
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
   }, []);
   
   // Cleanup timers
