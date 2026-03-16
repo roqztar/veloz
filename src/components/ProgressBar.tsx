@@ -43,13 +43,28 @@ export function ProgressBar({
     isDraggingRef.current = isDragging;
   }, [isDragging]);
   
-  // Global mouse move/up handlers
+  // Global mouse/touch move/up handlers
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current || !containerRef.current) return;
       
       const rect = containerRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, x / rect.width));
+      setTooltipPosition(percentage * 100);
+      
+      const index = Math.floor(percentage * (totalWords - 1));
+      setHoverIndex(index);
+      onSeek(index);
+    };
+    
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (!isDraggingRef.current || !containerRef.current) return;
+      e.preventDefault(); // Prevent scrolling while dragging
+      
+      const touch = e.touches[0];
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
       const percentage = Math.max(0, Math.min(1, x / rect.width));
       setTooltipPosition(percentage * 100);
       
@@ -65,17 +80,30 @@ export function ProgressBar({
       }
     };
     
+    const handleGlobalTouchEnd = () => {
+      if (isDraggingRef.current) {
+        setIsDragging(false);
+        isDraggingRef.current = false;
+      }
+    };
+    
     // Add global listeners when dragging starts
     if (isDragging) {
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleGlobalMouseUp);
       document.addEventListener('mouseleave', handleGlobalMouseUp);
+      document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+      document.addEventListener('touchend', handleGlobalTouchEnd);
+      document.addEventListener('touchcancel', handleGlobalTouchEnd);
     }
     
     return () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove);
       document.removeEventListener('mouseup', handleGlobalMouseUp);
       document.removeEventListener('mouseleave', handleGlobalMouseUp);
+      document.removeEventListener('touchmove', handleGlobalTouchMove);
+      document.removeEventListener('touchend', handleGlobalTouchEnd);
+      document.removeEventListener('touchcancel', handleGlobalTouchEnd);
     };
   }, [isDragging, onSeek, totalWords]);
   
@@ -85,6 +113,16 @@ export function ProgressBar({
     isDraggingRef.current = true;
     onSeekStart?.(); // Pause playback when seeking
     const index = calculateIndexFromPosition(e.clientX);
+    onSeek(index);
+  }, [calculateIndexFromPosition, onSeek, onSeekStart]);
+  
+  // Touch handlers for mobile drag-and-drop
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    setIsDragging(true);
+    isDraggingRef.current = true;
+    onSeekStart?.(); // Pause playback when seeking
+    const touch = e.touches[0];
+    const index = calculateIndexFromPosition(touch.clientX);
     onSeek(index);
   }, [calculateIndexFromPosition, onSeek, onSeekStart]);
   
@@ -120,6 +158,7 @@ export function ProgressBar({
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
       >
         {/* Progress Fill */}
         <div 

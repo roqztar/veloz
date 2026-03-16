@@ -119,25 +119,28 @@ export function useSpritz({
     }
   }, []);
   
-  // Gehe zum nächsten Wort
+  // Gehe zum nächsten Wort (pausiert automatisch)
   const next = useCallback(() => {
+    pause();
     setCurrentIndex(prev => {
       if (prev < words.length - 1) {
         return prev + 1;
       }
       return prev;
     });
-  }, [words.length]);
+  }, [words.length, pause]);
   
-  // Gehe zum vorherigen Wort
+  // Gehe zum vorherigen Wort (pausiert automatisch)
   const prev = useCallback(() => {
+    pause();
     setCurrentIndex(prev => Math.max(0, prev - 1));
-  }, []);
+  }, [pause]);
   
-  // Springe zu einem bestimmten Index
+  // Springe zu einem bestimmten Index (pausiert automatisch)
   const goTo = useCallback((index: number) => {
+    pause();
     setCurrentIndex(Math.max(0, Math.min(words.length - 1, index)));
-  }, [words.length]);
+  }, [words.length, pause]);
   
   // Starte die Wiedergabe
   const play = useCallback(() => {
