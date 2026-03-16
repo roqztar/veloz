@@ -18,13 +18,15 @@
       style-src 'self' 'unsafe-inline';
       font-src 'self' data:;
       img-src 'self' data: blob:;
-      connect-src 'self';
+      connect-src 'self' https://cdnjs.cloudflare.com;
       worker-src 'self' blob:;
       object-src 'none';
       base-uri 'self';
       form-action 'self';
       frame-ancestors 'none';
       upgrade-insecure-requests;
+      require-trusted-types-for 'script';
+      trusted-types default;
     ">
     
     <!-- X-Frame-Options - Prevents clickjacking -->
@@ -45,7 +47,25 @@
       usb=(),
       magnetometer=(),
       gyroscope=(),
-      accelerometer=()
+      accelerometer=(),
+      autoplay=(),
+      display-capture=(),
+      encrypted-media=(),
+      fullscreen=(self),
+      hid=(),
+      idle-detection=(),
+      interest-cohort=(),
+      keyboard-map=(),
+      midi=(),
+      navigation-override=(),
+      picture-in-picture=(),
+      publickey-credentials-get=(),
+      screen-wake-lock=(),
+      serial=(),
+      sync-script=(),
+      sync-xhr=(self),
+      web-share=(),
+      xr-spatial-tracking=()
     ">
     
     <!-- Description -->

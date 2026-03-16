@@ -99,6 +99,7 @@ export function validateFile(file: File): FileValidationResult {
 
 /**
  * Sanitizes extracted text to prevent XSS while preserving Unicode
+ * SECURITY: Removes HTML tags, script content, and dangerous patterns
  */
 export function sanitizeText(text: string): string {
   if (!text || typeof text !== 'string') {
@@ -114,6 +115,20 @@ export function sanitizeText(text: string): string {
   
   // Remove C1 control characters (U+0080-U+009F) but keep all other Unicode
   sanitized = sanitized.replace(/[\u0080-\u009F]/g, '');
+  
+  // SECURITY: Remove HTML tags to prevent XSS
+  // This is safe because we're extracting text content, not rendering HTML
+  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  sanitized = sanitized.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+  sanitized = sanitized.replace(/<[^>]+>/g, '');
+  
+  // SECURITY: Remove potentially dangerous URL schemes
+  sanitized = sanitized.replace(/javascript:/gi, '');
+  sanitized = sanitized.replace(/data:text\/html/gi, '');
+  sanitized = sanitized.replace(/vbscript:/gi, '');
+  
+  // SECURITY: Remove event handler attributes that might slip through
+  sanitized = sanitized.replace(/\s*on\w+\s*=\s*["']?[^"'>]*["']?/gi, '');
   
   // Note: We do NOT remove high Unicode planes - they contain Umlaute, CJK, etc.
   // Umlaute: ä = \u00E4, ö = \u00F6, ü = \u00FC (all in Latin-1 Supplement, safe)
