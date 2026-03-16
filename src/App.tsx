@@ -1,6 +1,6 @@
 import { Reader } from './components/Reader';
 
-// Production build - latest
+// Production build - deploy
 function App() {
   return <Reader />;
 }
