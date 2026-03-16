@@ -53,7 +53,7 @@ export function Reader({ className = '' }: ReaderProps) {
   
   // Inactivity timer for auto-hiding controls
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const INACTIVITY_DELAY = 2000; // 2 seconds
+  const INACTIVITY_DELAY = 4000; // 4 seconds before fade-out starts
   const [showSettings, setShowSettings] = useState(false);
   const [showScrubber, setShowScrubber] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -992,7 +992,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
         
         {/* Top Bar - Cyberpunk Terminal */}
         <div 
-          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-6 sm:px-10 lg:px-16 py-4 sm:py-6 gap-3 sm:gap-0 transition-all duration-300 ${
+          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-6 sm:px-10 lg:px-16 py-4 sm:py-6 gap-3 sm:gap-0 transition-all duration-700 ease-in-out ${
             showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
         >
@@ -1263,7 +1263,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
         
         {/* Bottom Controls */}
         <div 
-          className={`px-6 sm:px-10 lg:px-16 pb-10 sm:pb-12 transition-all duration-300 ${
+          className={`px-6 sm:px-10 lg:px-16 pb-10 sm:pb-12 transition-all duration-700 ease-in-out ${
             showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
