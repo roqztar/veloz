@@ -49,7 +49,7 @@ export function SettingsModal({
 
   const textColor = 'text-slate-200';
   const mutedColor = 'text-slate-500';
-  const terminalClass = 'bg-black/60 border border-slate-700/50';
+  const terminalClass = 'bg-black/60 border border-slate-700/50 rounded-2xl';
   const accentBg = 'bg-slate-800 hover:bg-slate-700';
 
   return (
@@ -106,7 +106,7 @@ export function SettingsModal({
                 <button
                   key={f}
                   onClick={() => setFontFamily(f)}
-                  className={`flex-1 py-2 px-3 text-sm font-mono transition-all border ${
+                  className={`flex-1 py-2 px-3 text-sm font-mono transition-all border rounded-lg ${
                     fontFamily === f 
                       ? 'text-black font-bold' 
                       : `${accentBg} ${textColor} border-slate-700 hover:border-slate-500`
@@ -155,7 +155,7 @@ export function SettingsModal({
                 <button
                   onClick={() => setFontSizeLevel(Math.max(-5, fontSizeLevel - 1))}
                   disabled={fontSizeLevel <= -5}
-                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold rounded-lg`}
                 >
                   -
                 </button>
@@ -175,7 +175,7 @@ export function SettingsModal({
                 <button
                   onClick={() => setFontSizeLevel(Math.min(5, fontSizeLevel + 1))}
                   disabled={fontSizeLevel >= 5}
-                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold`}
+                  className={`w-10 h-10 ${accentBg} ${textColor} flex items-center justify-center disabled:opacity-30 border border-slate-700 font-mono font-bold rounded-lg`}
                 >
                   +
                 </button>

@@ -79,22 +79,37 @@ export function Reader({ className = '' }: ReaderProps) {
   const [showGrid, setShowGrid] = useState(false);
   const [showGlow, setShowGlow] = useState(false);
   
+// Spotlight effect types
+type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' | 'corner';
+
   // Spotlight and scan animation states
   const [spotlightActive, setSpotlightActive] = useState(false);
+  const [currentSpotlightType, setCurrentSpotlightType] = useState<SpotlightType>('horizontal');
   const [orpScanActive, setOrpScanActive] = useState(false);
   const [showNavBuffer, setShowNavBuffer] = useState(false);
   const [gridFlashActive, setGridFlashActive] = useState(false);
   const orpScanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
-  // Trigger spotlight animation
+  // Available spotlight effects
+  const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'diagonal', 'radial', 'dual', 'corner'];
+  
+  // Get random spotlight type
+  const getRandomSpotlightType = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * spotlightTypes.length);
+    return spotlightTypes[randomIndex];
+  }, []);
+  
+  // Trigger spotlight animation with random effect
   const triggerSpotlight = useCallback(() => {
+    const effectType = getRandomSpotlightType();
+    setCurrentSpotlightType(effectType);
     setSpotlightActive(true);
     setGridFlashActive(true);
     setTimeout(() => {
       setSpotlightActive(false);
       setGridFlashActive(false);
     }, 2500);
-  }, []);
+  }, [getRandomSpotlightType]);
   
   // Trigger ORP scan animation
   const triggerOrpScan = useCallback(() => {
@@ -452,7 +467,7 @@ export function Reader({ className = '' }: ReaderProps) {
   const mutedColorClass = 'text-slate-500';
   
   // Cyberpunk terminal-style glass class with neon borders
-  const terminalClass = 'bg-black/60 border border-slate-700/50';
+  const terminalClass = 'bg-black/60 border border-slate-700/50 rounded-2xl';
   
   return (
     <div 
@@ -464,7 +479,7 @@ export function Reader({ className = '' }: ReaderProps) {
     >
       {/* Optional Cyberpunk Grid Background */}
       {(showGrid || gridFlashActive) && (
-        <div className={`fixed inset-0 pointer-events-none overflow-hidden ${gridFlashActive ? 'grid-flash' : ''}`}>
+        <div className={`fixed inset-0 pointer-events-none overflow-hidden ${gridFlashActive ? `grid-flash-${currentSpotlightType}` : ''}`}>
           <div 
             className="absolute inset-0 opacity-20"
             style={{
@@ -485,39 +500,167 @@ export function Reader({ className = '' }: ReaderProps) {
         </div>
       )}
       
-      {/* Neon Spotlight Sweep Effect */}
+      {/* Neon Spotlight Effects - Random on each trigger */}
       {spotlightActive && (
-        <div className="fixed inset-0 pointer-events-none z-30 spotlight-sweep overflow-hidden">
-          {/* Main spotlight beam */}
-          <div 
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-full"
-            style={{
-              background: `linear-gradient(90deg, 
-                transparent 0%, 
-                ${neonColorGlow} 20%, 
-                ${neonColor} 50%, 
-                ${neonColorGlow} 80%, 
-                transparent 100%
-              )`,
-              filter: 'blur(40px)',
-              opacity: 0.4
-            }}
-          />
-          {/* Secondary glow layer */}
-          <div 
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-full"
-            style={{
-              background: `linear-gradient(90deg, 
-                transparent 0%, 
-                ${neonColor} 30%, 
-                ${neonColor} 70%, 
-                transparent 100%
-              )`,
-              filter: 'blur(80px)',
-              opacity: 0.2
-            }}
-          />
-          {/* Ambient glow pulse overlay */}
+        <div className={`fixed inset-0 pointer-events-none z-30 overflow-hidden spotlight-${currentSpotlightType}`}>
+          {/* Effect 1: Horizontal Sweep */}
+          {currentSpotlightType === 'horizontal' && (
+            <>
+              <div 
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-full"
+                style={{
+                  background: `linear-gradient(90deg, transparent 0%, ${neonColorGlow} 20%, ${neonColor} 50%, ${neonColorGlow} 80%, transparent 100%)`,
+                  filter: 'blur(40px)',
+                  opacity: 0.4
+                }}
+              />
+              <div 
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-full"
+                style={{
+                  background: `linear-gradient(90deg, transparent 0%, ${neonColor} 30%, ${neonColor} 70%, transparent 100%)`,
+                  filter: 'blur(80px)',
+                  opacity: 0.2
+                }}
+              />
+            </>
+          )}
+          
+          {/* Effect 2: Vertical Sweep */}
+          {currentSpotlightType === 'vertical' && (
+            <>
+              <div 
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[600px]"
+                style={{
+                  background: `linear-gradient(180deg, transparent 0%, ${neonColorGlow} 20%, ${neonColor} 50%, ${neonColorGlow} 80%, transparent 100%)`,
+                  filter: 'blur(40px)',
+                  opacity: 0.4
+                }}
+              />
+              <div 
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[400px]"
+                style={{
+                  background: `linear-gradient(180deg, transparent 0%, ${neonColor} 30%, ${neonColor} 70%, transparent 100%)`,
+                  filter: 'blur(80px)',
+                  opacity: 0.25
+                }}
+              />
+            </>
+          )}
+          
+          {/* Effect 3: Diagonal Sweep */}
+          {currentSpotlightType === 'diagonal' && (
+            <>
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
+                style={{
+                  background: `linear-gradient(135deg, transparent 0%, ${neonColorGlow} 25%, ${neonColor} 50%, ${neonColorGlow} 75%, transparent 100%)`,
+                  filter: 'blur(50px)',
+                  opacity: 0.5,
+                  transform: 'translate(-50%, -50%) rotate(45deg)'
+                }}
+              />
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]"
+                style={{
+                  background: `linear-gradient(135deg, transparent 10%, ${neonColor} 40%, ${neonColor} 60%, transparent 90%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.3,
+                  transform: 'translate(-50%, -50%) rotate(45deg)'
+                }}
+              />
+            </>
+          )}
+          
+          {/* Effect 4: Radial Burst */}
+          {currentSpotlightType === 'radial' && (
+            <>
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vh] h-[100vh]"
+                style={{
+                  background: `radial-gradient(circle, ${neonColor} 0%, ${neonColorGlow} 30%, transparent 70%)`,
+                  filter: 'blur(30px)',
+                  opacity: 0.6
+                }}
+              />
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vh] h-[60vh]"
+                style={{
+                  background: `radial-gradient(circle, ${neonColor} 0%, transparent 60%)`,
+                  filter: 'blur(20px)',
+                  opacity: 0.4
+                }}
+              />
+              <div 
+                className="absolute inset-0"
+                style={{
+                  background: `radial-gradient(circle at 50% 50%, ${neonColorGlow} 0%, transparent 50%)`,
+                  opacity: 0.3
+                }}
+              />
+            </>
+          )}
+          
+          {/* Effect 5: Dual Spotlight */}
+          {currentSpotlightType === 'dual' && (
+            <>
+              <div 
+                className="absolute top-0 left-0 w-1/2 h-full spotlight-dual-left"
+                style={{
+                  background: `linear-gradient(90deg, ${neonColorGlow} 0%, ${neonColor} 40%, transparent 100%)`,
+                  filter: 'blur(50px)',
+                  opacity: 0.5
+                }}
+              />
+              <div 
+                className="absolute top-0 right-0 w-1/2 h-full spotlight-dual-right"
+                style={{
+                  background: `linear-gradient(270deg, ${neonColorGlow} 0%, ${neonColor} 40%, transparent 100%)`,
+                  filter: 'blur(50px)',
+                  opacity: 0.5
+                }}
+              />
+              <div 
+                className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[300px] h-[80vh]"
+                style={{
+                  background: `linear-gradient(90deg, ${neonColor} 0%, transparent 100%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.3
+                }}
+              />
+              <div 
+                className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[300px] h-[80vh]"
+                style={{
+                  background: `linear-gradient(270deg, ${neonColor} 0%, transparent 100%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.3
+                }}
+              />
+            </>
+          )}
+          
+          {/* Effect 6: Corner Sweep */}
+          {currentSpotlightType === 'corner' && (
+            <>
+              <div 
+                className="absolute -top-1/4 -left-1/4 w-[150%] h-[150%]"
+                style={{
+                  background: `conic-gradient(from 0deg at 30% 70%, transparent 0deg, ${neonColorGlow} 45deg, ${neonColor} 90deg, ${neonColorGlow} 135deg, transparent 180deg)`,
+                  filter: 'blur(40px)',
+                  opacity: 0.5
+                }}
+              />
+              <div 
+                className="absolute top-0 left-0 w-full h-full"
+                style={{
+                  background: `linear-gradient(135deg, ${neonColor} 0%, transparent 40%, transparent 60%, ${neonColorGlow} 100%)`,
+                  filter: 'blur(60px)',
+                  opacity: 0.35
+                }}
+              />
+            </>
+          )}
+          
+          {/* Ambient glow pulse overlay - common for all effects */}
           <div 
             className="absolute inset-0 ambient-pulse"
             style={{
@@ -566,7 +709,7 @@ export function Reader({ className = '' }: ReaderProps) {
         >
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
           <div 
-            className={`relative ${terminalClass} p-6 rounded-none animate-in zoom-in-95 duration-200`}
+            className={`relative ${terminalClass} p-6 rounded-2xl animate-in zoom-in-95 duration-200`}
             style={{ 
               boxShadow: `0 0 40px ${neonColorGlow}, inset 0 0 20px ${neonColorGlow}`,
               borderColor: neonColor
@@ -691,7 +834,7 @@ export function Reader({ className = '' }: ReaderProps) {
         >
           <div className="absolute inset-0 bg-black/90 backdrop-blur-md" />
           <div 
-            className={`relative w-full max-w-5xl max-h-[90vh] sm:max-h-[85vh] ${terminalClass} rounded-none sm:rounded-none p-4 sm:p-6 lg:p-8 animate-in zoom-in-95 duration-200`}
+            className={`relative w-full max-w-5xl max-h-[90vh] sm:max-h-[85vh] ${terminalClass} p-4 sm:p-6 lg:p-8 animate-in zoom-in-95 duration-200`}
             style={{ boxShadow: `0 0 30px ${neonColorGlow}` }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -768,7 +911,7 @@ export function Reader({ className = '' }: ReaderProps) {
         >
           <div className="absolute inset-0 bg-black/90 backdrop-blur-md" />
           <div 
-            className={`relative w-full max-w-3xl ${terminalClass} rounded-none sm:rounded-none p-1 animate-in zoom-in-95 duration-300 h-[85vh] sm:h-auto sm:max-h-[90vh] overflow-hidden flex flex-col`}
+            className={`relative w-full max-w-3xl ${terminalClass} p-1 animate-in zoom-in-95 duration-300 h-[85vh] sm:h-auto sm:max-h-[90vh] overflow-hidden flex flex-col`}
             style={{ 
               boxShadow: `0 0 40px ${neonColorGlow}, inset 0 0 20px ${neonColorGlow}`,
               borderColor: neonColorDim
@@ -932,14 +1075,14 @@ export function Reader({ className = '' }: ReaderProps) {
         
         {/* Top Bar - Cyberpunk Terminal */}
         <div 
-          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-3 sm:px-6 py-3 sm:py-5 gap-3 sm:gap-0 transition-all duration-300 ${
+          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-8 lg:px-12 py-3 sm:py-5 gap-3 sm:gap-0 transition-all duration-300 ${
             showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
         >
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {/* WPM Display - Terminal Style */}
             <div 
-              className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 ${terminalClass} flex-1 sm:flex-none`}
+              className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 ${terminalClass} flex-1 sm:flex-none rounded-xl ml-2 sm:ml-4`}
               style={{ borderColor: neonColorDim }}
             >
               <span 
@@ -952,7 +1095,7 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Minus Button */}
               <button
                 onClick={() => setWPM(Math.max(50, wpm - 10))}
-                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
+                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
@@ -974,7 +1117,7 @@ export function Reader({ className = '' }: ReaderProps) {
               {/* Plus Button */}
               <button
                 onClick={() => setWPM(Math.min(1000, wpm + 10))}
-                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded"
+                className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-200 ease-out hover:scale-110 active:scale-90 rounded-lg"
                 style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   border: `1px solid ${neonColor}30`
@@ -1007,14 +1150,14 @@ export function Reader({ className = '' }: ReaderProps) {
               <CyberEye 
                 timeSaved={timeSaved}
                 neonColor={neonColor}
-                className="hidden sm:block ml-3"
+                className="hidden sm:block ml-3 mr-4"
               />
             </div>
             
             {/* Editor Button */}
             <button
               onClick={openEditor}
-              className="relative w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="relative w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1027,7 +1170,7 @@ export function Reader({ className = '' }: ReaderProps) {
               </svg>
               {words.length > 1 && (
                 <span 
-                  className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full"
+                  className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full shadow-lg"
                   style={{ 
                     backgroundColor: neonColor,
                     boxShadow: `0 0 8px ${neonColor}`
@@ -1070,7 +1213,7 @@ export function Reader({ className = '' }: ReaderProps) {
             />
             <label 
               htmlFor="file-upload" 
-              className={`w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              className={`w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1094,7 +1237,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Delete Button */}
             <button 
               onClick={reset}
-              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-red-400 transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-red-400 transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1112,7 +1255,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Settings Button */}
             <button
               onClick={() => setShowSettings(true)}
-              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded sm:ml-4"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl sm:ml-4"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1128,7 +1271,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1151,7 +1294,7 @@ export function Reader({ className = '' }: ReaderProps) {
           <div className="flex items-center justify-end gap-2">
             <button 
               onClick={() => setShowColorPicker(true)}
-              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)'
               }}
@@ -1174,7 +1317,7 @@ export function Reader({ className = '' }: ReaderProps) {
         
         {/* Word Display - with touch/swipe support */}
         <div 
-          className="flex-1 flex items-center justify-center px-2 sm:px-4 touch-pan-y relative"
+          className="flex-1 flex items-center justify-center px-4 sm:px-8 lg:px-12 touch-pan-y relative"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onClick={(e) => {
@@ -1243,7 +1386,7 @@ export function Reader({ className = '' }: ReaderProps) {
         
         {/* Bottom Controls */}
         <div 
-          className={`px-3 sm:px-6 pb-6 sm:pb-8 transition-all duration-300 ${
+          className={`px-4 sm:px-8 lg:px-12 pb-8 sm:pb-10 transition-all duration-300 ${
             showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
@@ -1252,7 +1395,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Skip to Start */}
             <button
               onClick={() => goTo(0)}
-              className="w-12 h-12 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded"
+              className="w-12 h-12 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1272,7 +1415,7 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('prev')}
               onTouchEnd={() => handlePointerUp('prev')}
-              className="w-14 h-14 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
+              className="w-14 h-14 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`
@@ -1287,7 +1430,7 @@ export function Reader({ className = '' }: ReaderProps) {
             {/* Play/Pause */}
             <button 
               onClick={handleToggle} 
-              className="w-20 h-20 flex items-center justify-center text-black transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 rounded-lg"
+              className="w-20 h-20 flex items-center justify-center text-black transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 rounded-2xl"
               style={{
                 backgroundColor: neonColor,
                 border: `1px solid ${neonColor}`,
@@ -1313,7 +1456,7 @@ export function Reader({ className = '' }: ReaderProps) {
               onMouseLeave={handlePointerLeave}
               onTouchStart={() => handlePointerDown('next')}
               onTouchEnd={() => handlePointerUp('next')}
-              className="w-14 h-14 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded"
+              className="w-14 h-14 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 ease-out hover:scale-105 active:scale-95 select-none rounded-xl"
               style={{ 
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 border: `1px solid ${neonColor}30`

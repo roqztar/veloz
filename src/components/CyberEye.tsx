@@ -81,7 +81,7 @@ export function CyberEye({ timeSaved, neonColor, className = '' }: CyberEyeProps
         
         {/* Time display - minimal */}
         <div 
-          className="mt-2 px-2 py-1 rounded font-mono text-xs text-center w-full"
+          className="mt-2 px-2 py-1 rounded-lg font-mono text-xs text-center w-full"
           style={{ 
             backgroundColor: 'rgba(0,0,0,0.4)',
             border: `1px solid ${neonColor}30`,

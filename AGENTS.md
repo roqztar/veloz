@@ -1,23 +1,23 @@
-# Veloz - AI Agent Documentation
+# Eyedance - AI Agent Documentation
 
 ## Project Overview
 
-Veloz is a **React-based speed reading application** that uses RSVP (Rapid Serial Visual Presentation) technology to help users read faster. Words are displayed one at a time at a fixed position, with the Optimal Recognition Point (ORP) highlighted in red to minimize eye movement.
+Eyedance is a **cyberpunk-themed RSVP (Rapid Serial Visual Presentation) speed reading application** built with React, TypeScript, and Vite. Words are displayed one at a time at a fixed position, with the Optimal Recognition Point (ORP) highlighted in a customizable neon color to minimize eye movement.
 
 The project consists of two main parts:
-1. **Web Application** (`src/`) - A standalone Vite + React app for reading pasted or uploaded text
+1. **Web Application** (`src/`) - A standalone PWA built with Vite + React for reading pasted or uploaded text
 2. **Browser Extension** (`extension/`) - A Chrome/Edge extension for speed-reading selected text on any webpage
 
 ### Key Features
-- **ORP Highlighting**: Red letter marks the optimal reading focus point
-- **Smart Delays**: Words display longer based on length, punctuation, and type (numbers, URLs, etc.)
-- **WPM Control**: Adjustable reading speed from 200 to 1000 words per minute
+- **ORP Highlighting**: Neon-colored character marks the optimal reading focus point (position varies by word length)
+- **Smart Delays**: Words display longer based on length, punctuation, and type (numbers, URLs, code, etc.)
+- **WPM Control**: Adjustable reading speed from 50 to 1000 words per minute
+- **Cyberpunk UI**: Dark terminal aesthetic with customizable neon accent colors, grid backgrounds, and glow effects
 - **Text Cleaning Pipeline**: URL shortening, number formatting, abbreviation expansion, markup removal
-- **Dark/Light Mode**: Theme switching with glassmorphism UI
-- **Focus Mode**: Distraction-free reading with hidden controls
-- **Keyboard Shortcuts**: Space (play/pause), Arrows (navigate), F (focus mode), E (editor)
 - **File Support**: Upload PDF, DOC, DOCX, PPT, PPTX, and TXT files for reading
+- **Keyboard Shortcuts**: Space (play/pause), Arrows (navigate), F (fullscreen), E (editor), +/- (font size)
 - **Touch Gestures**: Swipe left/right to navigate, tap to play/pause (mobile)
+- **PWA Support**: Can be installed as a Progressive Web App with offline capability
 
 ---
 
@@ -41,46 +41,48 @@ The project consists of two main parts:
 ## Project Structure
 
 ```
-spritz-reader/
+eyedance/
 ├── src/                          # Main web application
 │   ├── components/               # React components
-│   │   ├── Reader.tsx           # Main reader component (~844 lines)
-│   │   ├── SettingsModal.tsx    # Settings dialog (extracted for maintainability)
-│   │   ├── WordDisplay.tsx      # Single word display with ORP (~197 lines)
-│   │   ├── Controls.tsx         # Playback controls (legacy, unused)
-│   │   └── ProgressBar.tsx      # Reading progress bar (~22 lines)
+│   │   ├── Reader.tsx           # Main reader component (~1300 lines)
+│   │   ├── SettingsModal.tsx    # Settings dialog (typography, effects)
+│   │   ├── WordDisplay.tsx      # Single word display with ORP (~260 lines)
+│   │   ├── ProgressBar.tsx      # Reading progress bar with seek
+│   │   ├── CyberEye.tsx         # Time saved display component
+│   │   ├── Controls.tsx         # Legacy playback controls (unused)
+│   │   └── PixelIcons.tsx       # SVG icon components
 │   ├── hooks/                    # Custom React hooks
-│   │   ├── useSpritz.ts         # Core reading logic hook (~246 lines)
-│   │   └── useDynamicFontSize.ts # Responsive font sizing (~83 lines)
-│   ├── core/                     # Core utilities
-│   │   ├── textCleaner.ts       # Text parsing and cleaning pipeline (~458 lines)
-│   │   └── fileParser.ts        # Secure file upload parser (~516 lines)
+│   │   ├── useSpritz.ts         # Core reading logic hook (~240 lines)
+│   │   └── useDynamicFontSize.ts # Responsive font sizing (~80 lines)
+│   ├── core/                     # Core business logic
+│   │   ├── textCleaner.ts       # Text parsing and cleaning pipeline (~510 lines)
+│   │   └── fileParser.ts        # Secure file upload parser (~640 lines)
 │   ├── utils/                    # Utility functions
-│   │   └── orp.ts               # ORP calculations (legacy exports)
+│   │   └── orp.ts               # Legacy ORP exports (re-exports from textCleaner)
 │   ├── types/                    # TypeScript declarations
 │   │   └── external.d.ts        # Types for pdfjs-dist, mammoth, jszip
-│   ├── assets/                   # Static assets
+│   ├── assets/                   # Static assets (react.svg)
 │   ├── App.tsx                  # Root app component (renders Reader)
 │   ├── main.tsx                 # Entry point
-│   ├── App.css                  # Component styles (minimal)
-│   └── index.css                # Global styles + Tailwind (~388 lines)
+│   ├── index.css                # Global styles + Tailwind (~730 lines)
+│   └── App.css                  # Component styles (minimal)
 ├── extension/                    # Browser extension (Manifest V3)
-│   ├── manifest.json            # Extension manifest (v3)
-│   ├── background.js            # Service worker (~77 lines)
+│   ├── manifest.json            # Extension manifest
+│   ├── background.js            # Service worker (~75 lines)
 │   ├── content/
 │   │   ├── content.js           # Content script injected to pages (~540 lines)
-│   │   └── content.css          # Content script styles (~523 lines)
+│   │   └── content.css          # Content script styles (~520 lines)
 │   ├── popup/
-│   │   ├── popup.html           # Extension popup UI (~475 lines inline styles)
-│   │   └── popup.js             # Popup logic (~204 lines)
+│   │   ├── popup.html           # Extension popup UI
+│   │   └── popup.js             # Popup logic (~200 lines)
 │   └── icons/                   # Extension icons (16/48/128px PNG + SVG)
 ├── dist/                         # Build output (gitignored)
-├── public/                       # Public assets
+├── public/                       # Public assets (eyedance.svg, manifest.json, sw.js)
 ├── index.html                    # HTML entry point (with CSP headers)
 ├── package.json                  # NPM dependencies
 ├── vite.config.ts               # Vite configuration
 ├── tsconfig.json                # TypeScript project references
-├── tsconfig.app.json            # TypeScript app config (ES2022, strict)
+├── tsconfig.app.json            # TypeScript app config (ES2020, strict)
 ├── tsconfig.node.json           # TypeScript node config (ES2023)
 ├── tailwind.config.js           # Tailwind CSS configuration
 ├── postcss.config.js            # PostCSS configuration
@@ -88,7 +90,7 @@ spritz-reader/
 ├── vercel.json                  # Vercel deployment configuration
 ├── README.md                    # Human-readable README
 ├── DEPLOY.md                    # Deployment instructions
-└── MAINTENANCE.md               # Maintenance guidelines for developers
+└── MAINTENANCE.md               # Maintenance guidelines
 ```
 
 ---
@@ -123,61 +125,67 @@ npm run lint
 
 ### Component Architecture
 
-**Reader.tsx** (Main Component)
-- Manages all UI state (settings, scrubber, editor, focus mode, theme)
+**Reader.tsx** (Main Component - ~1300 lines)
+- Manages all UI state (settings, scrubber, editor, neon color picker)
+- Implements cyberpunk dark theme with customizable neon accent color
 - Handles keyboard shortcuts AND touch/swipe gestures for mobile
-- Mobile Features:
-  - Swipe left/right on word display to navigate
-  - Tap word display to play/pause
-  - Touch-optimized buttons (min 44px)
-  - Responsive layout adapts to screen size
+- Visual effects: spotlight sweep, ORP scan animation, grid background
 - Integrates `useSpritz` hook for reading logic
-- Contains modals for Settings, Scrubber, and Text Editor
-- Default text is in German
+- Contains inline modals for Color Picker, Scrubber, and Text Editor
+- Auto-hiding controls based on mouse inactivity (2 seconds)
+- Default text is cyberpunk-themed English welcome message
 
-**WordDisplay.tsx**
+**WordDisplay.tsx** (~260 lines)
 - Displays a single word with ORP highlighting
 - Responsive font sizing: Adapts to mobile screens (<768px)
-- Mobile: smaller padding (25% vs 35%), adjusted min/max sizes
 - Supports 3 font families (sans, serif, mono) and 3 weights (light, normal, bold)
-- Font size adjustable from -5 to +5 levels (15% per step)
+- Font size adjustable from -5 to +5 levels (20% per step)
 - Type-based coloring (URL: amber, number: cyan, parenthetical: dim)
+- Optional nav buffer showing previous/next words
+- Calculates dynamic padding for ORP centering based on longest word
 
-**ProgressBar.tsx** (22 lines)
-- Simple progress indicator with gradient fill
+**ProgressBar.tsx**
+- Draggable progress indicator with word preview tooltip
+- Shows current position and allows seeking to any word
 - Accessibility attributes (role, aria values)
 
-**SettingsModal.tsx** (206 lines)
-- Extracted from Reader.tsx to maintain component size
+**SettingsModal.tsx** (~220 lines)
+- Extracted from Reader.tsx for maintainability
 - Typography settings: font family, weight, size
-- Text cleaning options: URLs, numbers, abbreviations, line breaks, markup
-- Parentheses handling modes: keep, dim, shorten, remove
+- Visual effects: grid background, glow effect
+- Cyberpunk terminal styling with neon accents
+
+**CyberEye.tsx**
+- Displays time saved statistic
+- Animated cyberpunk-style visual indicator
 
 ### Core Logic
 
-**useSpritz.ts** (Custom Hook - 246 lines)
+**useSpritz.ts** (Custom Hook - ~240 lines)
 - Manages reading state (current word, playing status, WPM)
 - Implements the main reading loop with `setTimeout`
 - Calculates smart delays based on word metadata
 - Provides text navigation (next, prev, goTo, reset)
 - Context buffer for previous/next words
 - Code block detection and optional skipping
+- German comments mixed with English code
 
-**textCleaner.ts** (Text Processing - 458 lines)
+**textCleaner.ts** (Text Processing - ~510 lines)
 - `CleanOptions` interface for text processing configuration
 - `DisplayWord` interface with type and delay multiplier
 - `parseToDisplayWords()` - Main parsing function
 - `calculateSmartDelay()` - Delay calculation based on word characteristics
 - Abbreviation dictionary (German and English)
 - URL, number, markup cleaning functions
+- PDF line break fixing, footnote removal
 
-**fileParser.ts** (Secure File Upload - 516 lines)
+**fileParser.ts** (Secure File Upload - ~640 lines)
 - `parseFile()` - Main entry point for file parsing
 - `validateFile()` - Security validation (size, type, path traversal check)
 - `sanitizeText()` - XSS prevention, control character removal
-- `parsePDF()` - PDF text extraction using pdfjs-dist
+- `parsePDF()` - PDF text extraction using pdfjs-dist with Unicode fixes
 - `parseDOCX()` - DOCX parsing using mammoth
-- `parseDOC()` - Legacy DOC support (limited)
+- `parseDOC()` - Legacy DOC support (limited via mammoth)
 - `parsePPTX()` - PowerPoint text extraction using JSZip
 - `parsePPT()` - Legacy PPT not supported (shows helpful error)
 - `parseTXT()` - Plain text with encoding detection
@@ -188,42 +196,6 @@ npm run lint
   - Path traversal protection
   - Control character sanitization
   - Null byte removal
-
-### Component Architecture Best Practices
-
-To ensure maintainability, follow these principles when modifying components:
-
-**1. Extract Large Modals into Separate Components**
-- Settings modal moved to `SettingsModal.tsx` (was inline in Reader.tsx)
-- Keeps parent components under 400 lines
-- Props interface clearly defines all dependencies
-- Example pattern for future modals
-
-**2. Props Interface Pattern**
-```typescript
-interface ComponentProps {
-  isOpen: boolean;
-  onClose: () => void;
-  // Typed callbacks with specific values
-  setFontFamily: (f: 'sans' | 'serif' | 'mono') => void;
-  // ...
-}
-```
-
-**3. State Management Hierarchy**
-- `Reader.tsx`: Top-level UI state (modals, theme, font settings)
-- `useSpritz.ts`: Reading logic state (current word, WPM, playback)
-- Individual modals: Local form state only
-
-**4. Styling Consistency**
-- Use `glassClass` and `accentBgClass` variables from parent
-- Never hardcode colors - use theme-aware variables
-- Animation durations: 200ms for quick feedback, 300ms for transitions
-
-**5. When Adding New Features**
-- If >100 lines of JSX: Consider extraction
-- If reused >2 times: Make it a component
-- If modal content: Create separate file in `components/`
 
 ### Smart Delay Algorithm
 The delay for each word is calculated as:
@@ -242,10 +214,11 @@ Where `delayMultiplier` is affected by:
 ## Development Conventions
 
 ### TypeScript Configuration
-- **App config**: `tsconfig.app.json` - ES2022, DOM libs, strict mode enabled
+- **App config**: `tsconfig.app.json` - ES2020, DOM libs, strict mode enabled
 - **Node config**: `tsconfig.node.json` - ES2023, for Vite config
 - Strict TypeScript with `noUnusedLocals`, `noUnusedParameters`
 - Module resolution: `bundler`
+- JSX: `react-jsx` transform
 
 ### Code Style
 - Single quotes for strings
@@ -254,20 +227,22 @@ Where `delayMultiplier` is affected by:
 - Component files use PascalCase (e.g., `Reader.tsx`)
 - Hook files use camelCase with `use` prefix (e.g., `useSpritz.ts`)
 - Type interfaces defined in the same file as usage
+- Comments mix German and English (legacy from development)
 
 ### CSS Conventions
 - Tailwind CSS v4 with `@import "tailwindcss"` in index.css
-- Custom animations defined in `index.css` (fade, zoom, slide, pulse)
+- Custom animations defined in `index.css` (fade, zoom, slide, pulse, spotlight)
 - Glassmorphism utilities: `.glass`, `.glass-light`
 - Custom range input styling in `index.css`
-- Color scheme uses red (`#ef4444`) as accent color
-- Responsive breakpoints at 768px (tablet) and 480px (mobile)
-- Dark mode classes applied conditionally
+- Neon glow effects using CSS variables (`--neon-color`)
+- Responsive breakpoints at 640px (sm), 768px (md), and custom mobile queries
+- Mobile-first approach with touch-optimized targets (min 44px)
 
-### Language
-- UI language is **German** (e.g., "Einstellungen", "Schriftart", "Speichern & Lesen")
-- Code comments mix German and English
-- Variable names in English
+### Theme System
+- Always dark mode (cyberpunk aesthetic)
+- Customizable neon accent color via HSL color picker
+- Default neon color is random on each visit (prevents hydration mismatch)
+- Color applied via CSS custom property `--neon-color`
 
 ---
 
@@ -278,20 +253,18 @@ Where `delayMultiplier` is affected by:
 |-----|--------|
 | `Space` | Play/Pause |
 | `←` / `→` | Previous / Next word |
-| `F` | Toggle focus mode |
+| `F` | Toggle fullscreen mode |
 | `E` | Open text editor |
 | `+` / `-` | Increase / Decrease font size |
-| `Escape` | Close modals / Exit focus mode |
-| `Home` / `End` | Jump to beginning / end |
+| `Escape` | Close modals |
 
 ### Mobile (Touch)
 | Gesture | Action |
 |---------|--------|
-| **Tap** word display | Play/Pause |
+| **Tap** word display | Toggle play/pause |
 | **Swipe Left** | Next word |
 | **Swipe Right** | Previous word |
-| **Long press** navigation buttons | Fast forward/rewind |
-| **Touch buttons** | All buttons min 44px for easy tapping |
+| **Long press** navigation buttons | Fast forward/rewind (opens scrubber) |
 
 ### Extension Shortcuts
 | Key | Action |
@@ -316,6 +289,7 @@ Where `delayMultiplier` is affected by:
 - WPM setting persisted in chrome.storage
 - Direct text input in popup
 - Touch/swipe support in reader overlay
+- Context buffer showing previous/next words (8 words each side)
 
 ### Extension Development
 - Extension files are in plain JavaScript (no build step required)
@@ -384,6 +358,7 @@ Where `delayMultiplier` is affected by:
   - Line ending normalization
 - **Client-Side Only**: All parsing happens in browser, no server upload
 - **Memory Safety**: PDF.js cleanup after extraction, ArrayBuffer handling
+- **Unicode Support**: Proper handling of Umlaute (äöü) and special characters
 
 ### Extension Security
 - Content script runs on all URLs with access to page DOM
@@ -405,12 +380,14 @@ Where `delayMultiplier` is affected by:
 - Manual chunking for PDF and DOC parsers (large dependencies)
 - Security headers for dev/preview servers
 - Optimized dependencies: pdfjs-dist, mammoth
+- Target: ES2020
 
 ### tsconfig.app.json
-- Target: ES2022
-- Libs: ES2022, DOM, DOM.Iterable
+- Target: ES2020
+- Libs: ES2020, DOM, DOM.Iterable
 - Strict mode enabled
 - Module resolution: bundler
+- JSX: react-jsx
 
 ### eslint.config.js
 - Flat config format (ESLint 9.x)
@@ -437,23 +414,24 @@ Where `delayMultiplier` is affected by:
 ## Known Limitations
 
 - No automated test suite implemented
-- No internationalization framework (hardcoded German UI strings)
+- No internationalization framework (UI is English with some German strings)
 - No persistent storage for web app (text lost on refresh)
 - Extension popup has inline styles (not using shared CSS)
 - Legacy `.doc` format has limited support (best effort via mammoth)
 - Legacy `.ppt` format not supported (requires server-side conversion)
-- PDF parsing requires CDN worker (privacy: loaded from cdnjs.cloudflare.com)
+- PDF parsing requires CDN worker (loaded from cdnjs.cloudflare.com)
 
 ---
 
 ## Useful References
 
-- **ORP Calculation**: Based on word length - position 1 for short words (≤5), position 2 for medium (≤9), position 3 for longer
-- **WPM Range**: 200-1000 (default 300)
-- **Font Size Levels**: -5 to +5, each step is 15% change
+- **ORP Calculation**: Based on word length - position 0 for single char, 1 for short (≤5), 2 for medium (≤9), 3 for longer
+- **WPM Range**: 50-1000 (default 300)
+- **Font Size Levels**: -5 to +5, each step is 20% change
 - **Context Buffer**: Shows previous/next words (buffer size 1 in web app, 8 in extension)
 - **Abbreviations**: German and English abbreviations supported (z.B., e.g., etc.)
+- **Neon Color**: HSL value stored as CSS custom property, random on first visit
 
 ---
 
-Last updated: 2026-03-15
+Last updated: 2026-03-16
