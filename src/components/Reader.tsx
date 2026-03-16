@@ -98,7 +98,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   
   // Cursor glow effect
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [showCursorGlow, setShowCursorGlow] = useState(false);
   
   // Available spotlight effects
   const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'diagonal', 'radial', 'dual', 'corner'];
@@ -412,13 +411,11 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   // Inactivity detection - hide controls after cursor is still for 2 seconds
   const resetInactivityTimer = useCallback(() => {
     setShowControls(true);
-    setShowCursorGlow(true);
     if (inactivityTimerRef.current) {
       clearTimeout(inactivityTimerRef.current);
     }
     inactivityTimerRef.current = setTimeout(() => {
       setShowControls(false);
-      setShowCursorGlow(false);
     }, INACTIVITY_DELAY);
   }, []);
   
@@ -431,7 +428,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   // Handle mouse leaving the window
   const handleMouseLeave = useCallback(() => {
     setShowControls(false);
-    setShowCursorGlow(false);
   }, []);
   
   // Cleanup timers on unmount
