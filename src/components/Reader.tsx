@@ -243,14 +243,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     return () => clearInterval(interval);
   }, [isPlaying, startTime]);
   
-  // Check if fullscreen is supported
-  const isFullscreenSupported = useCallback(() => {
-    return !!(
-      document.documentElement.requestFullscreen ||
-      (document.documentElement as any).webkitRequestFullscreen
-    );
-  }, []);
-  
   // Check if running as installed PWA (standalone mode)
   const isStandalone = useCallback(() => {
     return (
