@@ -96,6 +96,10 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   const wpmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentWPMRef = useRef<number>(300); // Will be updated after useSpritz
   
+  // Cursor glow effect
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [showCursorGlow, setShowCursorGlow] = useState(false);
+  
   // Available spotlight effects
   const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'diagonal', 'radial', 'dual', 'corner'];
   
@@ -408,13 +412,21 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   // Inactivity detection - hide controls after cursor is still for 2 seconds
   const resetInactivityTimer = useCallback(() => {
     setShowControls(true);
+    setShowCursorGlow(true);
     if (inactivityTimerRef.current) {
       clearTimeout(inactivityTimerRef.current);
     }
     inactivityTimerRef.current = setTimeout(() => {
       setShowControls(false);
+      setShowCursorGlow(false);
     }, INACTIVITY_DELAY);
   }, []);
+  
+  // Track cursor position for glow effect
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    setCursorPos({ x: e.clientX, y: e.clientY });
+    resetInactivityTimer();
+  }, [resetInactivityTimer]);
   
   // Touch/Swipe handlers for mobile navigation
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -568,8 +580,8 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     <div 
       className={`min-h-screen w-full ${bgClass} ${className} transition-colors duration-500`}
       style={{ '--neon-color': neonColor } as React.CSSProperties}
-      onMouseMove={resetInactivityTimer}
-      onMouseLeave={() => setShowControls(false)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => { setShowControls(false); setShowCursorGlow(false); }}
       onClick={resetInactivityTimer}
     >
       {/* Optional Cyberpunk Grid Background */}
@@ -765,6 +777,21 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
           />
         </div>
       )}
+      
+      {/* Cursor Glow Effect - follows mouse with heavy blur */}
+      <div 
+        className={`fixed pointer-events-none z-20 transition-opacity duration-700 ease-out ${showCursorGlow ? 'opacity-100' : 'opacity-0'}`}
+        style={{
+          left: cursorPos.x,
+          top: cursorPos.y,
+          transform: 'translate(-50%, -50%)',
+          width: '300px',
+          height: '300px',
+          background: `radial-gradient(circle, ${neonColor} 0%, ${neonColorGlow} 30%, transparent 70%)`,
+          filter: 'blur(80px)',
+          opacity: 0.4
+        }}
+      />
       
       {/* Settings Modal */}
       <SettingsModal
