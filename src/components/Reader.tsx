@@ -110,7 +110,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       setSpotlightActive(false);
       setGridFlashActive(false);
       setOrpGlowActive(false);
-    }, 2000);
+    }, 2500);
   }, [getRandomSpotlightType]);
   
   // Trigger ORP scan animation
