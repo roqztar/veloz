@@ -94,7 +94,7 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
   // WPM long press state
   const wpmIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wpmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const currentWPMRef = useRef(wpm);
+  const currentWPMRef = useRef<number>(300); // Will be updated after useSpritz
   
   // Available spotlight effects
   const spotlightTypes: SpotlightType[] = ['horizontal', 'vertical', 'diagonal', 'radial', 'dual', 'corner'];
@@ -174,6 +174,11 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
     initialText: DEFAULT_TEXT,
     skipCodeBlocks: false,
   });
+  
+  // Keep ref in sync with wpm state
+  useEffect(() => {
+    currentWPMRef.current = wpm;
+  }, [wpm]);
   
   // Calculate neon color from hue
   const neonColor = `hsl(${hue}, 100%, 50%)`;
@@ -483,11 +488,6 @@ type SpotlightType = 'horizontal' | 'vertical' | 'diagonal' | 'radial' | 'dual' 
       else next();
     }
   }, [prev, next, showScrubber]);
-  
-  // Keep ref in sync with wpm state
-  useEffect(() => {
-    currentWPMRef.current = wpm;
-  }, [wpm]);
   
   // WPM long press handlers for fast adjustment
   const handleWPMPointerDown = useCallback((direction: 'increase' | 'decrease') => {
